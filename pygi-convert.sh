@@ -170,6 +170,8 @@ for f in $FILES_TO_CONVERT; do
     -pe "s/Gdk.Pixbuf/GdkPixbuf.Pixbuf/g;" \
     -pe "s/Gdk.INTERP_/GdkPixbuf.InterpType./g;" \
     -pe "s/Gdk.COLORSPACE_RGB/GdkPixbuf.Colorspace.RGB/g;" \
+    -pe "s/import Gtk.glade//g;" \
+    -pe "s/Gtk.glade/Gtk.Builder/g;" \
 \
     -pe "s/import pango\n/from gi.repository import Pango\n/g;" \
     -pe "s/pango\./Pango\./g;" \
