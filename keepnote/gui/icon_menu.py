@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gobject
-import gtk
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
 
 import keepnote.gui.icons
 from keepnote.gui.icons import \
@@ -39,22 +38,22 @@ default_menu_icons = [x for x in keepnote.gui.icons.builtin_icons
                       if "-open." not in x][:20]
 
 
-class IconMenu (gtk.Menu):
+class IconMenu (Gtk.Menu):
     """Icon picker menu"""
 
     def __init__(self):
-        gtk.Menu.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._notebook = None
 
         # default icon
-        self.default_icon = gtk.MenuItem("_Default Icon")
+        self.default_icon = Gtk.MenuItem("_Default Icon")
         self.default_icon.connect("activate",
                                   lambda w: self.emit("set-icon", ""))
         self.default_icon.show()
 
         # new icon
-        self.new_icon = gtk.MenuItem("_More Icons...")
+        self.new_icon = Gtk.MenuItem("_More Icons...")
         self.new_icon.show()
 
         self.width = 4
@@ -97,7 +96,7 @@ class IconMenu (gtk.Menu):
                 self.add_icon(iconfile)
 
         # separator
-        item = gtk.SeparatorMenuItem()
+        item = Gtk.SeparatorMenuItem()
         item.show()
         self.append(item)
 
@@ -125,22 +124,22 @@ class IconMenu (gtk.Menu):
             self.posi += 1
             self.posj = 0
 
-        gtk.Menu.append(self, item)
+        Gtk.Menu.append(self, item)
 
     def add_icon(self, iconfile):
-        child = gtk.MenuItem("")
-        child.remove(child.child)
-        img = gtk.Image()
+        child = Gtk.MenuItem("")
+        child.remove(child.get_child())
+        img = Gtk.Image()
         iconfile2 = lookup_icon_filename(self._notebook, iconfile)
         img.set_from_file(iconfile2)
         child.add(img)
-        child.child.show()
+        child.get_child().show()
         child.show()
         child.connect("activate",
                       lambda w: self.emit("set-icon", iconfile))
         self.append_grid(child)
 
 
-gobject.type_register(IconMenu)
-gobject.signal_new("set-icon", IconMenu, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(IconMenu)
+GObject.signal_new("set-icon", IconMenu, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))

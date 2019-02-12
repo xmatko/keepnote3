@@ -50,15 +50,13 @@ from keepnote import tasklib
 from keepnote import tarfile
 from keepnote.gui import extension, FileChooserDialog
 
-# pygtk imports
+# GObject introspection imports
 try:
-    import pygtk
-    pygtk.require('2.0')
-    from gtk import gdk
-    import gtk.glade
-    import gobject
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import GObject, Gtk, Gdk
 except ImportError:
-    # do not fail on gtk import error,
+    # do not fail on Gtk import error,
     # extension should be usable for non-graphical uses
     pass
 
@@ -106,9 +104,9 @@ class Extension (extension.Extension):
             return
 
         dialog = FileChooserDialog("Export Notebook", window, 
-            action=gtk.FILE_CHOOSER_ACTION_SAVE,
-            buttons=("Cancel", gtk.RESPONSE_CANCEL,
-                     "Export", gtk.RESPONSE_OK),
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=("Cancel", Gtk.ResponseType.CANCEL,
+                     "Export", Gtk.ResponseType.OK),
             app=self.app,
             persistent_path="archive_notebook_path")
 
@@ -126,7 +124,7 @@ class Extension (extension.Extension):
         
         response = dialog.run()
 
-        if response == gtk.RESPONSE_OK and dialog.get_filename():
+        if response == Gtk.ResponseType.OK and dialog.get_filename():
             filename = unicode_gtk(dialog.get_filename())
             dialog.destroy()
             self.export_notebook(notebook, filename, window=window)

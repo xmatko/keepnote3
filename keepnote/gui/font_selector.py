@@ -24,19 +24,19 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk.glade
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 
-class FontSelector (gtk.ComboBox):
+class FontSelector (Gtk.ComboBox):
     """ComboBox for selection Font family"""
 
     def __init__(self):
-        gtk.ComboBox.__init__(self)
+        GObject.GObject.__init__(self)
 
-        self._list = gtk.ListStore(str)
+        self._list = Gtk.ListStore(str)
         self.set_model(self._list)
 
         self._families = sorted(
@@ -47,7 +47,7 @@ class FontSelector (gtk.ComboBox):
         for f in self._families:
             self._list.append([f])
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 0)
 

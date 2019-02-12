@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk.glade
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
 
 # keepnote imports
 import keepnote
@@ -74,14 +73,14 @@ class TextEditor (KeepNoteEditor):
         self._textview.connect("visit-url", self._on_visit_url)
 
         # scrollbars
-        self._sw = gtk.ScrolledWindow()
-        self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self._sw.set_shadow_type(gtk.SHADOW_IN)
+        self._sw = Gtk.ScrolledWindow()
+        self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self._sw.set_shadow_type(Gtk.ShadowType.IN)
         self._sw.add(self._textview)
-        self.pack_start(self._sw)
+        self.pack_start(self._sw, True, True, 0)
 
-        #self._socket = gtk.Socket()
-        #self.pack_start(self._socket)
+        #self._socket = Gtk.Socket()
+        #self.pack_start(self._socket, True, True, 0)
 
         # menus
         self.editor_menus = EditorMenus(self._app, self)
@@ -194,7 +193,7 @@ class TextEditor (KeepNoteEditor):
             self._page_cursors[self._page] = it.get_offset()
 
             x, y = self._textview.window_to_buffer_coords(
-                gtk.TEXT_WINDOW_TEXT, 0, 0)
+                Gtk.TextWindowType.TEXT, 0, 0)
             it = self._textview.get_iter_at_location(x, y)
             self._page_scrolls[self._page] = it.get_offset()
 
@@ -284,10 +283,10 @@ class TextEditor (KeepNoteEditor):
                 self.emit("error", e.msg, e)
 
 
-class EditorMenus (gobject.GObject):
+class EditorMenus (GObject.GObject):
 
     def __init__(self, app, editor):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._app = app
         self._editor = editor
@@ -321,7 +320,7 @@ class EditorMenus (gobject.GObject):
     # toolbar and menus
 
     def add_ui(self, window):
-        self._action_group = gtk.ActionGroup("Editor")
+        self._action_group = Gtk.ActionGroup("Editor")
         self._uis = []
         add_actions(self._action_group, self.get_actions())
         window.get_uimanager().insert_action_group(
@@ -351,20 +350,20 @@ class EditorMenus (gobject.GObject):
 
         return (map(lambda x: Action(*x), [
             # finding
-            ("Find In Page", gtk.STOCK_FIND, _("_Find In Page..."),
+            ("Find In Page", Gtk.STOCK_FIND, _("_Find In Page..."),
              "<control>F", None,
              lambda w: self._editor.find_dialog.on_find(False)),
 
-            ("Find Next In Page", gtk.STOCK_FIND, _("Find _Next In Page..."),
+            ("Find Next In Page", Gtk.STOCK_FIND, _("Find _Next In Page..."),
              "<control>G", None,
              lambda w: self._editor.find_dialog.on_find(False, forward=True)),
 
-            ("Find Previous In Page", gtk.STOCK_FIND,
+            ("Find Previous In Page", Gtk.STOCK_FIND,
              _("Find Pre_vious In Page..."),
              "<control><shift>G", None,
              lambda w: self._editor.find_dialog.on_find(False, forward=False)),
 
-            ("Replace In Page", gtk.STOCK_FIND_AND_REPLACE,
+            ("Replace In Page", Gtk.STOCK_FIND_AND_REPLACE,
              _("_Replace In Page..."),
              "<control>R", None,
              lambda w: self._editor.find_dialog.on_find(True)),

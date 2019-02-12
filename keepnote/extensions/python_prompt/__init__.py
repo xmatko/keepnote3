@@ -38,16 +38,16 @@ import keepnote
 from keepnote.gui import extension
 
 
-# pygtk imports
+# GObject introspection imports
 try:
-    import pygtk
-    pygtk.require('2.0')
-    import gtk
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
 
     from keepnote.gui import dialog_app_options
 
 except ImportError:
-    # do not fail on gtk import error,
+    # do not fail on Gtk import error,
     # extension should be usable for non-graphical uses
     pass
 

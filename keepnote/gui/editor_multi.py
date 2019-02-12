@@ -27,9 +27,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
+
 
 # keepnote imports
 import keepnote

@@ -35,14 +35,10 @@ import urlparse
 import uuid
 from xml.sax.saxutils import escape
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
-import pango
-from gtk import gdk
-import gtk.keysyms   # this is necessary for py2exe discovery
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GObject, Pango
 
 # try to import spell check
 try:
@@ -89,7 +85,7 @@ from keepnote import translate as _
 DEFAULT_FONT = "Sans 10"
 TEXTVIEW_MARGIN = 5
 if keepnote.get_platform() == "darwin":
-    CLIPBOARD_NAME = gdk.SELECTION_PRIMARY
+    CLIPBOARD_NAME = Gdk.SELECTION_PRIMARY
 else:
     CLIPBOARD_NAME = "CLIPBOARD"
 RICHTEXT_ID = -3    # application defined integer for the clipboard
@@ -240,10 +236,10 @@ class RichTextError (StandardError):
             return self.msg
 
 
-class RichTextMenu (gtk.Menu):
+class RichTextMenu (Gtk.Menu):
     """A popup menu for child widgets in a RichTextView"""
     def __inti__(self):
-        gtk.Menu.__init__(self)
+        GObject.GObject.__init__(self)
         self._child = None
 
     def set_child(self, child):
@@ -398,11 +394,11 @@ class RichTextDragDrop (object):
         return None
 
 
-class RichTextView (gtk.TextView):
+class RichTextView (Gtk.TextView):
     """A RichText editor widget"""
 
     def __init__(self, textbuffer=None):
-        gtk.TextView.__init__(self, textbuffer)
+        GObject.GObject.__init__(self)
 
         self._textbuffer = None
         self._buffer_callbacks = []
@@ -428,7 +424,7 @@ class RichTextView (gtk.TextView):
         self.enable_spell_check(True)
 
         # signals
-        self.set_wrap_mode(gtk.WRAP_WORD)
+        self.set_wrap_mode(Gtk.WrapMode.WORD)
         self.set_property("right-margin", TEXTVIEW_MARGIN)
         self.set_property("left-margin", TEXTVIEW_MARGIN)
 
@@ -467,17 +463,17 @@ class RichTextView (gtk.TextView):
         self._image_menu = RichTextMenu()
         self._image_menu.attach_to_widget(self, lambda w, m: None)
 
-        item = gtk.ImageMenuItem(gtk.STOCK_CUT)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_CUT)
         item.connect("activate", lambda w: self.emit("cut-clipboard"))
         self._image_menu.append(item)
         item.show()
 
-        item = gtk.ImageMenuItem(gtk.STOCK_COPY)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_COPY)
         item.connect("activate", lambda w: self.emit("copy-clipboard"))
         self._image_menu.append(item)
         item.show()
 
-        item = gtk.ImageMenuItem(gtk.STOCK_DELETE)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_DELETE)
 
         def func(widget):
             if self._textbuffer:
@@ -495,9 +491,9 @@ class RichTextView (gtk.TextView):
 
         # change buffer
         if textbuffer:
-            gtk.TextView.set_buffer(self, textbuffer)
+            Gtk.TextView.set_buffer(self, textbuffer)
         else:
-            gtk.TextView.set_buffer(self, self._blank_buffer)
+            Gtk.TextView.set_buffer(self, self._blank_buffer)
         self._textbuffer = textbuffer
 
         # tell new buffer we are attached
@@ -543,7 +539,7 @@ class RichTextView (gtk.TextView):
         if self._textbuffer is None:
             return
 
-        if event.keyval == gtk.keysyms.ISO_Left_Tab:
+        if event.keyval == Gdk.KEY_ISO_Left_Tab:
             # shift+tab is pressed
             it = self._textbuffer.get_iter_at_mark(
                 self._textbuffer.get_insert())
@@ -554,7 +550,7 @@ class RichTextView (gtk.TextView):
                 self.unindent()
                 return True
 
-        if event.keyval == gtk.keysyms.Tab:
+        if event.keyval == Gdk.KEY_Tab:
             # tab is pressed
             it = self._textbuffer.get_iter_at_mark(
                 self._textbuffer.get_insert())
@@ -566,7 +562,7 @@ class RichTextView (gtk.TextView):
                 self.indent()
                 return True
 
-        if event.keyval == gtk.keysyms.Delete:
+        if event.keyval == Gdk.KEY_Delete:
             # delete key pressed
 
             # TODO: make sure selection with delete does not fracture
@@ -602,10 +598,10 @@ class RichTextView (gtk.TextView):
 
     def on_button_press(self, widget, event):
         """Process context popup menu"""
-        if event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gdk._2BUTTON_PRESS:
             # double left click
 
-            x, y = self.window_to_buffer_coords(gtk.TEXT_WINDOW_TEXT,
+            x, y = self.window_to_buffer_coords(Gtk.TextWindowType.TEXT,
                                                 int(event.x), int(event.y))
             it = self.get_iter_at_location(x, y)
 
@@ -760,7 +756,7 @@ class RichTextView (gtk.TextView):
            contents[0][0] == "anchor" and \
            isinstance(contents[0][2][0], RichTextImage):
             # copy image
-            targets = [(MIME_RICHTEXT, gtk.TARGET_SAME_APP, RICHTEXT_ID)] + \
+            targets = [(MIME_RICHTEXT, Gtk.TargetFlags.SAME_APP, RICHTEXT_ID)] + \
                 [("text/x-moz-url-priv", 0, RICHTEXT_ID)] + \
                 [("text/html", 0, RICHTEXT_ID)] + \
                 [(x, 0, RICHTEXT_ID) for x in MIME_IMAGES]
@@ -771,7 +767,7 @@ class RichTextView (gtk.TextView):
 
         else:
             # copy text
-            targets = [(MIME_RICHTEXT, gtk.TARGET_SAME_APP, RICHTEXT_ID)] + \
+            targets = [(MIME_RICHTEXT, Gtk.TargetFlags.SAME_APP, RICHTEXT_ID)] + \
                 [("text/x-moz-url-priv", 0, RICHTEXT_ID)] + \
                 [("text/html", 0, RICHTEXT_ID)] + \
                 [(x, 0, RICHTEXT_ID) for x in MIME_TEXT]
@@ -1106,20 +1102,20 @@ class RichTextView (gtk.TextView):
         pos = 3
 
         # insert additional menu options after paste
-        item = gtk.ImageMenuItem(stock_id=gtk.STOCK_PASTE, accel_group=None)
-        item.child.set_text(_("Paste As Plain Text"))
+        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
+        item.get_child().set_text(_("Paste As Plain Text"))
         item.connect("activate", lambda item: self.paste_clipboard_as_text())
         item.show()
         menu.insert(item, pos)
 
-        item = gtk.ImageMenuItem(stock_id=gtk.STOCK_PASTE, accel_group=None)
-        item.child.set_text(_("Paste As Quote"))
+        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
+        item.get_child().set_text(_("Paste As Quote"))
         item.connect("activate", lambda item: self.paste_clipboard_as_quote())
         item.show()
         menu.insert(item, pos+1)
 
-        item = gtk.ImageMenuItem(stock_id=gtk.STOCK_PASTE, accel_group=None)
-        item.child.set_text(_("Paste As Plain Text Quote"))
+        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
+        item.get_child().set_text(_("Paste As Plain Text Quote"))
         item.connect(
             "activate",
             lambda item: self.paste_clipboard_as_quote(plain_text=True))
@@ -1183,7 +1179,7 @@ class RichTextView (gtk.TextView):
 
     def insert_image_from_file(self, imgfile, filename="image.png"):
         """Inserts an image from a file"""
-        pixbuf = gdk.pixbuf_new_from_file(imgfile)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(imgfile)
         img = RichTextImage()
         img.set_from_pixbuf(pixbuf)
         self.insert_image(img, filename)
@@ -1494,7 +1490,7 @@ class RichTextView (gtk.TextView):
             # // PIXELS_PER_PANGO_UNIT)
             #set_text_scale(native_size / 10.0)
 
-            f = pango.FontDescription(font)
+            f = Pango.FontDescription(font)
             f.set_size(int(f.get_size() * get_text_scale()))
             self.modify_font(f)
         except:
@@ -1518,15 +1514,15 @@ class RichTextView (gtk.TextView):
 
 
 # register new signals
-gobject.type_register(RichTextView)
-gobject.signal_new("modified", RichTextView, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (bool,))
-gobject.signal_new("font-change", RichTextView, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("child-activated", RichTextView, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("visit-url", RichTextView, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str,))
+GObject.type_register(RichTextView)
+GObject.signal_new("modified", RichTextView, GObject.SignalFlags.RUN_LAST,
+                   None, (bool,))
+GObject.signal_new("font-change", RichTextView, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("child-activated", RichTextView, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("visit-url", RichTextView, GObject.SignalFlags.RUN_LAST,
+                   None, (str,))
 
 
 '''

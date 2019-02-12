@@ -24,6 +24,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
 from keepnote import orderdict
 
 
@@ -98,6 +99,8 @@ class Pref (object):
     """A general preference object"""
 
     def __init__(self, data=None):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.pref.Pref.__init__()")
         if data is None:
             self._data = orderdict.OrderDict()
         else:

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 #
 #  KeepNote - note-taking and organization
 #  Copyright (c) 2008-2011 Matt Rasmussen
@@ -23,6 +24,7 @@ import exceptions
 import sys
 import os
 from os.path import basename, dirname, realpath, join, isdir
+import logging, inspect
 import time
 import optparse
 import thread
@@ -105,9 +107,11 @@ keepnote.set_basedir(basedir)
 import keepnote
 from keepnote.commands import get_command_executor, CommandExecutor
 from keepnote.teefile import TeeFileStream
+from keepnote.logger import create_logger
 import keepnote.compat.pref
 _ = keepnote.translate
 
+logger = logging.getLogger('keepnote')
 
 
 #=============================================================================
@@ -217,38 +221,40 @@ def parse_argv(argv):
 def setup_threading():
     """Initialize threading environment"""
 
-    import gtk.gdk
-    import gobject
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk, GObject
 
     if keepnote.get_platform() == "windows":
         # HACK: keep gui thread active
         def sleeper():
             time.sleep(.001)
             return True # repeat timer
-        gobject.timeout_add(400, sleeper)
+        GObject.timeout_add(400, sleeper)
 
     else:
-        gtk.gdk.threads_init()
+        Gdk.threads_init()
 
 
 def gui_exec(function, *args, **kw):
     """Execute a function in the GUI thread"""
     
-    import gtk.gdk
-    import gobject
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk, GObjects
 
     sem = threading.Semaphore()
     sem.acquire()
 
     def idle_func():
-        gtk.gdk.threads_enter()
+        Gdk.threads_enter()
         try:
             function(*args, **kw)
             return False
         finally:
             sem.release() # notify that command is done
-            gtk.gdk.threads_leave()
-    gobject.idle_add(idle_func)
+            Gdk.threads_leave()
+    GObject.idle_add(idle_func)
 
     # wait for command to execute
     sem.acquire()
@@ -258,14 +264,15 @@ def gui_exec(function, *args, **kw):
 def start_gui(argv, options, args, cmd_exec):
     import keepnote.gui
 
-    # pygtk imports
-    import pygtk
-    pygtk.require('2.0')
-    import gtk
+    # GObject introspection imports
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk, GObject
 
     # setup threading environment
     setup_threading()
 
+    logger.info("Start GUI (GTK %d.%d.%d)" % (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION))
     # create app
     app = keepnote.gui.KeepNote(basedir)
     app.init()
@@ -274,7 +281,7 @@ def start_gui(argv, options, args, cmd_exec):
     
     # begin gtk event loop
     if need_gui:
-        gtk.main()
+        Gtk.main()
 
 
 def start_non_gui(argv, options, args, cmd_exec):
@@ -386,8 +393,6 @@ def list_commands(app):
             print " -- " + command.help,
         print
 
-
-
 def main(argv):
     """Main execution"""    
 
@@ -400,6 +405,10 @@ def main(argv):
 
     # start error log
     start_error_log(options.show_errors)
+
+    # create logger
+    # TODO: get logfile and loglevel from options/preferences
+    create_logger("keepnote.log", logging.DEBUG)
 
     # get command executor
     if options.newproc:

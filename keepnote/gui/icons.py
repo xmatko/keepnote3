@@ -28,10 +28,10 @@
 import mimetypes
 import os
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 # keepnote imports
 import keepnote
@@ -90,7 +90,7 @@ DEFAULT_QUICK_PICK_ICONS = [u"folder" + c + u".png" for c in _colors] + \
 class MimeIcons:
 
     def __init__(self):
-        self.theme = gtk.icon_theme_get_default()
+        self.theme = Gtk.IconTheme.get_default()
         if self.theme is None:
             icons = []
         else:

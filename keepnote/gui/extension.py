@@ -25,8 +25,10 @@
 # python imports
 import sys
 
-# gtk imports
-import gtk
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 # keepnote imports
 import keepnote
@@ -120,7 +122,7 @@ class Extension (extension.Extension):
                    stock_id=None, accel="", tooltip=None):
         # init action group
         if window not in self.__action_groups:
-            group = gtk.ActionGroup("MainWindow")
+            group = Gtk.ActionGroup("MainWindow")
             self.__action_groups[window] = group
             window.get_uimanager().insert_action_group(group, 0)
 

@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GObject
 
 from .undo_handler import InsertAction
 
@@ -49,17 +48,17 @@ class RichTextBaseFont (object):
         pass
 
 
-class FontHandler (gobject.GObject):
+class FontHandler (GObject.GObject):
     """Basic RichTextBuffer with the following features
 
         - manages "current font" behavior
     """
     def __init__(self, textbuffer):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._buf = textbuffer
         self._current_tags = []
-        self._default_attr = gtk.TextAttributes()
+        self._default_attr = Gtk.TextAttributes()
         self._font_class = RichTextBaseFont
 
         self._insert_mark = self._buf.get_insert()
@@ -250,7 +249,7 @@ class FontHandler (gobject.GObject):
         current_tags = set(self._current_tags)
 
         # get the text attributes and font at the iter
-        attr = gtk.TextAttributes()
+        attr = Gtk.TextAttributes()
         self._default_attr.copy_values(attr)
         it.get_attributes(attr)
         tags = it.get_tags()
@@ -263,6 +262,6 @@ class FontHandler (gobject.GObject):
         return font
 
 
-gobject.type_register(FontHandler)
-gobject.signal_new("font-change", FontHandler, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(FontHandler)
+GObject.signal_new("font-change", FontHandler, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, (object,))

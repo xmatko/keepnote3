@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk.glade
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
 
 # keepnote imports
 import keepnote
@@ -37,13 +36,13 @@ import keepnote
 _ = keepnote.translate
 
 
-class KeepNoteEditor (gtk.VBox):
+class KeepNoteEditor (Gtk.Box):
     """
     Base class for all KeepNoteEditors
     """
 
     def __init__(self, app):
-        gtk.VBox.__init__(self, False, 0)
+        GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self._app = app
         self._notebook = None
         self._textview = None
@@ -95,20 +94,20 @@ class KeepNoteEditor (gtk.VBox):
 
 
 # add new signals to KeepNoteEditor
-gobject.type_register(KeepNoteEditor)
-gobject.signal_new("view-node", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("visit-node", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("modified", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object, bool))
-gobject.signal_new("font-change", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("error", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str, object))
-gobject.signal_new("child-activated", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object, object))
-gobject.signal_new("window-request", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str,))
-gobject.signal_new("make-link", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
+GObject.type_register(KeepNoteEditor)
+GObject.signal_new("view-node", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("visit-node", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("modified", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (object, bool))
+GObject.signal_new("font-change", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("error", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (str, object))
+GObject.signal_new("child-activated", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (object, object))
+GObject.signal_new("window-request", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, (str,))
+GObject.signal_new("make-link", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
+                   None, ())

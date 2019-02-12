@@ -34,6 +34,7 @@ import re
 import subprocess
 import tempfile
 import traceback
+import logging
 import uuid
 import zipfile
 try:
@@ -101,7 +102,7 @@ except ImportError:
 #=============================================================================
 # globals / constants
 
-PROGRAM_NAME = u"KeepNote"
+PROGRAM_NAME = u"KeepNote3"
 PROGRAM_VERSION_MAJOR = 0
 PROGRAM_VERSION_MINOR = 7
 PROGRAM_VERSION_RELEASE = 9
@@ -255,9 +256,9 @@ def print_runtime_info(out=None):
               "-------------\n"
               "keepnote: " + keepnote.__file__+"\n")
     try:
-        import gtk
-        out.write("gtk: " + gtk.__file__+"\n")
-        out.write("gtk.gtk_version: "+repr(gtk.gtk_version)+"\n")
+        from gi.repository import Gtk
+        out.write("gtk: " + Gtk.__file__+"\n")
+        out.write("Gtk.gtk_version: "+repr(Gtk.gtk_version)+"\n")
     except:
         out.write("gtk: NOT PRESENT\n")
 
@@ -712,6 +713,8 @@ class KeepNote (object):
 
     def __init__(self, basedir=None, pref_dir=None):
 
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.Keepnote.__init__()")
         # base directory of keepnote library
         if basedir is not None:
             set_basedir(basedir)
@@ -721,6 +724,7 @@ class KeepNote (object):
         self.pref = KeepNotePreferences(pref_dir)
         self.pref.changed.add(self._on_pref_changed)
 
+        self.language = None
         self.id = None
 
         # list of registered application commands
@@ -752,6 +756,8 @@ class KeepNote (object):
     def init(self):
         """Initialize from preferences saved on disk"""
 
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.Keepnote.init()")
         # read preferences
         self.pref.read()
         self.load_preferences()
@@ -767,6 +773,8 @@ class KeepNote (object):
     def load_preferences(self):
         """Load information from preferences"""
 
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.Keepnote.load_preferences()")
         self.language = self.pref.get("language", default="")
         self.set_lang()
 

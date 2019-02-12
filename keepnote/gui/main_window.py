@@ -29,12 +29,12 @@ import os
 import shutil
 import sys
 import uuid
+import logging
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk, Gdk
 
 # keepnote imports
 import keepnote
@@ -73,11 +73,13 @@ DEFAULT_WINDOW_POS = (-1, -1)
 #=============================================================================
 
 
-class KeepNoteWindow (gtk.Window):
+class KeepNoteWindow (Gtk.Window):
     """Main windows for KeepNote"""
 
     def __init__(self, app, winid=None):
-        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+        GObject.GObject.__init__(self, type=Gtk.WindowType.TOPLEVEL)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.__init__()")
 
         self._app = app  # application object
         self._winid = winid if winid else unicode(uuid.uuid4())
@@ -105,12 +107,13 @@ class KeepNoteWindow (gtk.Window):
         return self._winid
 
     def init_layout(self):
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.init_layout()")
         # init main window
         self.set_title(keepnote.PROGRAM_NAME)
         self.set_default_size(*DEFAULT_WINDOW_SIZE)
-        self.set_icon_list(get_resource_pixbuf("keepnote-16x16.png"),
+        self.set_icon_list([get_resource_pixbuf("keepnote-16x16.png"),
                            get_resource_pixbuf("keepnote-32x32.png"),
-                           get_resource_pixbuf("keepnote-64x64.png"))
+                           get_resource_pixbuf("keepnote-64x64.png")])
 
         # main window signals
         self.connect("error", lambda w, m, e, t: self.error(m, e, t))
@@ -123,44 +126,42 @@ class KeepNoteWindow (gtk.Window):
         # Dialogs
 
         self.drag_test = dialog_drag_drop_test.DragDropTestDialog(self)
-
         self.viewer = self.new_viewer()
 
         #====================================
         # Layout
 
         # vertical box
-        main_vbox = gtk.VBox(False, 0)
+        main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(main_vbox)
 
         # menu bar
         main_vbox.set_border_width(0)
-        self.menubar = self.make_menubar()
-        main_vbox.pack_start(self.menubar, False, True, 0)
+        main_vbox.pack_start(self.make_menubar(), False, True, 0)
 
         # toolbar
         main_vbox.pack_start(self.make_toolbar(), False, True, 0)
 
-        main_vbox2 = gtk.VBox(False, 0)
+        main_vbox2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         main_vbox2.set_border_width(1)
         main_vbox.pack_start(main_vbox2, True, True, 0)
 
         # viewer
-        self.viewer_box = gtk.VBox(False, 0)
+        self.viewer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         main_vbox2.pack_start(self.viewer_box, True, True, 0)
 
         # status bar
-        status_hbox = gtk.HBox(False, 0)
+        status_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         main_vbox.pack_start(status_hbox, False, True, 0)
 
         # message bar
-        self.status_bar = gtk.Statusbar()
+        self.status_bar = Gtk.Statusbar()
         status_hbox.pack_start(self.status_bar, False, True, 0)
-        self.status_bar.set_property("has-resize-grip", False)
+        #self.status_bar.set_property("has-resize-grip", False)
         self.status_bar.set_size_request(300, -1)
 
         # stats bar
-        self.stats_bar = gtk.Statusbar()
+        self.stats_bar = Gtk.Statusbar()
         status_hbox.pack_start(self.stats_bar, True, True, 0)
 
         #====================================================
@@ -174,24 +175,21 @@ class KeepNoteWindow (gtk.Window):
     def setup_systray(self):
         """Setup systray for window"""
         # system tray icon
-        if gtk.gtk_version > (2, 10):
-            if not self._tray_icon:
-                self._tray_icon = gtk.StatusIcon()
-                self._tray_icon.set_from_pixbuf(
-                    get_resource_pixbuf("keepnote-32x32.png"))
-                self._tray_icon.set_tooltip(keepnote.PROGRAM_NAME)
-                self._statusicon_menu = self.make_statusicon_menu()
-                self._tray_icon.connect("activate",
-                                        self._on_tray_icon_activate)
-                self._tray_icon.connect('popup-menu',
-                                        self._on_systray_popup_menu)
+        if not self._tray_icon:
+            self._tray_icon = Gtk.StatusIcon()
+            self._tray_icon.set_from_pixbuf(
+                get_resource_pixbuf("keepnote-32x32.png"))
+            self._tray_icon.set_tooltip_text(keepnote.PROGRAM_NAME)
+            self._statusicon_menu = self.make_statusicon_menu()
+            self._tray_icon.connect("activate",
+                                    self._on_tray_icon_activate)
+            self._tray_icon.connect('popup-menu',
+                                    self._on_systray_popup_menu)
 
-            self._tray_icon.set_property(
-                "visible", self._app.pref.get("window", "use_systray",
-                                              default=True))
+        self._tray_icon.set_property(
+            "visible", self._app.pref.get("window", "use_systray",
+                                          default=True))
 
-        else:
-            self._tray_icon = None
 
     def _on_systray_popup_menu(self, status, button, time):
         self._statusicon_menu.popup(None, None, None, button, time)
@@ -265,7 +263,7 @@ class KeepNoteWindow (gtk.Window):
 
         # keep track of maximized and minimized state
         self._iconified = bool(event.new_window_state &
-                               gtk.gdk.WINDOW_STATE_ICONIFIED)
+                               Gdk.WindowState.ICONIFIED)
 
         # detect recent iconification
         if not iconified and self._iconified:
@@ -273,14 +271,14 @@ class KeepNoteWindow (gtk.Window):
             self._was_maximized = self._maximized
 
         self._maximized = bool(event.new_window_state &
-                               gtk.gdk.WINDOW_STATE_MAXIMIZED)
+                               Gdk.WindowState.MAXIMIZED)
 
         # detect recent de-iconification
         if iconified and not self._iconified:
             # explicitly maximize if not maximized
             # NOTE: this is needed to work around a MS windows GTK bug
             if self._was_maximized:
-                gobject.idle_add(self.maximize)
+                GObject.idle_add(self.maximize)
 
     def _on_window_size(self, window, event):
         """Callback for resize events"""
@@ -320,11 +318,11 @@ class KeepNoteWindow (gtk.Window):
 
         # TODO: add timer in case minimize fails
         def on_window_state(window, event):
-            if event.new_window_state & gtk.gdk.WINDOW_STATE_ICONIFIED:
-                gtk.main_quit()
+            if event.new_window_state & Gdk.WindowState.ICONIFIED:
+                Gtk.main_quit()
         sig = self.connect("window-state-event", on_window_state)
         self.iconify()
-        gtk.main()
+        Gtk.main()
         self.disconnect(sig)
 
     def restore_window(self):
@@ -403,7 +401,7 @@ class KeepNoteWindow (gtk.Window):
 
         # init menu
         if menu.get_submenu() is None:
-            submenu = gtk.Menu()
+            submenu = Gtk.Menu()
             submenu.show()
             menu.set_submenu(submenu)
         menu = menu.get_submenu()
@@ -424,7 +422,7 @@ class KeepNoteWindow (gtk.Window):
 
         # populate menu
         for i, notebook in enumerate(recent_notebooks):
-            item = gtk.MenuItem(u"%d. %s" % (i+1, make_filename(notebook)))
+            item = Gtk.MenuItem(u"%d. %s" % (i+1, make_filename(notebook)))
             item.connect("activate", make_func(notebook))
             item.show()
             menu.append(item)
@@ -445,16 +443,27 @@ class KeepNoteWindow (gtk.Window):
 
     def on_new_notebook(self):
         """Launches New NoteBook dialog"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.on_new_notebook()")
+        '''
         dialog = FileChooserDialog(
             _("New Notebook"), self,
-            action=gtk.FILE_CHOOSER_ACTION_SAVE,
-            buttons=(_("Cancel"), gtk.RESPONSE_CANCEL,
-                     _("New"), gtk.RESPONSE_OK),
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=(_("Cancel"), Gtk.ResponseType.CANCEL,
+                     _("New"), Gtk.ResponseType.OK),
             app=self._app,
             persistent_path="new_notebook_path")
+        '''
+        dialog = Gtk.FileChooserDialog(
+            _("New Notebook"), self,
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=(_("Cancel"), Gtk.ResponseType.CANCEL,
+                     _("New"), Gtk.ResponseType.OK)
+            )
         response = dialog.run()
 
-        if response == gtk.RESPONSE_OK:
+        self.logger.debug("FileChooserDialog response=%d, filename=%s" % (response, dialog.get_filename()))
+
+        if response == Gtk.ResponseType.OK:
             # create new notebook
             if dialog.get_filename():
                 self.new_notebook(unicode_gtk(dialog.get_filename()))
@@ -464,16 +473,16 @@ class KeepNoteWindow (gtk.Window):
     def on_open_notebook(self):
         """Launches Open NoteBook dialog"""
 
-        dialog = gtk.FileChooserDialog(
+        dialog = Gtk.FileChooserDialog(
             _("Open Notebook"), self,
-            action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-            buttons=(_("Cancel"), gtk.RESPONSE_CANCEL,
-                     _("Open"), gtk.RESPONSE_OK))
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+            buttons=(_("Cancel"), Gtk.ResponseType.CANCEL,
+                     _("Open"), Gtk.ResponseType.OK))
 
         def on_folder_changed(filechooser):
             folder = unicode_gtk(filechooser.get_current_folder())
             if os.path.exists(os.path.join(folder, notebooklib.PREF_FILE)):
-                filechooser.response(gtk.RESPONSE_OK)
+                filechooser.response(Gtk.ResponseType.OK)
 
         dialog.connect("current-folder-changed", on_folder_changed)
 
@@ -481,19 +490,19 @@ class KeepNoteWindow (gtk.Window):
         if os.path.exists(path):
             dialog.set_current_folder(path)
 
-        file_filter = gtk.FileFilter()
+        file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*.nbk")
         file_filter.set_name(_("Notebook (*.nbk)"))
         dialog.add_filter(file_filter)
 
-        file_filter = gtk.FileFilter()
+        file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*")
         file_filter.set_name(_("All files (*.*)"))
         dialog.add_filter(file_filter)
 
         response = dialog.run()
 
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
 
             path = ensure_unicode(dialog.get_current_folder(), FS_ENCODING)
             if path:
@@ -508,35 +517,35 @@ class KeepNoteWindow (gtk.Window):
 
     def on_open_notebook_url(self):
         """Launches Open NoteBook from URL dialog"""
-        dialog = gtk.Dialog("Open Notebook from URL", self,
-                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT)
+        dialog = Gtk.Dialog("Open Notebook from URL", self,
+                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT)
 
         p = dialog.get_content_area()
 
-        h = gtk.HBox()
+        h = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         h.show()
         p.pack_start(h, expand=False, fill=True, padding=0)
 
         # url label
-        l = gtk.Label("URL: ")
+        l = Gtk.Label(label="URL: ")
         l.show()
         h.pack_start(l, expand=False, fill=True, padding=0)
 
         # url entry
-        entry = gtk.Entry()
+        entry = Gtk.Entry()
         entry.set_width_chars(80)
         entry.connect("activate", lambda w:
-                      dialog.response(gtk.RESPONSE_OK))
+                      dialog.response(Gtk.ResponseType.OK))
         entry.show()
         h.pack_start(entry, expand=True, fill=True, padding=0)
 
         # actions
-        dialog.add_button("_Cancel", gtk.RESPONSE_CANCEL)
-        dialog.add_button("_Open", gtk.RESPONSE_OK)
+        dialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+        dialog.add_button("_Open", Gtk.ResponseType.OK)
 
         response = dialog.run()
 
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             url = unicode_gtk(entry.get_text())
             if url:
                 self.open_notebook(url)
@@ -951,25 +960,25 @@ class KeepNoteWindow (gtk.Window):
     def on_cut(self):
         """Cut callback"""
         widget = self.get_focus()
-        if gobject.signal_lookup("cut-clipboard", widget) != 0:
+        if GObject.signal_lookup("cut-clipboard", widget) != 0:
             widget.emit("cut-clipboard")
 
     def on_copy(self):
         """Copy callback"""
         widget = self.get_focus()
-        if gobject.signal_lookup("copy-clipboard", widget) != 0:
+        if GObject.signal_lookup("copy-clipboard", widget) != 0:
             widget.emit("copy-clipboard")
 
     def on_copy_tree(self):
         """Copy tree callback"""
         widget = self.get_focus()
-        if gobject.signal_lookup("copy-tree-clipboard", widget) != 0:
+        if GObject.signal_lookup("copy-tree-clipboard", widget) != 0:
             widget.emit("copy-tree-clipboard")
 
     def on_paste(self):
         """Paste callback"""
         widget = self.get_focus()
-        if gobject.signal_lookup("paste-clipboard", widget) != 0:
+        if GObject.signal_lookup("paste-clipboard", widget) != 0:
             widget.emit("paste-clipboard")
 
     def on_undo(self):
@@ -1020,9 +1029,9 @@ class KeepNoteWindow (gtk.Window):
                 self._app.open_webpage(link)
             except KeepNoteError, e:
                 self.error(e.msg, e, sys.exc_info()[2])
-        gtk.about_dialog_set_url_hook(func, None)
+        Gtk.about_dialog_set_url_hook(func, None)
 
-        about = gtk.AboutDialog()
+        about = Gtk.AboutDialog()
         about.set_name(keepnote.PROGRAM_NAME)
         about.set_version(keepnote.PROGRAM_VERSION_TEXT)
         about.set_copyright(keepnote.COPYRIGHT)
@@ -1038,7 +1047,7 @@ class KeepNoteWindow (gtk.Window):
         #about.set_authors(["Matt Rasmussen <rasmus@alum.mit.edu>"])
 
         about.set_transient_for(self)
-        about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        about.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         about.connect("response", lambda d, r: about.destroy())
         about.show()
 
@@ -1047,6 +1056,7 @@ class KeepNoteWindow (gtk.Window):
 
     def set_status(self, text, bar="status"):
         """Sets a status message in the status bar"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.set_status()")
         if bar == "status":
             self.status_bar.pop(0)
             self.status_bar.push(0, text)
@@ -1076,36 +1086,38 @@ class KeepNoteWindow (gtk.Window):
     # Menus
 
     def get_actions(self):
+        """Set actions for main window menubar and return."""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_actions()")
         actions = map(
             lambda x: Action(*x),
             [
                 ("File", None, _("_File")),
 
-                ("New Notebook", gtk.STOCK_NEW, _("_New Notebook..."),
+                ("New Notebook", Gtk.STOCK_NEW, _("_New Notebook..."),
                  "", _("Start a new notebook"),
                  lambda w: self.on_new_notebook()),
 
-                ("Open Notebook", gtk.STOCK_OPEN, _("_Open Notebook..."),
+                ("Open Notebook", Gtk.STOCK_OPEN, _("_Open Notebook..."),
                  "<control>O", _("Open an existing notebook"),
                  lambda w: self.on_open_notebook()),
 
-                ("Open Recent Notebook", gtk.STOCK_OPEN,
+                ("Open Recent Notebook", Gtk.STOCK_OPEN,
                  _("Open Re_cent Notebook")),
 
-                ("Reload Notebook", gtk.STOCK_REVERT_TO_SAVED,
+                ("Reload Notebook", Gtk.STOCK_REVERT_TO_SAVED,
                  _("_Reload Notebook"),
                  "", _("Reload the current notebook"),
                  lambda w: self.reload_notebook()),
 
-                ("Save Notebook", gtk.STOCK_SAVE, _("_Save Notebook"),
+                ("Save Notebook", Gtk.STOCK_SAVE, _("_Save Notebook"),
                  "<control>S", _("Save the current notebook"),
                  lambda w: self._app.save()),
 
-                ("Close Notebook", gtk.STOCK_CLOSE, _("_Close Notebook"),
+                ("Close Notebook", Gtk.STOCK_CLOSE, _("_Close Notebook"),
                  "", _("Close the current notebook"),
                  lambda w: self._app.close_all_notebook(self.get_notebook())),
 
-                ("Empty Trash", gtk.STOCK_DELETE, _("Empty _Trash"),
+                ("Empty Trash", Gtk.STOCK_DELETE, _("Empty _Trash"),
                  "", None,
                  lambda w: self.on_empty_trash()),
 
@@ -1113,38 +1125,38 @@ class KeepNoteWindow (gtk.Window):
 
                 ("Import", None, _("_Import Notebook")),
 
-                ("Quit", gtk.STOCK_QUIT, _("_Quit"),
+                ("Quit", Gtk.STOCK_QUIT, _("_Quit"),
                  "<control>Q", _("Quit KeepNote"),
                  lambda w: self.on_quit()),
 
                 #=======================================
                 ("Edit", None, _("_Edit")),
 
-                ("Undo", gtk.STOCK_UNDO, None,
+                ("Undo", Gtk.STOCK_UNDO, None,
                  "<control>Z", None,
                  lambda w: self.on_undo()),
 
-                ("Redo", gtk.STOCK_REDO, None,
+                ("Redo", Gtk.STOCK_REDO, None,
                  "<control><shift>Z", None,
                  lambda w: self.on_redo()),
 
-                ("Cut", gtk.STOCK_CUT, None,
+                ("Cut", Gtk.STOCK_CUT, None,
                  "<control>X", None,
                  lambda w: self.on_cut()),
 
-                ("Copy", gtk.STOCK_COPY, None,
+                ("Copy", Gtk.STOCK_COPY, None,
                  "<control>C", None,
                  lambda w: self.on_copy()),
 
-                ("Copy Tree", gtk.STOCK_COPY, None,
+                ("Copy Tree", Gtk.STOCK_COPY, None,
                  "<control><shift>C", None,
                  lambda w: self.on_copy_tree()),
 
-                ("Paste", gtk.STOCK_PASTE, None,
+                ("Paste", Gtk.STOCK_PASTE, None,
                  "<control>V", None,
                  lambda w: self.on_paste()),
 
-                ("KeepNote Preferences", gtk.STOCK_PREFERENCES,
+                ("KeepNote Preferences", Gtk.STOCK_PREFERENCES,
                  _("_Preferences"),
                  "", None,
                  lambda w: self._app.app_options_dialog.show(self)),
@@ -1152,7 +1164,7 @@ class KeepNoteWindow (gtk.Window):
                 #========================================
                 ("Search", None, _("_Search")),
 
-                ("Search All Notes", gtk.STOCK_FIND, _("_Search All Notes"),
+                ("Search All Notes", Gtk.STOCK_FIND, _("_Search All Notes"),
                  "<control>K", None,
                  lambda w: self.search_box.grab_focus()),
 
@@ -1162,27 +1174,27 @@ class KeepNoteWindow (gtk.Window):
                 #========================================
                 ("View", None, _("_View")),
 
-                ("View Note As", gtk.STOCK_OPEN, _("_View Note As")),
+                ("View Note As", Gtk.STOCK_OPEN, _("_View Note As")),
 
-                ("View Note in File Explorer", gtk.STOCK_OPEN,
+                ("View Note in File Explorer", Gtk.STOCK_OPEN,
                  _("View Note in File Explorer"),
                  "", None,
                  lambda w: self.on_view_node_external_app("file_explorer",
                                                           kind="dir")),
 
-                ("View Note in Text Editor", gtk.STOCK_OPEN,
+                ("View Note in Text Editor", Gtk.STOCK_OPEN,
                  _("View Note in Text Editor"),
                  "", None,
                  lambda w: self.on_view_node_external_app("text_editor",
                                                           kind="page")),
 
-                ("View Note in Web Browser", gtk.STOCK_OPEN,
+                ("View Note in Web Browser", Gtk.STOCK_OPEN,
                  _("View Note in Web Browser"),
                  "", None,
                  lambda w: self.on_view_node_external_app("web_browser",
                                                           kind="page")),
 
-                ("Open File", gtk.STOCK_OPEN,
+                ("Open File", Gtk.STOCK_OPEN,
                  _("_Open File"),
                  "", None,
                  lambda w: self.on_view_node_external_app("file_launcher",
@@ -1217,7 +1229,7 @@ class KeepNoteWindow (gtk.Window):
                 #=========================================
                 ("Help", None, _("_Help")),
 
-                ("View Error Log...", gtk.STOCK_DIALOG_ERROR,
+                ("View Error Log...", Gtk.STOCK_DIALOG_ERROR,
                  _("View _Error Log..."),
                  "", None,
                  lambda w: self.view_error_log()),
@@ -1230,14 +1242,14 @@ class KeepNoteWindow (gtk.Window):
                  "", None,
                  lambda w: self.drag_test.on_drag_and_drop_test()),
 
-                ("About", gtk.STOCK_ABOUT, _("_About"),
+                ("About", Gtk.STOCK_ABOUT, _("_About"),
                  "", None,
                  lambda w: self.on_about())
                 ]) + [
 
             Action("Main Spacer Tool"),
             Action("Search Box Tool", None, None, "", _("Search All Notes")),
-            Action("Search Button Tool", gtk.STOCK_FIND, None, "",
+            Action("Search Button Tool", Gtk.STOCK_FIND, None, "",
                    _("Search All Notes"),
                    lambda w: self.search_box.on_search_nodes())]
 
@@ -1248,10 +1260,16 @@ class KeepNoteWindow (gtk.Window):
 
         return actions
 
+    # FIXME: This is not used
+    '''
     def setup_menus(self, uimanager):
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.setup_menus() -- NOT USED !")
         pass
+    '''
 
     def get_ui(self):
+        """Create UI xml-definition for main window menu bar and return."""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_ui()")
         return ["""
 <ui>
 
@@ -1342,16 +1360,17 @@ class KeepNoteWindow (gtk.Window):
 
     def get_actions_statusicon(self):
         """Set actions for StatusIcon menu and return."""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_actions_statusicon()")
         actions = map(
             lambda x: Action(*x),
-            [("KeepNote Preferences", gtk.STOCK_PREFERENCES,
+            [("KeepNote Preferences", Gtk.STOCK_PREFERENCES,
               _("_Preferences"),
               "", None,
               lambda w: self._app.app_options_dialog.show(self)),
-             ("Quit", gtk.STOCK_QUIT, _("_Quit"),
+             ("Quit", Gtk.STOCK_QUIT, _("_Quit"),
               "<control>Q", _("Quit KeepNote"),
               lambda w: self.close()),
-             ("About", gtk.STOCK_ABOUT, _("_About"),
+             ("About", Gtk.STOCK_ABOUT, _("_About"),
               "", None,
               lambda w: self.on_about())
              ])
@@ -1360,6 +1379,7 @@ class KeepNoteWindow (gtk.Window):
 
     def get_ui_statusicon(self):
         """Create UI xml-definition for StatusIcon menu and return."""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_ui_statusicon()")
         return ["""
 <ui>
   <!-- statusicon_menu -->
@@ -1375,17 +1395,19 @@ class KeepNoteWindow (gtk.Window):
     def make_menubar(self):
         """Initialize the menu bar"""
 
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.make_menubar()")
         #===============================
         # ui manager
 
-        self._actiongroup = gtk.ActionGroup('MainWindow')
+        self._actiongroup = Gtk.ActionGroup('MainWindow')
         self._uimanager.insert_action_group(self._actiongroup, 0)
 
         # setup menus
         add_actions(self._actiongroup, self.get_actions())
         for s in self.get_ui():
             self._uimanager.add_ui_from_string(s)
-        self.setup_menus(self._uimanager)
+        # FIXME: This is not used
+        #self.setup_menus(self._uimanager)
 
         # return menu bar
         menubar = self._uimanager.get_widget('/main_menu_bar')
@@ -1393,30 +1415,32 @@ class KeepNoteWindow (gtk.Window):
         return menubar
 
     def make_toolbar(self):
+        """Initialize the tool bar"""
 
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.make_toolbar()")
         # configure toolbar
         toolbar = self._uimanager.get_widget('/main_tool_bar')
-        toolbar.set_orientation(gtk.ORIENTATION_HORIZONTAL)
-        toolbar.set_style(gtk.TOOLBAR_ICONS)
+        toolbar.set_orientation(Gtk.Orientation.HORIZONTAL)
+        toolbar.set_style(Gtk.ToolbarStyle.ICONS)
         toolbar.set_border_width(0)
 
         try:
             # NOTE: if this version of GTK doesn't have this size, then
             # ignore it
-            toolbar.set_property("icon-size", gtk.ICON_SIZE_SMALL_TOOLBAR)
+            toolbar.set_property("icon-size", Gtk.IconSize.SMALL_TOOLBAR)
         except:
             pass
 
         # separator (is there a better way to do this?)
         spacer = self._uimanager.get_widget("/main_tool_bar/Main Spacer Tool")
-        spacer.remove(spacer.child)
+        spacer.remove(spacer.get_child())
         spacer.set_expand(True)
 
         # search box
         self.search_box = SearchBox(self)
         self.search_box.show()
         w = self._uimanager.get_widget("/main_tool_bar/Search Box Tool")
-        w.remove(w.child)
+        w.remove(w.get_child())
         w.add(self.search_box)
 
         return toolbar
@@ -1424,11 +1448,12 @@ class KeepNoteWindow (gtk.Window):
     def make_statusicon_menu(self):
         """Initialize the StatusIcon menu."""
 
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.make_statusicon_menu()")
         #===============================
         # ui manager
 
-        self._actiongroup_statusicon = gtk.ActionGroup('StatusIcon')
-        self._tray_icon.uimanager = gtk.UIManager()
+        self._actiongroup_statusicon = Gtk.ActionGroup('StatusIcon')
+        self._tray_icon.uimanager = Gtk.UIManager()
         self._tray_icon.uimanager.insert_action_group(
             self._actiongroup_statusicon, 0)
 
@@ -1437,7 +1462,8 @@ class KeepNoteWindow (gtk.Window):
                     self.get_actions_statusicon())
         for s in self.get_ui_statusicon():
             self._tray_icon.uimanager.add_ui_from_string(s)
-        self.setup_menus(self._tray_icon.uimanager)
+        # This is not used
+        #self.setup_menus(self._tray_icon.uimanager)
 
         # return menu
         statusicon_menu = self._tray_icon.uimanager.get_widget(
@@ -1446,24 +1472,24 @@ class KeepNoteWindow (gtk.Window):
         return statusicon_menu
 
 
-gobject.type_register(KeepNoteWindow)
-gobject.signal_new("error", KeepNoteWindow, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str, object, object))
+GObject.type_register(KeepNoteWindow)
+GObject.signal_new("error", KeepNoteWindow, GObject.SignalFlags.RUN_LAST,
+                   None, (str, object, object))
 
 
-class SearchBox (gtk.Entry):
+class SearchBox (Gtk.Entry):
 
     def __init__(self, window):
-        gtk.Entry.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._window = window
 
         self.connect("changed", self._on_search_box_text_changed)
         self.connect("activate", lambda w: self.on_search_nodes())
 
-        self.search_box_list = gtk.ListStore(gobject.TYPE_STRING,
-                                             gobject.TYPE_STRING)
-        self.search_box_completion = gtk.EntryCompletion()
+        self.search_box_list = Gtk.ListStore(GObject.TYPE_STRING,
+                                             GObject.TYPE_STRING)
+        self.search_box_completion = Gtk.EntryCompletion()
         self.search_box_completion.connect(
             "match-selected", self._on_search_box_completion_match)
         self.search_box_completion.set_match_func(lambda c, k, i: True)
@@ -1531,7 +1557,7 @@ class SearchBox (gtk.Entry):
                 if not more:
                     alldone.release()
                 return more
-            gobject.idle_add(gui_update)
+            GObject.idle_add(gui_update)
 
             # init search
             notebook = self._window.get_notebook()

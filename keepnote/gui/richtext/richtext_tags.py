@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import pango
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GObject, Pango
 
 # richtext imports
 from .richtextbase_tags import \
@@ -46,7 +45,7 @@ BULLET_FONT_SIZE = 10
 
 
 def color_to_string(color):
-    """Converts a gtk.Color to a RGB string (#rrrrggggbbbb)"""
+    """Converts a Gtk.Color to a RGB string (#rrrrggggbbbb)"""
     redstr = hex(color.red)[2:]
     greenstr = hex(color.green)[2:]
     bluestr = hex(color.blue)[2:]
@@ -87,8 +86,8 @@ def get_text_scale():
     """Returns current text scale"""
     global _text_scale
     if _text_scale is None:
-        _text_scale = (float(gtk.gdk.screen_height()) /
-                       gtk.gdk.screen_height_mm()) / 2.95566
+        _text_scale = (float(Gdk.screen_height()) /
+                       Gdk.screen_height_mm()) / 2.95566
 
     return _text_scale
 
@@ -127,14 +126,14 @@ class RichTextTagTable (RichTextBaseTagTable):
         # All of these can be combined
         self.tag_class_add(
             "mod",
-            RichTextModTag("bold", weight=pango.WEIGHT_BOLD))
+            RichTextModTag("bold", weight=Pango.Weight.BOLD))
         self.tag_class_add(
             "mod",
-            RichTextModTag("italic", style=pango.STYLE_ITALIC))
+            RichTextModTag("italic", style=Pango.Style.ITALIC))
         self.tag_class_add(
             "mod",
             RichTextModTag("underline",
-                           underline=pango.UNDERLINE_SINGLE))
+                           underline=Pango.Underline.SINGLE))
         self.tag_class_add(
             "mod",
             RichTextModTag("strike",
@@ -144,21 +143,21 @@ class RichTextTagTable (RichTextBaseTagTable):
             RichTextModTag("tt", family="Monospace"))
         self.tag_class_add(
             "mod",
-            RichTextModTag("nowrap", wrap_mode=gtk.WRAP_NONE))
+            RichTextModTag("nowrap", wrap_mode=Gtk.WrapMode.NONE))
 
         # justify tags
         self.tag_class_add(
             "justify", RichTextJustifyTag("left",
-                                          justification=gtk.JUSTIFY_LEFT))
+                                          justification=Gtk.Justification.LEFT))
         self.tag_class_add(
             "justify", RichTextJustifyTag("center",
-                                          justification=gtk.JUSTIFY_CENTER))
+                                          justification=Gtk.Justification.CENTER))
         self.tag_class_add(
             "justify", RichTextJustifyTag("right",
-                                          justification=gtk.JUSTIFY_RIGHT))
+                                          justification=Gtk.Justification.RIGHT))
         self.tag_class_add(
             "justify", RichTextJustifyTag("fill",
-                                          justification=gtk.JUSTIFY_FILL))
+                                          justification=Gtk.Justification.FILL))
 
         self.bullet_tag = self.tag_class_add("bullet", RichTextBulletTag())
 
@@ -185,10 +184,10 @@ class RichTextJustifyTag (RichTextTag):
     """
 
     justify2name = {
-        gtk.JUSTIFY_LEFT: "left",
-        gtk.JUSTIFY_RIGHT: "right",
-        gtk.JUSTIFY_CENTER: "center",
-        gtk.JUSTIFY_FILL: "fill"
+        Gtk.Justification.LEFT: "left",
+        Gtk.Justification.RIGHT: "right",
+        Gtk.Justification.CENTER: "center",
+        Gtk.Justification.FILL: "fill"
     }
 
     justify_names = set(["left", "right", "center", "fill"])
@@ -406,7 +405,7 @@ class RichTextLinkTag (RichTextTag):
     def __init__(self, href):
         RichTextTag.__init__(self, "link %s" % href,
                              foreground=self.LINK_COLOR,
-                             underline=pango.UNDERLINE_SINGLE)
+                             underline=Pango.Underline.SINGLE)
         self._href = href
 
         #self.connect("event", self.on_event)

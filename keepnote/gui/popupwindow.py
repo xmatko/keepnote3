@@ -1,20 +1,20 @@
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
 
 
-class PopupWindow (gtk.Window):
+class PopupWindow (Gtk.Window):
     """A customizable popup window"""
 
     def __init__(self, parent):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_MENU)
+        GObject.GObject.__init__(self, Gtk.WindowType.POPUP)
+        self.set_type_hint(Gdk.WindowTypeHint.MENU)
         self.set_transient_for(parent.get_toplevel())
-        self.set_flags(gtk.CAN_FOCUS)
-        self.add_events(gtk.gdk.KEY_PRESS_MASK |
-                        gtk.gdk.KEY_RELEASE_MASK)
+        self.set_flags(Gtk.CAN_FOCUS)
+        self.add_events(Gdk.EventMask.KEY_PRESS_MASK |
+                        Gdk.EventMask.KEY_RELEASE_MASK)
 
         self._parent = parent
         self._parent.get_toplevel().connect("configure-event",
@@ -41,7 +41,7 @@ class PopupWindow (gtk.Window):
         self._y2 = y2
 
         # get screen dimensions
-        screenh = gtk.gdk.screen_height()
+        screenh = Gdk.Screen.height()
 
         # account for window
         wx, wy = win.get_origin()
@@ -54,7 +54,7 @@ class PopupWindow (gtk.Window):
         y3 += rect.y
 
         # get size of popup
-        w, h = self.child.size_request()
+        w, h = self.get_child().size_request()
         self.resize(w, h)
 
         # perform move

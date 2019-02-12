@@ -27,11 +27,10 @@
 # python imports
 import uuid
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
 
 # keepnote imports
 import keepnote
@@ -41,10 +40,11 @@ from keepnote import notebook as notebooklib
 _ = keepnote.translate
 
 
-class Viewer (gtk.VBox):
+class Viewer (Gtk.Box):
 
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
-        gtk.VBox.__init__(self, False, 0)
+        #GObject.GObject.__init__(self, False, 0)
+        GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self._app = app
         self._main_window = parent
         self._viewerid = viewerid if viewerid else unicode(uuid.uuid4())
@@ -161,16 +161,16 @@ class Viewer (gtk.VBox):
         pass
 
 
-gobject.type_register(Viewer)
-gobject.signal_new("error", Viewer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str, object))
-gobject.signal_new("status", Viewer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str, str))
-gobject.signal_new("history-changed", Viewer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("window-request", Viewer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (str,))
-gobject.signal_new("modified", Viewer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (bool,))
-gobject.signal_new("current-node", Viewer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(Viewer)
+GObject.signal_new("error", Viewer, GObject.SignalFlags.RUN_LAST,
+                   None, (str, object))
+GObject.signal_new("status", Viewer, GObject.SignalFlags.RUN_LAST,
+                   None, (str, str))
+GObject.signal_new("history-changed", Viewer, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("window-request", Viewer, GObject.SignalFlags.RUN_LAST,
+                   None, (str,))
+GObject.signal_new("modified", Viewer, GObject.SignalFlags.RUN_LAST,
+                   None, (bool,))
+GObject.signal_new("current-node", Viewer, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))

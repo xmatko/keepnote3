@@ -24,10 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk.glade
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 
 def parse_utf(text):
@@ -48,32 +48,32 @@ class DragDropTestDialog (object):
         self.main_window = main_window
 
     def on_drag_and_drop_test(self):
-        self.drag_win = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.drag_win = Gtk.Window(Gtk.WindowType.TOPLEVEL)
         self.drag_win.connect(
             "delete-event", lambda d, r: self.drag_win.destroy())
-        self.drag_win.drag_dest_set(0, [], gtk.gdk.ACTION_DEFAULT)
+        self.drag_win.drag_dest_set(0, [], Gdk.DragAction.DEFAULT)
 
         self.drag_win.set_default_size(400, 400)
-        vbox = gtk.VBox(False, 0)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.drag_win.add(vbox)
 
-        self.drag_win.mime = gtk.TextView()
+        self.drag_win.mime = Gtk.TextView()
         vbox.pack_start(self.drag_win.mime, False, True, 0)
 
-        self.drag_win.editor = gtk.TextView()
+        self.drag_win.editor = Gtk.TextView()
         self.drag_win.editor.connect(
             "drag-motion", self.on_drag_and_drop_test_motion)
         self.drag_win.editor.connect(
             "drag-data-received", self.on_drag_and_drop_test_data)
         self.drag_win.editor.connect(
             "paste-clipboard", self.on_drag_and_drop_test_paste)
-        self.drag_win.editor.set_wrap_mode(gtk.WRAP_WORD)
+        self.drag_win.editor.set_wrap_mode(Gtk.WrapMode.WORD)
 
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_IN)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.IN)
         sw.add(self.drag_win.editor)
-        vbox.pack_start(sw)
+        vbox.pack_start(sw, True, True, 0)
 
         self.drag_win.show_all()
 

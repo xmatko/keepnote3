@@ -23,11 +23,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gobject
-import gtk
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+from gi.repository import Gtk
 
 # keepnote imports
 from keepnote.gui import treemodel
@@ -51,7 +51,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         self.connect("button-press-event", self.on_button_press)
 
         # selection config
-        self.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        self.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
 
         self.set_headers_visible(False)
 
@@ -73,7 +73,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             return
 
         # create the treeview column
-        self.column = gtk.TreeViewColumn()
+        self.column = Gtk.TreeViewColumn()
         self.column.set_clickable(False)
         self.append_column(self.column)
 
@@ -93,7 +93,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         if self.editing_path:
             return
 
-        if event.keyval == gtk.keysyms.Delete:
+        if event.keyval == Gdk.KEY_Delete:
             self.emit("delete-node", self.get_selected_nodes())
             self.stop_emission("key-release-event")
 
@@ -103,7 +103,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             # popup menu
             return self.popup_menu(event.x, event.y, event.button, event.time)
 
-        if event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gdk._2BUTTON_PRESS:
             nodes = self.get_selected_nodes()
             if len(nodes) > 0:
                 # double click --> goto node
@@ -138,6 +138,6 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         path = treemodel.get_path_from_node(
             self.model, node,
             self.rich_model.get_node_column_pos())
-        gobject.idle_add(lambda: self.set_cursor_on_cell(
+        GObject.idle_add(lambda: self.set_cursor_on_cell(
             path, self.column, self.title_text, True))
-        #gobject.idle_add(lambda: self.scroll_to_cell(path))
+        #GObject.idle_add(lambda: self.scroll_to_cell(path))

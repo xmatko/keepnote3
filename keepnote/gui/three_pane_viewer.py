@@ -24,11 +24,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gobject
-import gtk
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+from gi.repository import Gtk
 
 # keepnote imports
 import keepnote
@@ -127,7 +127,7 @@ class ThreePaneViewer (Viewer):
                             self.emit("window-request", t))
         self.editor.view_nodes([])
 
-        self.editor_pane = gtk.VBox(False, 5)
+        self.editor_pane = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         self.editor_pane.pack_start(self.editor, True, True, 0)
 
         #=====================================
@@ -136,26 +136,26 @@ class ThreePaneViewer (Viewer):
         # TODO: make sure to add underscore for these variables
 
         # create a horizontal paned widget
-        self.hpaned = gtk.HPaned()
+        self.hpaned = Gtk.HPaned()
         self.pack_start(self.hpaned, True, True, 0)
         self.hpaned.set_position(DEFAULT_HSASH_POS)
 
         # layout major widgets
-        self.paned2 = gtk.VPaned()
+        self.paned2 = Gtk.VPaned()
         self.hpaned.add2(self.paned2)
         self.paned2.set_position(DEFAULT_VSASH_POS)
 
         # treeview and scrollbars
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_IN)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.IN)
         sw.add(self.treeview)
         self.hpaned.add1(sw)
 
         # listview with scrollbars
-        self.listview_sw = gtk.ScrolledWindow()
-        self.listview_sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.listview_sw.set_shadow_type(gtk.SHADOW_IN)
+        self.listview_sw = Gtk.ScrolledWindow()
+        self.listview_sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.listview_sw.set_shadow_type(Gtk.ShadowType.IN)
         self.listview_sw.add(self.listview)
         self.paned2.add1(self.listview_sw)
         #self.paned2.child_set_property(self.listview_sw, "shrink", True)
@@ -284,10 +284,10 @@ class ThreePaneViewer (Viewer):
         # remake paned2
         if mode == "vertical":
             # create a vertical paned widget
-            self.paned2 = gtk.VPaned()
+            self.paned2 = Gtk.VPaned()
         else:
             # create a horizontal paned widget
-            self.paned2 = gtk.HPaned()
+            self.paned2 = Gtk.HPaned()
 
         self.paned2.set_position(vsash)
         self.paned2.show()
@@ -654,7 +654,7 @@ class ThreePaneViewer (Viewer):
     def on_copy_tree(self):
         """Callback for copy on whole tree"""
         widget = self._main_window.get_focus()
-        if gobject.signal_lookup("copy-tree-clipboard", widget) != 0:
+        if GObject.signal_lookup("copy-tree-clipboard", widget) != 0:
             widget.emit("copy-tree-clipboard")
 
     #============================================
@@ -708,7 +708,7 @@ class ThreePaneViewer (Viewer):
         assert window == self._main_window
 
         self._ui_ready = True
-        self._action_group = gtk.ActionGroup("Viewer")
+        self._action_group = Gtk.ActionGroup("Viewer")
         self._uis = []
         add_actions(self._action_group, self._get_actions())
         self._main_window.get_uimanager().insert_action_group(
@@ -995,65 +995,65 @@ class ThreePaneViewer (Viewer):
             ("treeview_popup", None, "", "", None, lambda w: None),
             ("listview_popup", None, "", "", None, lambda w: None),
 
-            ("Copy Tree", gtk.STOCK_COPY, _("Copy _Tree"),
+            ("Copy Tree", Gtk.STOCK_COPY, _("Copy _Tree"),
              "<control><shift>C", _("Copy entire tree"),
              lambda w: self.on_copy_tree()),
 
-            ("New Page", gtk.STOCK_NEW, _("New _Page"),
+            ("New Page", Gtk.STOCK_NEW, _("New _Page"),
              "<control>N", _("Create a new page"),
              lambda w: self.on_new_page(), "note-new.png"),
 
-            ("New Child Page", gtk.STOCK_NEW, _("New _Child Page"),
+            ("New Child Page", Gtk.STOCK_NEW, _("New _Child Page"),
              "<control><shift>N", _("Create a new child page"),
              lambda w: self.on_new_child_page(),
              "note-new.png"),
 
-            ("New Folder", gtk.STOCK_DIRECTORY, _("New _Folder"),
+            ("New Folder", Gtk.STOCK_DIRECTORY, _("New _Folder"),
              "<control><shift>M", _("Create a new folder"),
              lambda w: self.on_new_dir(),
              "folder-new.png"),
 
-            ("Attach File", gtk.STOCK_ADD, _("_Attach File..."),
+            ("Attach File", Gtk.STOCK_ADD, _("_Attach File..."),
              "", _("Attach a file to the notebook"),
              lambda w: self._on_attach_file_menu()),
 
 
-            ("Back", gtk.STOCK_GO_BACK, _("_Back"), "", None,
+            ("Back", Gtk.STOCK_GO_BACK, _("_Back"), "", None,
              lambda w: self.visit_history(-1)),
 
-            ("Forward", gtk.STOCK_GO_FORWARD, _("_Forward"), "", None,
+            ("Forward", Gtk.STOCK_GO_FORWARD, _("_Forward"), "", None,
              lambda w: self.visit_history(1)),
 
-            ("Go to Note", gtk.STOCK_JUMP_TO, _("Go to _Note"),
+            ("Go to Note", Gtk.STOCK_JUMP_TO, _("Go to _Note"),
              "", None,
              lambda w: self.on_goto_node(None, None)),
 
-            ("Go to Parent Note", gtk.STOCK_GO_BACK, _("Go to _Parent Note"),
+            ("Go to Parent Note", Gtk.STOCK_GO_BACK, _("Go to _Parent Note"),
              "<shift><alt>Left", None,
              lambda w: self.on_goto_parent_node()),
 
-            ("Go to Next Note", gtk.STOCK_GO_DOWN, _("Go to Next N_ote"),
+            ("Go to Next Note", Gtk.STOCK_GO_DOWN, _("Go to Next N_ote"),
              "<alt>Down", None,
              lambda w: self.goto_next_node()),
 
-            ("Go to Previous Note", gtk.STOCK_GO_UP, _("Go to _Previous Note"),
+            ("Go to Previous Note", Gtk.STOCK_GO_UP, _("Go to _Previous Note"),
              "<alt>Up", None,
              lambda w: self.goto_prev_node()),
 
-            ("Expand Note", gtk.STOCK_ADD, _("E_xpand Note"),
+            ("Expand Note", Gtk.STOCK_ADD, _("E_xpand Note"),
              "<alt>Right", None,
              lambda w: self.expand_node()),
 
-            ("Collapse Note", gtk.STOCK_REMOVE, _("_Collapse Note"),
+            ("Collapse Note", Gtk.STOCK_REMOVE, _("_Collapse Note"),
              "<alt>Left", None,
              lambda w: self.collapse_node()),
 
-            ("Expand All Child Notes", gtk.STOCK_ADD,
+            ("Expand All Child Notes", Gtk.STOCK_ADD,
              _("Expand _All Child Notes"),
              "<shift><alt>Right", None,
              lambda w: self.expand_node(True)),
 
-            ("Collapse All Child Notes", gtk.STOCK_REMOVE,
+            ("Collapse All Child Notes", Gtk.STOCK_REMOVE,
              _("Collapse A_ll Child Notes"),
              "<shift><alt>Left", None,
              lambda w: self.collapse_node(True)),
@@ -1071,10 +1071,10 @@ class ThreePaneViewer (Viewer):
              "<control>D", None,
              lambda w: self.goto_editor()),
 
-            ("Delete Note", gtk.STOCK_DELETE, _("_Delete"),
+            ("Delete Note", Gtk.STOCK_DELETE, _("_Delete"),
              "", None, self.on_delete_node),
 
-            ("Rename Note", gtk.STOCK_EDIT, _("_Rename"),
+            ("Rename Note", Gtk.STOCK_EDIT, _("_Rename"),
              "", None,
              lambda w: self._on_rename_node()),
 

@@ -24,10 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk.glade
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 # keepnote imports
 import keepnote
@@ -66,7 +66,7 @@ class KeepNoteFindDialog (object):
 
             return
 
-        self.find_xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.find_xml = Gtk.Builder.XML(get_resource("rc", "keepnote.glade"),
                                       domain=keepnote.GETTEXT_DOMAIN)
         self.find_dialog = self.find_xml.get_widget("find_dialog")
         self.find_dialog.connect(
@@ -105,14 +105,14 @@ class KeepNoteFindDialog (object):
 
     def on_find_key_released(self, widget, event):
 
-        if (event.keyval == gtk.keysyms.G and
-                event.state & gtk.gdk.SHIFT_MASK and
-                event.state & gtk.gdk.CONTROL_MASK):
+        if (event.keyval == Gdk.KEY_G and
+                event.get_state() & Gdk.ModifierType.SHIFT_MASK and
+                event.get_state() & Gdk.ModifierType.CONTROL_MASK):
             self.on_find_response("find_prev")
             widget.stop_emission("key-release-event")
 
-        elif (event.keyval == gtk.keysyms.g and
-              event.state & gtk.gdk.CONTROL_MASK):
+        elif (event.keyval == Gdk.KEY_g and
+              event.get_state() & Gdk.ModifierType.CONTROL_MASK):
             self.on_find_response("find_next")
             widget.stop_emission("key-release-event")
 

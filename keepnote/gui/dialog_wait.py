@@ -27,11 +27,10 @@
 # python imports
 import time
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk.glade
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
 
 # keepnote imports
 import keepnote
@@ -46,21 +45,23 @@ class WaitDialog (object):
         self._task = None
 
     def show(self, title, message, task, cancel=True):
-        self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
-                                 "wait_dialog", keepnote.GETTEXT_DOMAIN)
-        self.dialog = self.xml.get_widget("wait_dialog")
-        self.xml.signal_autoconnect(self)
+        self.xml = Gtk.Builder()
+        objects = ["wait_dialog", "wait_text_label", "wait_progressbar", "cancel_button"]
+        self.xml.add_objects_from_file(get_resource("rc", "keepnote.glade"),
+                                objects)
+        self.dialog = self.xml.get_object("wait_dialog")
+        self.xml.connect_signals(self)
         self.dialog.connect("close", self._on_close)
         self.dialog.set_transient_for(self.parent_window)
-        self.text = self.xml.get_widget("wait_text_label")
-        self.progressbar = self.xml.get_widget("wait_progressbar")
+        self.text = self.xml.get_object("wait_text_label")
+        self.progressbar = self.xml.get_object("wait_progressbar")
 
         self.dialog.set_title(title)
         self.text.set_text(message)
         self._task = task
         self._task.change_event.add(self._on_task_update)
 
-        cancel_button = self.xml.get_widget("cancel_button")
+        cancel_button = self.xml.get_object("cancel_button")
         cancel_button.set_sensitive(cancel)
 
         self.dialog.show()
@@ -112,7 +113,7 @@ class WaitDialog (object):
             # repeat this timeout function
             return True
 
-        gobject.timeout_add(update_rate, gui_update)
+        GObject.timeout_add(update_rate, gui_update)
 
     def _on_task_update(self):
         pass

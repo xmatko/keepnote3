@@ -24,13 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
-import gobject
-import pango
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk, Gdk, Pango
 
 # keepnote imports
 import keepnote
@@ -133,11 +130,11 @@ DEFAULT_COLORS = [color_int8_to_str(color_float_to_int8(color))
 #=============================================================================
 # color menus
 
-class ColorTextImage (gtk.Image):
+class ColorTextImage (Gtk.Image):
     """Image widget that display a color box with and without text"""
 
     def __init__(self, width, height, letter, border=True):
-        gtk.Image.__init__(self)
+        GObject.GObject.__init__(self)
         self.width = width
         self.height = height
         self.letter = letter
@@ -151,7 +148,8 @@ class ColorTextImage (gtk.Image):
         self._exposed = False
 
         self.connect("parent-set", self.on_parent_set)
-        self.connect("expose-event", self.on_expose_event)
+        #self.connect("expose-event", self.on_expose_event)
+        self.connect("draw", self.on_expose_event)
 
     def on_parent_set(self, widget, old_parent):
         self._exposed = False
@@ -164,26 +162,26 @@ class ColorTextImage (gtk.Image):
             self.init_colors()
 
     def init_colors(self):
-        self._pixmap = gdk.Pixmap(None, self.width, self.height, 24)
+        self._pixmap = Gdk.Pixmap(None, self.width, self.height, 24)
         self._colormap = self._pixmap.get_colormap()
-        #self._colormap = gtk.gdk.colormap_get_system()
-        #gtk.gdk.screen_get_default().get_default_colormap()
+        #self._colormap = Gdk.colormap_get_system()
+        #Gdk.Screen.get_default().get_default_colormap()
         self._gc = self._pixmap.new_gc()
 
         self._context = self.get_pango_context()
-        self._fontdesc = pango.FontDescription("sans bold 10")
+        self._fontdesc = Pango.FontDescription("sans bold 10")
 
         if isinstance(self.fg_color, basestring):
             self.fg_color = self._colormap.alloc_color(self.fg_color)
         elif self.fg_color is None:
             self.fg_color = self._colormap.alloc_color(
-                self.get_style().text[gtk.STATE_NORMAL])
+                self.get_style().text[Gtk.StateType.NORMAL])
 
         if isinstance(self.bg_color, basestring):
             self.bg_color = self._colormap.alloc_color(self.bg_color)
         elif self.bg_color is None:
             self.bg_color = self._colormap.alloc_color(
-                self.get_style().bg[gtk.STATE_NORMAL])
+                self.get_style().bg[Gtk.StateType.NORMAL])
 
         self._border_color = self._colormap.alloc_color(0, 0, 0)
         self.refresh()
@@ -217,7 +215,7 @@ class ColorTextImage (gtk.Image):
 
         if self.letter:
             self._gc.foreground = self.fg_color
-            layout = pango.Layout(self._context)
+            layout = Pango.Layout(self._context)
             layout.set_text(FONT_LETTER)
             layout.set_font_description(self._fontdesc)
             self._pixmap.draw_layout(self._gc, self.marginx,
@@ -227,36 +225,36 @@ class ColorTextImage (gtk.Image):
         self.set_from_pixmap(self._pixmap, None)
 
 
-class ColorMenu (gtk.Menu):
+class ColorMenu (Gtk.Menu):
     """Color picker menu"""
 
     def __init__(self, colors=DEFAULT_COLORS):
-        gtk.Menu.__init__(self)
+        GObject.GObject.__init__(self)
 
         self.width = 7
         self.posi = 4
         self.posj = 0
         self.color_items = []
 
-        no_color = gtk.MenuItem("_Default Color")
+        no_color = Gtk.MenuItem("_Default Color")
         no_color.show()
         no_color.connect("activate", self.on_no_color)
         self.attach(no_color, 0, self.width, 0, 1)
 
         # new color
-        new_color = gtk.MenuItem("_New Color...")
+        new_color = Gtk.MenuItem("_New Color...")
         new_color.show()
         new_color.connect("activate", self.on_new_color)
         self.attach(new_color, 0, self.width, 1, 2)
 
         # grab color
-        #new_color = gtk.MenuItem("_Grab Color")
+        #new_color = Gtk.MenuItem("_Grab Color")
         #new_color.show()
         #new_color.connect("activate", self.on_grab_color)
         #self.attach(new_color, 0, self.width, 2, 3)
 
         # separator
-        item = gtk.SeparatorMenuItem()
+        item = Gtk.SeparatorMenuItem()
         item.show()
         self.attach(item, 0, self.width,  3, 4)
 
@@ -272,7 +270,7 @@ class ColorMenu (gtk.Menu):
 
         response = dialog.run()
 
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             color = dialog.colorsel.get_current_color()
             color = color_int16_to_str((color.red, color.green, color.blue))
             self.set_colors(dialog.get_colors())
@@ -336,12 +334,12 @@ class ColorMenu (gtk.Menu):
         if refresh:
             self.unrealize()
 
-        child = gtk.MenuItem("")
-        child.remove(child.child)
+        child = Gtk.MenuItem("")
+        child.remove(child.get_child())
         img = ColorTextImage(15, 15, False)
         img.set_bg_color(color)
         child.add(img)
-        child.child.show()
+        child.get_child().show()
         child.show()
         child.connect("activate", lambda w: self.emit("set_color", color))
         self.attach(child, j, j+1, i, i+1)
@@ -351,24 +349,24 @@ class ColorMenu (gtk.Menu):
             self.realize()
 
 
-gobject.type_register(ColorMenu)
-gobject.signal_new("set-color", ColorMenu, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("set-colors", ColorMenu, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("get-colors", ColorMenu, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(ColorMenu)
+GObject.signal_new("set-color", ColorMenu, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("set-colors", ColorMenu, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("get-colors", ColorMenu, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
 
 
 #=============================================================================
 # color selection ToolBarItem
 
 
-class ColorTool (gtk.MenuToolButton):
+class ColorTool (Gtk.MenuToolButton):
     """Abstract base class for a ColorTool"""
 
     def __init__(self, icon, default):
-        gtk.MenuToolButton.__init__(self, self.icon, "")
+        GObject.GObject.__init__(self, self.icon, "")
         self.icon = icon
         self.color = None
         self.colors = DEFAULT_COLORS
@@ -417,13 +415,13 @@ class ColorTool (gtk.MenuToolButton):
         self.menu.set_colors(self.colors)
 
 
-gobject.type_register(ColorTool)
-gobject.signal_new("set-color", ColorTool, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("set-colors", ColorTool, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("get-colors", ColorTool, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
+GObject.type_register(ColorTool)
+GObject.signal_new("set-color", ColorTool, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("set-colors", ColorTool, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("get-colors", ColorTool, GObject.SignalFlags.RUN_LAST,
+                   None, ())
 
 
 class FgColorTool (ColorTool):
@@ -473,10 +471,10 @@ class BgColorTool (ColorTool):
 # color selection dialog and pallete
 
 
-class ColorSelectionDialog (gtk.ColorSelectionDialog):
+class ColorSelectionDialog (Gtk.ColorSelectionDialog):
 
     def __init__(self, title="Choose color"):
-        gtk.ColorSelectionDialog.__init__(self, title)
+        GObject.GObject.__init__(self, title)
         self.colorsel.set_has_opacity_control(False)
 
         # hide default gtk pallete
@@ -494,7 +492,7 @@ class ColorSelectionDialog (gtk.ColorSelectionDialog):
         vbox = self.colorsel.get_children()[0].get_children()[1]
 
         # label
-        label = gtk.Label(_("Pallete:"))
+        label = Gtk.Label(label=_("Pallete:"))
         label.set_alignment(0, .5)
         label.show()
         vbox.pack_start(label, expand=False, fill=True, padding=0)
@@ -506,29 +504,29 @@ class ColorSelectionDialog (gtk.ColorSelectionDialog):
         vbox.pack_start(self.pallete, expand=False, fill=True, padding=0)
 
         # pallete buttons
-        hbox = gtk.HButtonBox()
+        hbox = Gtk.HButtonBox()
         hbox.show()
         vbox.pack_start(hbox, expand=False, fill=True, padding=0)
 
         # new color
-        button = gtk.Button("new", stock=gtk.STOCK_NEW)
-        button.set_relief(gtk.RELIEF_NONE)
+        button = Gtk.Button("new", stock=Gtk.STOCK_NEW)
+        button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect("clicked", self.on_new_color)
         button.show()
         hbox.pack_start(button, expand=False, fill=False, padding=0)
 
         # delete color
-        button = gtk.Button("delete", stock=gtk.STOCK_DELETE)
-        button.set_relief(gtk.RELIEF_NONE)
+        button = Gtk.Button("delete", stock=Gtk.STOCK_DELETE)
+        button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect("clicked", self.on_delete_color)
         button.show()
         hbox.pack_start(button, expand=False, fill=False, padding=0)
 
         # reset colors
-        button = gtk.Button(stock=gtk.STOCK_UNDO)
+        button = Gtk.Button(stock=Gtk.STOCK_UNDO)
         (button.get_children()[0].get_child()
          .get_children()[1].set_text_with_mnemonic("_Reset"))
-        button.set_relief(gtk.RELIEF_NONE)
+        button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect("clicked", self.on_reset_colors)
         button.show()
         hbox.pack_start(button, expand=False, fill=False, padding=0)
@@ -549,7 +547,7 @@ class ColorSelectionDialog (gtk.ColorSelectionDialog):
         return self.pallete.get_colors()
 
     def on_pick_pallete_color(self, widget, color):
-        self.colorsel.set_current_color(gtk.gdk.Color(color))
+        self.colorsel.set_current_color(Gdk.Color(color))
 
     def on_new_color(self, widget):
         color = self.colorsel.get_current_color()
@@ -563,10 +561,10 @@ class ColorSelectionDialog (gtk.ColorSelectionDialog):
         self.pallete.set_colors(DEFAULT_COLORS)
 
 
-class ColorPallete (gtk.IconView):
+class ColorPallete (Gtk.IconView):
     def __init__(self, colors=DEFAULT_COLORS, nrows=1, ncols=7):
-        gtk.IconView.__init__(self)
-        self._model = gtk.ListStore(gtk.gdk.Pixbuf, object)
+        GObject.GObject.__init__(self)
+        self._model = Gtk.ListStore(GdkPixbuf.Pixbuf, object)
         self._cell_size = [30, 20]
 
         self.set_model(self._model)
@@ -607,8 +605,8 @@ class ColorPallete (gtk.IconView):
         width, height = self._cell_size
 
         # make pixbuf
-        pixbuf = gtk.gdk.Pixbuf(
-            gtk.gdk.COLORSPACE_RGB, False, 8, width, height)
+        pixbuf = GdkPixbuf.Pixbuf(
+            GdkPixbuf.Colorspace.RGB, False, 8, width, height)
         self._draw_color(pixbuf, color, 0, 0, width, height)
 
         self._model.append([pixbuf, color])
@@ -652,23 +650,23 @@ class ColorPallete (gtk.IconView):
         border_color = "#000000"
 
         # create pixmap
-        pixmap = gdk.Pixmap(None, width, height, 24)
+        pixmap = Gdk.Pixmap(None, width, height, 24)
         cmap = pixmap.get_colormap()
         gc = pixmap.new_gc()
         color1 = cmap.alloc_color(color)
         color2 = cmap.alloc_color(border_color)
 
         # draw fill
-        gc.foreground = color1  # gtk.gdk.Color(* color)
+        gc.foreground = color1  # Gdk.Color(* color)
         pixmap.draw_rectangle(gc, True, 0, 0, width, height)
 
         # draw border
-        gc.foreground = color2  # gtk.gdk.Color(* border_color)
+        gc.foreground = color2  # Gdk.Color(* border_color)
         pixmap.draw_rectangle(gc, False, 0, 0, width-1, height-1)
 
         pixbuf.get_from_drawable(pixmap, cmap, 0, 0, 0, 0, width, height)
 
 
-gobject.type_register(ColorPallete)
-gobject.signal_new("pick-color", ColorPallete, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(ColorPallete)
+GObject.signal_new("pick-color", ColorPallete, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))

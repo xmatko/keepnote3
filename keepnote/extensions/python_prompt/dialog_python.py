@@ -29,12 +29,10 @@ import os
 import sys
 import StringIO
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gtk.gdk
-import pango
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, Pango
 
 
 # keepnote imports
@@ -82,13 +80,13 @@ class PythonDialog (object):
         self.outfile = Stream(self.output_text)
         self.errfile = Stream(lambda t: self.output_text(t, "error"))
 
-        self.error_tag = gtk.TextTag()
+        self.error_tag = Gtk.TextTag()
         self.error_tag.set_property("foreground", "red")
-        self.error_tag.set_property("weight", pango.WEIGHT_BOLD)
+        self.error_tag.set_property("weight", Pango.Weight.BOLD)
 
-        self.info_tag = gtk.TextTag()
+        self.info_tag = Gtk.TextTag()
         self.info_tag.set_property("foreground", "blue")
-        self.info_tag.set_property("weight", pango.WEIGHT_BOLD)
+        self.info_tag.set_property("weight", Pango.Weight.BOLD)
 
     
     def show(self):
@@ -99,35 +97,35 @@ class PythonDialog (object):
                     "info": self.print_info}
 
         # create dialog
-        self.dialog = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.dialog = Gtk.Window(Gtk.WindowType.TOPLEVEL)
         self.dialog.connect("delete-event", lambda d,r: self.dialog.destroy())
         self.dialog.ptr = self
         
         self.dialog.set_default_size(400, 400)
 
-        self.vpaned = gtk.VPaned()
+        self.vpaned = Gtk.VPaned()
         self.dialog.add(self.vpaned)
         self.vpaned.set_position(200)
         
         # editor buffer
-        self.editor = gtk.TextView()
+        self.editor = Gtk.TextView()
         self.editor.connect("key-press-event", self.on_key_press_event)
-        f = pango.FontDescription("Courier New")
+        f = Pango.FontDescription("Courier New")
         self.editor.modify_font(f)
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_IN)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.IN)
         sw.add(self.editor)
         self.vpaned.add1(sw)
         
         # output buffer
-        self.output = gtk.TextView()
-        self.output.set_wrap_mode(gtk.WRAP_WORD)
-        f = pango.FontDescription("Courier New")
+        self.output = Gtk.TextView()
+        self.output.set_wrap_mode(Gtk.WrapMode.WORD)
+        f = Pango.FontDescription("Courier New")
         self.output.modify_font(f)
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_IN)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.IN)
         sw.add(self.output)
         self.vpaned.add2(sw)
         
@@ -143,13 +141,13 @@ class PythonDialog (object):
     def on_key_press_event(self, textview, event):
         """Callback from key press event"""
         
-        if (event.keyval == gtk.keysyms.Return and
-            event.state & gtk.gdk.CONTROL_MASK):
+        if (event.keyval == Gdk.KEY_Return and
+            event.get_state() & Gdk.ModifierType.CONTROL_MASK):
             # execute
             self.execute_buffer()
             return True
 
-        if event.keyval == gtk.keysyms.Return:
+        if event.keyval == Gdk.KEY_Return:
             # new line indenting
             self.newline_indent()
             return True

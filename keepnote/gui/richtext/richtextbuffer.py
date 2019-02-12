@@ -30,12 +30,9 @@ import tempfile
 import urllib2
 from itertools import chain
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gobject
-import gtk
-from gtk import gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GObject
 
 # TODO: remove
 # keepnote imports
@@ -120,20 +117,20 @@ def download_file(url, filename):
 # TODO: remove init signals
 
 
-class BaseWidget (gtk.EventBox):
+class BaseWidget (Gtk.EventBox):
     """Widgets in RichTextBuffer must support this interface"""
 
     def __init__(self):
-        gtk.EventBox.__init__(self)
+        GObject.GObject.__init__(self)
 
         # TODO: will this be configurable?
         # set to white background
-        self.modify_bg(gtk.STATE_NORMAL, gdk.Color(*DEFAULT_BGCOLOR))
+        self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(*DEFAULT_BGCOLOR))
 
-        # gtk.STATE_ACTIVE
-        # gtk.STATE_PRELIGHT
-        # gtk.STATE_SELECTED
-        # gtk.STATE_INSENSITIVE
+        # Gtk.StateType.ACTIVE
+        # Gtk.StateType.PRELIGHT
+        # Gtk.StateType.SELECTED
+        # Gtk.StateType.INSENSITIVE
 
     def highlight(self):
         pass
@@ -142,12 +139,12 @@ class BaseWidget (gtk.EventBox):
         pass
 
     def show(self):
-        gtk.EventBox.show_all(self)
+        Gtk.EventBox.show_all(self)
 
 
-#gobject.type_register(BaseWidget)
-#gobject.signal_new("init", BaseWidget, gobject.SIGNAL_RUN_LAST,
-#                   gobject.TYPE_NONE, ())
+#GObject.type_register(BaseWidget)
+#GObject.signal_new("init", BaseWidget, GObject.SignalFlags.RUN_LAST,
+#                   None, ())
 
 
 class RichTextSep (BaseWidget):
@@ -155,19 +152,19 @@ class RichTextSep (BaseWidget):
 
     def __init__(self):
         BaseWidget.__init__(self)
-        self._sep = gtk.HSeparator()
+        self._sep = Gtk.HSeparator()
         self.add(self._sep)
         self._size = None
 
-        self._sep.modify_bg(gtk.STATE_NORMAL, gdk.Color(* DEFAULT_HR_COLOR))
-        self._sep.modify_fg(gtk.STATE_NORMAL, gdk.Color(* DEFAULT_HR_COLOR))
+        self._sep.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(* DEFAULT_HR_COLOR))
+        self._sep.modify_fg(Gtk.StateType.NORMAL, Gdk.Color(* DEFAULT_HR_COLOR))
 
         self.connect("size-request", self._on_resize)
         self.connect("parent-set", self._on_parent_set)
 
         self._resizes_id = None
 
-        #pixbuf = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
+        #pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, False, 8, width, height)
         #pixbuf.fill(color)
         #self._widget.set_from_pixbuf(pixbuf)
         #self._widget.img.set_padding(0, padding)
@@ -217,12 +214,12 @@ class RichTextHorizontalRule (RichTextAnchor):
 
 
 class BaseImage (BaseWidget):
-    """Subclasses gtk.Image to make an Image Widget that can be used within
+    """Subclasses Gtk.Image to make an Image Widget that can be used within
        RichTextViewS"""
 
     def __init__(self, *args, **kargs):
         BaseWidget.__init__(self)
-        self._img = gtk.Image(*args, **kargs)
+        self._img = Gtk.Image(*args, **kargs)
         self._img.show()
         self.add(self._img)
 
@@ -347,7 +344,7 @@ class RichTextImage (RichTextAnchor):
             self._filename = os.path.basename(filename)
 
         try:
-            self._pixbuf_original = gdk.pixbuf_new_from_file(filename)
+            self._pixbuf_original = GdkPixbuf.Pixbuf.new_from_file(filename)
 
         except Exception:
             # use missing image instead
@@ -364,7 +361,7 @@ class RichTextImage (RichTextAnchor):
 
     def set_from_stream(self, stream):
 
-        loader = gtk.gdk.PixbufLoader()
+        loader = GdkPixbuf.PixbufLoader()
         try:
             loader.write(stream.read())
             loader.close()
@@ -384,7 +381,7 @@ class RichTextImage (RichTextAnchor):
     def set_no_image(self):
         """Set the 'no image' icon"""
         for widget in self.get_all_widgets().itervalues():
-            widget.set_from_stock(gtk.STOCK_MISSING_IMAGE, gtk.ICON_SIZE_MENU)
+            widget.set_from_stock(Gtk.STOCK_MISSING_IMAGE, Gtk.IconSize.MENU)
         self._pixbuf_original = None
         self._pixbuf = None
 
@@ -483,7 +480,7 @@ class RichTextImage (RichTextAnchor):
                 height = int(factor * height2)
 
             self._pixbuf = self._pixbuf_original.scale_simple(
-                width, height, gtk.gdk.INTERP_BILINEAR)
+                width, height, GdkPixbuf.InterpType.BILINEAR)
 
             if set_widget:
                 for widget in self.get_all_widgets().itervalues():
@@ -510,7 +507,7 @@ class RichTextImage (RichTextAnchor):
             #self._widgets[None].grab_focus()
             self.emit("selected")
 
-            if event.type == gtk.gdk._2BUTTON_PRESS:
+            if event.type == Gdk._2BUTTON_PRESS:
                 # double left click activates image
                 self.emit("activated")
 
@@ -564,8 +561,8 @@ class RichTextFont (RichTextBaseFont):
             # TODO: replace this hard-coding
             self.family = "Sans"
             self.size = 10
-            #weight = pango.WEIGHT_NORMAL
-            #style = pango.STYLE_NORMAL
+            #weight = Pango.Weight.NORMAL
+            #style = Pango.Style.NORMAL
 
         # get colors
         self.fg_color = color_to_string(attr.fg_color)
@@ -997,12 +994,12 @@ class RichTextBuffer (RichTextBaseBuffer):
             self._anchors_highlighted.clear()
 
 
-gobject.type_register(RichTextBuffer)
-gobject.signal_new("child-added", RichTextBuffer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("child-activated", RichTextBuffer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("child-menu", RichTextBuffer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object, object, object))
-gobject.signal_new("font-change", RichTextBuffer, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(RichTextBuffer)
+GObject.signal_new("child-added", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("child-activated", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("child-menu", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
+                   None, (object, object, object))
+GObject.signal_new("font-change", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
+                   None, (object,))

@@ -24,11 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GObject
 
 # import textbuffer tools
 from .textbuffer_tools import \
@@ -52,11 +51,11 @@ def add_child_to_buffer(textbuffer, it, anchor):
 
 #=============================================================================
 
-class RichTextAnchor (gtk.TextChildAnchor):
+class RichTextAnchor (Gtk.TextChildAnchor):
     """Base class of all anchor objects in a RichTextView"""
 
     def __init__(self):
-        gtk.TextChildAnchor.__init__(self)
+        Gtk.TextChildAnchor.__init__(self)
         self._widgets = {}
         self._buffer = None
 
@@ -96,25 +95,26 @@ class RichTextAnchor (gtk.TextChildAnchor):
                 widget.unhighlight()
 
 
-gobject.type_register(RichTextAnchor)
-gobject.signal_new("selected", RichTextAnchor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("activated", RichTextAnchor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("popup-menu", RichTextAnchor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (int, object))
-gobject.signal_new("init", RichTextAnchor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
+GObject.type_register(RichTextAnchor)
+GObject.signal_new("selected", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, ())
+GObject.signal_new("activated", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, ())
+GObject.signal_new("popup-menu", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, (int, object))
+GObject.signal_new("init", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, ())
 
 
-class RichTextBaseBuffer (gtk.TextBuffer):
+class RichTextBaseBuffer (Gtk.TextBuffer):
     """Basic RichTextBuffer with the following features
 
         - maintains undo/redo stacks
     """
 
     def __init__(self, tag_table=RichTextBaseTagTable()):
-        gtk.TextBuffer.__init__(self, tag_table)
+        #Gtk.TextBuffer.__init__(self, tag_table=tag_table)
+        GObject.GObject.__init__(self, tag_table=tag_table)
         tag_table.add_textbuffer(self)
 
         # undo handler
@@ -255,14 +255,14 @@ class RichTextBaseBuffer (gtk.TextBuffer):
     def apply_tag(self, tag, start, end):
         if isinstance(tag, RichTextTag):
             tag.on_apply()
-        gtk.TextBuffer.apply_tag(self, tag, start, end)
+        Gtk.TextBuffer.apply_tag(self, tag, start, end)
 
         '''
 
     def remove_tag(self, tag, start, end):
         #assert self.get_tag_table().lookup(
         #tag.get_property("name")) is not None, tag.get_property("name")
-        gtk.TextBuffer.remove_tag(self, tag, start, end)
+        Gtk.TextBuffer.remove_tag(self, tag, start, end)
 
     #===========================================================
     # callbacks
@@ -383,7 +383,7 @@ class RichTextBaseBuffer (gtk.TextBuffer):
         self.undo_stack.end_action()
 
 
-gobject.type_register(RichTextBaseBuffer)
-gobject.signal_new("ending-user-action", RichTextBaseBuffer,
-                   gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
+GObject.type_register(RichTextBaseBuffer)
+GObject.signal_new("ending-user-action", RichTextBaseBuffer,
+                   GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, ())

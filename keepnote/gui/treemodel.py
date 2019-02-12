@@ -26,16 +26,17 @@
 #
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gobject
-import gtk
-
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk
+# GenericTreeModel implementation for pygtk compatibility
+# from https://github.com/GNOME/pygobject/blob/master/pygtkcompat/generictreemodel.py
+from keepnote.pygtkcompat import GenericTreeModel
 
 def get_path_from_node(model, node, node_col):
     """
-    Determine the path of a NoteBookNode 'node' in a gtk.TreeModel 'model'
+    Determine the path of a NoteBookNode 'node' in a Gtk.TreeModel 'model'
     """
 
     # NOTE: I must make no assumptions about the type of the model
@@ -101,7 +102,7 @@ def iter_children(model, it):
         node = model.iter_next(node)
 
 
-class BaseTreeModel (gtk.GenericTreeModel):
+class BaseTreeModel (GenericTreeModel):
     """
     TreeModel that wraps a subset of a NoteBook
 
@@ -109,7 +110,8 @@ class BaseTreeModel (gtk.GenericTreeModel):
     """
 
     def __init__(self, roots=[]):
-        gtk.GenericTreeModel.__init__(self)
+
+        GObject.GObject.__init__(self)
         self.set_property("leak-references", False)
 
         self._notebook = None
@@ -188,14 +190,12 @@ class BaseTreeModel (gtk.GenericTreeModel):
         """Set the column that contains nodes"""
         self._node_column = col
 
-    if gtk.gtk_version < (2, 10):
-        # NOTE: not available in pygtk 2.8?
+    
+    def create_tree_iter(self, node):
+        return self.get_iter(self.on_get_path(node))
 
-        def create_tree_iter(self, node):
-            return self.get_iter(self.on_get_path(node))
-
-        def get_user_data(self, it):
-            return self.on_get_iter(self.get_path(it))
+    def get_user_data(self, it):
+        return self.on_get_iter(self.get_path(it))
 
     #================================
     # master nodes and root nodes
@@ -320,11 +320,11 @@ class BaseTreeModel (gtk.GenericTreeModel):
         self.emit("node-changed-end", nodes)
 
     #=====================================
-    # gtk.GenericTreeModel implementation
+    # Gtk.GenericTreeModel implementation
 
     def on_get_flags(self):
         """Returns the flags of this treemodel"""
-        return gtk.TREE_MODEL_ITERS_PERSIST
+        return Gtk.TreeModelFlags.ITERS_PERSIST
 
     def on_get_n_columns(self):
         """Returns the number of columns in a treemodel"""
@@ -440,13 +440,13 @@ class BaseTreeModel (gtk.GenericTreeModel):
             return parent
 
 
-gobject.type_register(BaseTreeModel)
-gobject.signal_new("node-changed-start", BaseTreeModel,
-                   gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("node-changed-end", BaseTreeModel,
-                   gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(BaseTreeModel)
+GObject.signal_new("node-changed-start", BaseTreeModel,
+                   GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
+GObject.signal_new("node-changed-end", BaseTreeModel,
+                   GObject.SignalFlags.RUN_LAST,
+                   None, (object,))
 
 
 class KeepNoteTreeModel (BaseTreeModel):
@@ -469,12 +469,12 @@ class KeepNoteTreeModel (BaseTreeModel):
         # init default columns
         #self.append_column(
         #    TreeModelColumn(
-        #        "icon", gdk.Pixbuf,
+        #        "icon", GdkPixbuf.Pixbuf,
         #        get=lambda node: get_node_icon(node, False,
         #                                       node in self.fades)))
         #self.append_column(
         #    TreeModelColumn(
-        #        "icon_open", gdk.Pixbuf,
+        #        "icon_open", GdkPixbuf.Pixbuf,
         #        get=lambda node: get_node_icon(node, True,
         #                                       node in self.fades)))
         #self.append_column(
