@@ -24,10 +24,17 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gtk, Gdk, Pango
+try:
+    gi.require_foreign("cairo")
+    import cairo
+except ImportError:
+    print("No pycairo integration :(")
 
 # keepnote imports
 import keepnote
@@ -121,6 +128,10 @@ def color_int16_to_str(color):
 def color_int8_to_str(color):
     return "#%02x%02x%02x" % (color[0], color[1], color[2])
 
+def color_str_to_float(colorstr):
+    return (float(int(colorstr[1:3], 16)) / 256.0,
+        float(int(colorstr[3:5], 16)) / 256.0,
+        float(int(colorstr[5:7], 16)) / 256.0)
 
 # convert to str
 DEFAULT_COLORS = [color_int8_to_str(color_float_to_int8(color))
@@ -135,20 +146,22 @@ class ColorTextImage (Gtk.Image):
 
     def __init__(self, width, height, letter, border=True):
         GObject.GObject.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        #self.logger.debug("keepnote.gui.colortool.ColorTextImage.__init__()")
         self.width = width
         self.height = height
         self.letter = letter
         self.border = border
-        self.marginx = int((width - 10) / 2.0)
-        self.marginy = - int((height - 12) / 2.0)
+        self.marginx = 0.0
+        self.marginy = 0.0
         self._pixmap = None
-        self._colormap = None
-        self.fg_color = None
-        self.bg_color = None
+        self._gc = None
+        self.fg_color = "#000000"
+        self.bg_color = "#FFFFFF"
+        self._border_color = "#000000"
         self._exposed = False
 
         self.connect("parent-set", self.on_parent_set)
-        #self.connect("expose-event", self.on_expose_event)
         self.connect("draw", self.on_expose_event)
 
     def on_parent_set(self, widget, old_parent):
@@ -156,73 +169,65 @@ class ColorTextImage (Gtk.Image):
 
     def on_expose_event(self, widget, event):
         """Set up colors on exposure"""
-
         if not self._exposed:
+            #self.logger.debug("keepnote.gui.colortool.ColorTextImage2.on_expose_event() :  _exposed")
             self._exposed = True
             self.init_colors()
 
     def init_colors(self):
-        self._pixmap = Gdk.Pixmap(None, self.width, self.height, 24)
-        self._colormap = self._pixmap.get_colormap()
-        #self._colormap = Gdk.colormap_get_system()
-        #Gdk.Screen.get_default().get_default_colormap()
-        self._gc = self._pixmap.new_gc()
-
-        self._context = self.get_pango_context()
-        self._fontdesc = Pango.FontDescription("sans bold 10")
-
-        if isinstance(self.fg_color, basestring):
-            self.fg_color = self._colormap.alloc_color(self.fg_color)
-        elif self.fg_color is None:
-            self.fg_color = self._colormap.alloc_color(
-                self.get_style().text[Gtk.StateType.NORMAL])
-
-        if isinstance(self.bg_color, basestring):
-            self.bg_color = self._colormap.alloc_color(self.bg_color)
-        elif self.bg_color is None:
-            self.bg_color = self._colormap.alloc_color(
-                self.get_style().bg[Gtk.StateType.NORMAL])
-
-        self._border_color = self._colormap.alloc_color(0, 0, 0)
+        #self.logger.debug("keepnote.gui.colortool.ColorTextImage2.init_colors()")
+        self._pixmap = cairo.ImageSurface(cairo.Format.ARGB32, self.width, self.height)
+        self._gc = cairo.Context(self._pixmap)
         self.refresh()
 
     def set_fg_color(self, color, refresh=True):
         """Set the color of the color chooser"""
-        if self._colormap:
-            self.fg_color = self._colormap.alloc_color(color)
-            if refresh:
-                self.refresh()
-        else:
-            self.fg_color = color
+        #self.logger.debug("keepnote.gui.colortool.ColorTextImage2.set_fg_color() : %s" % str(color))
+        self.fg_color = color
+        if refresh:
+            self.refresh()
 
     def set_bg_color(self, color, refresh=True):
         """Set the color of the color chooser"""
-        if self._colormap:
-            self.bg_color = self._colormap.alloc_color(color)
-            if refresh:
-                self.refresh()
-        else:
-            self.bg_color = color
+        #self.logger.debug("keepnote.gui.colortool.ColorTextImage2.set_bg_color() : %s" % str(color))
+        self.bg_color = color
+        if refresh:
+            self.refresh()
 
     def refresh(self):
-        self._gc.foreground = self.bg_color
-        self._pixmap.draw_rectangle(self._gc, True, 0, 0,
-                                    self.width, self.height)
-        if self.border:
-            self._gc.foreground = self._border_color
-            self._pixmap.draw_rectangle(self._gc, False, 0, 0,
-                                        self.width-1, self.height-1)
+        if self._gc:
+            self.logger.debug("keepnote.gui.colortool.ColorTextImage2.refresh() : %s" % str(self.bg_color))
+            self._gc.rectangle(0, 0, self.width, self.height)
+            color = color_str_to_float(self.bg_color)
+            self._gc.set_source_rgba(color[0], color[1], color[2], 1.0)
+            self._gc.fill()
 
-        if self.letter:
-            self._gc.foreground = self.fg_color
-            layout = Pango.Layout(self._context)
-            layout.set_text(FONT_LETTER)
-            layout.set_font_description(self._fontdesc)
-            self._pixmap.draw_layout(self._gc, self.marginx,
-                                     self.marginy,
-                                     layout)
+            if self.border:
+                self._gc.set_line_width(1)
+                color = color_str_to_float(self._border_color)
+                self._gc.set_source_rgba(color[0], color[1], color[2], 1.0)
+                self._gc.rectangle(0, 0, self.width, self.height)
+                self._gc.stroke()
 
-        self.set_from_pixmap(self._pixmap, None)
+            if self.letter:
+                self._gc.select_font_face("Serif", cairo.FontSlant.NORMAL, cairo.FontWeight.BOLD)
+                self._gc.set_font_size(self.width)
+                self._gc.set_antialias(cairo.Antialias.SUBPIXEL)
+                x_bearing, y_bearing, letter_width, letter_height = self._gc.text_extents(FONT_LETTER)[:4]
+                self.marginx = ((float(self.width) - letter_width)/2.0) - x_bearing
+                self.marginy = float(self.height) - ((self.height - letter_height)/2.0)
+                '''
+                self.logger.debug("LETTER X: frame_width=%f, letter_width=%f, x_bearing=%f, x_margin=%f" % 
+                        (self.width, letter_width, x_bearing, self.marginx))
+                self.logger.debug("LETTER Y: frame_height=%f, letter_height=%f, y_bearing=%f, y_margin=%f" % 
+                        (self.height, letter_height, y_bearing, self.marginy))
+                '''
+                color = color_str_to_float(self.fg_color)
+                self._gc.set_source_rgba(color[0], color[1], color[2], 1.0)
+                self._gc.move_to(self.marginx, self.marginy)
+                self._gc.show_text(FONT_LETTER)
+
+            self.set_from_surface(self._pixmap)
 
 
 class ColorMenu (Gtk.Menu):
@@ -230,7 +235,8 @@ class ColorMenu (Gtk.Menu):
 
     def __init__(self, colors=DEFAULT_COLORS):
         GObject.GObject.__init__(self)
-
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.colortool.ColorMenu.__init__()")
         self.width = 7
         self.posi = 4
         self.posj = 0
@@ -306,6 +312,7 @@ class ColorMenu (Gtk.Menu):
 
     def set_colors(self, colors):
         """Sets color pallete"""
+        self.logger.debug("keepnote.gui.colortool.ColorMenu.set_colors(): %s" % str(colors))
         self.clear_colors()
 
         self.colors = list(colors)
@@ -323,6 +330,7 @@ class ColorMenu (Gtk.Menu):
 
     def append_color(self, color, refresh=True):
         """Appends color to menu"""
+        #self.logger.debug("keepnote.gui.colortool.ColorMenu.append_color()")
         self.add_color(self.posi, self.posj, color, refresh=refresh)
         self.posj += 1
         if self.posj >= self.width:
@@ -331,6 +339,7 @@ class ColorMenu (Gtk.Menu):
 
     def add_color(self, i, j, color, refresh=True):
         """Add color to location in the menu"""
+        #self.logger.debug("keepnote.gui.colortool.ColorMenu.add_color() : %s" % str(color))
         if refresh:
             self.unrealize()
 
@@ -366,7 +375,7 @@ class ColorTool (Gtk.MenuToolButton):
     """Abstract base class for a ColorTool"""
 
     def __init__(self, icon, default):
-        GObject.GObject.__init__(self, self.icon, "")
+        GObject.GObject.__init__(self, icon_widget=self.icon, label="")
         self.icon = icon
         self.color = None
         self.colors = DEFAULT_COLORS
