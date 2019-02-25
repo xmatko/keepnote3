@@ -190,12 +190,12 @@ class TextEditor (KeepNoteEditor):
         if self._page is not None:
             it = self._textview.get_buffer().get_iter_at_mark(
                 self._textview.get_buffer().get_insert())
-            self._page_cursors[self._page] = it.get_offset()
+            self._page_cursors[self._page] = it[1].get_offset()
 
             x, y = self._textview.window_to_buffer_coords(
                 Gtk.TextWindowType.TEXT, 0, 0)
             it = self._textview.get_iter_at_location(x, y)
-            self._page_scrolls[self._page] = it.get_offset()
+            self._page_scrolls[self._page] = it[1].get_offset()
 
     def _load_cursor(self):
         # place cursor in last location

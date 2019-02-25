@@ -27,6 +27,7 @@
 # python imports
 import os
 import re
+import logging
 
 # GObject introspection imports
 import gi
@@ -86,11 +87,14 @@ class NodeIO (RichTextIO):
 
     def __init__(self):
         RichTextIO.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.editor_richtext.NodeIO.__init__()")
         self._node = None
         self._image_files = set()
         self._saved_image_files = set()
 
     def set_node(self, node):
+        self.logger.debug("keepnote.gui.editor_richtext.NodeIO.set_node()")
         self._node = node
 
     def save(self, textbuffer, filename, title=None, stream=None):
@@ -98,6 +102,7 @@ class NodeIO (RichTextIO):
         RichTextIO.save(self, textbuffer, filename, title, stream=stream)
 
     def load(self, textview, textbuffer, filename, stream=None):
+        self.logger.debug("keepnote.gui.editor_richtext.NodeIO.load()")
         RichTextIO.load(self, textview, textbuffer, filename, stream=stream)
 
     def _load_images(self, textbuffer, html_filename):
@@ -163,6 +168,8 @@ class RichTextEditor (KeepNoteEditor):
 
     def __init__(self, app):
         KeepNoteEditor.__init__(self, app)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()")
         self._app = app
         self._notebook = None
 
@@ -173,12 +180,14 @@ class RichTextEditor (KeepNoteEditor):
         self._page = None                  # current NoteBookPage
         self._page_scrolls = {}            # remember scroll in each page
         self._page_cursors = {}
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()     Textview NodeIO")
         self._textview_io = NodeIO()
 
         # editor
         self.connect("make-link", self._on_make_link)
 
         # textview and its callbacks
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()     Textview and its callbacks")
         self._textview = RichTextView(RichTextBuffer(
             self._app.get_richtext_tag_table()))  # textview
         self._textview.disable()
@@ -191,6 +200,7 @@ class RichTextEditor (KeepNoteEditor):
         self._textview.connect("key-press-event", self._on_key_press_event)
 
         # scrollbars
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()     Scrollbars")
         self._sw = Gtk.ScrolledWindow()
         self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self._sw.set_shadow_type(Gtk.ShadowType.IN)
@@ -198,6 +208,7 @@ class RichTextEditor (KeepNoteEditor):
         self.pack_start(self._sw, True, True, 0)
 
         # link editor
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()     LinkEditor")
         self._link_editor = LinkEditor()
         self._link_editor.set_textview(self._textview)
         self._link_editor.set_search_nodes(self._search_nodes)
@@ -207,16 +218,19 @@ class RichTextEditor (KeepNoteEditor):
         self.make_image_menu(self._textview.get_image_menu())
 
         # menus
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()     EditorMenus")
         self.editor_menus = EditorMenus(self._app, self)
         self.connect("font-change", self.editor_menus.on_font_change)
 
         # find dialog
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.__init__()     KeepNoteFindDialog")
         self.find_dialog = dialog_find.KeepNoteFindDialog(self)
 
         self.show_all()
 
     def set_notebook(self, notebook):
         """Set notebook for editor"""
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.set_notebook()")
         # set new notebook
         self._notebook = notebook
 
@@ -232,6 +246,7 @@ class RichTextEditor (KeepNoteEditor):
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.load_preferences()")
         self.editor_menus.enable_spell_check(
             app_pref.get("editors", "general", "spell_check",
                          default=True))
@@ -254,6 +269,7 @@ class RichTextEditor (KeepNoteEditor):
 
     def load_notebook_preferences(self):
         """Load notebook-specific preferences"""
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.load_notebook_preferences()")
         if self._notebook:
             # read default font
             self._textview.set_default_font(
@@ -283,6 +299,7 @@ class RichTextEditor (KeepNoteEditor):
 
     def view_nodes(self, nodes):
         """View a page in the editor"""
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.view_nodes() : %s" % str(nodes))
 
         # editor cannot view multiple nodes at once
         # if asked to, it will view none
@@ -297,6 +314,7 @@ class RichTextEditor (KeepNoteEditor):
                  if node.get_attr("content_type") ==
                  notebooklib.CONTENT_TYPE_PAGE]
 
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.view_nodes() : %d" % len(pages))
         if len(pages) == 0:
             self.clear_view()
 
@@ -327,15 +345,24 @@ class RichTextEditor (KeepNoteEditor):
         if len(pages) > 0:
             self.emit("view-node", pages[0])
 
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.view_nodes()  FIN")
+
     def _save_cursor(self):
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor._save_cursor()")
         if self._page is not None:
             it = self._textview.get_buffer().get_insert_iter()
-            self._page_cursors[self._page] = it.get_offset()
+            print(it)
+            offset = it.get_offset()
+            print("offset", offset)
+            print("self._page_cursors", self._page_cursors)
+            print("self._page", self._page)
+            self._page_cursors[self._page] = offset
 
             x, y = self._textview.window_to_buffer_coords(
                 Gtk.TextWindowType.TEXT, 0, 0)
             it = self._textview.get_iter_at_location(x, y)
-            self._page_scrolls[self._page] = it.get_offset()
+            print("it2", it)
+            self._page_scrolls[self._page] = it[1].get_offset()
 
     def _load_cursor(self):
 
@@ -386,12 +413,14 @@ class RichTextEditor (KeepNoteEditor):
         return self._textview.is_modified()
 
     def add_ui(self, window):
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.add_ui()")
         self._textview.set_accel_group(window.get_accel_group())
         self._textview.set_accel_path(CONTEXT_MENU_ACCEL_PATH)
         self._textview.get_image_menu().set_accel_group(
             window.get_accel_group())
 
         self.editor_menus.add_ui(window)
+        self.logger.debug("keepnote.gui.editor_richtext.RichTextEditor.add_ui()  FIN")
 
     def remove_ui(self, window):
         self.editor_menus.remove_ui(window)
@@ -804,6 +833,8 @@ class EditorMenus (GObject.GObject):
 
     def __init__(self, app, editor):
         GObject.GObject.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.__init__()")
 
         self._editor = editor
         self._app = app
@@ -957,6 +988,7 @@ class EditorMenus (GObject.GObject):
     # toolbar and menus
 
     def add_ui(self, window):
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.add_ui()")
         self._action_group = Gtk.ActionGroup("Editor")
         self._uis = []
         add_actions(self._action_group, self.get_actions())
@@ -968,6 +1000,8 @@ class EditorMenus (GObject.GObject):
         window.get_uimanager().ensure_update()
 
         self.setup_menu(window, window.get_uimanager())
+
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.add_ui()  FIN")
 
     def remove_ui(self, window):
 
@@ -1276,6 +1310,7 @@ class EditorMenus (GObject.GObject):
     def setup_font_toggle(self, uimanager, path, stock=False,
                           update_func=lambda ui, font: None):
 
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.setup_font_toggle()")
         action = uimanager.get_action(path)
         # NOTE: action can be none if minimal toolbar is in use.
 
@@ -1319,6 +1354,7 @@ class EditorMenus (GObject.GObject):
                 widget.show()
                 w.set_homogeneous(False)
 
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.setup_menu()")
         self.setup_font_toggle(
             uimanager, "/main_tool_bar/Viewer/Editor/Bold Tool",
             update_func=lambda ui, font: update_toggle(ui, font.mods["bold"]))
@@ -1382,9 +1418,10 @@ class EditorMenus (GObject.GObject):
 
         # font size
         DEFAULT_FONT_SIZE = 10
-        font_size_button = Gtk.SpinButton(
+        font_size_button = Gtk.SpinButton(adjustment=
             Gtk.Adjustment(value=DEFAULT_FONT_SIZE, lower=2, upper=500,
-                           step_incr=1))
+                           step_increment=1, page_increment=5, page_size=0), climb_rate=1, digits=0)
+
         font_size_button.set_size_request(-1, 25)
         font_size_button.set_value(DEFAULT_FONT_SIZE)
         font_size_button.set_editable(False)
@@ -1401,6 +1438,7 @@ class EditorMenus (GObject.GObject):
                    update_func=lambda ui, font:
                    ui.widget.set_value(font.size)))
 
+
         def on_new_colors(notebook, colors):
             if self._editor.get_notebook() == notebook:
                 self.fg_color_button.set_colors(colors)
@@ -1416,7 +1454,8 @@ class EditorMenus (GObject.GObject):
 
         # font fg color
         # TODO: code in proper default color
-        self.fg_color_button = FgColorTool(14, 15, "#000000")
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.setup_menu()  font fg color")
+        self.fg_color_button = FgColorTool(15, 15, "#000000")
         self.fg_color_button.set_colors(colors)
         self.fg_color_button.set_homogeneous(False)
         self.fg_color_button.connect(
@@ -1430,7 +1469,8 @@ class EditorMenus (GObject.GObject):
                        self.fg_color_button)
 
         # font bg color
-        self.bg_color_button = BgColorTool(14, 15, "#ffffff")
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.setup_menu()  font bg color")
+        self.bg_color_button = BgColorTool(15, 15, "#ffffff")
         self.bg_color_button.set_colors(colors)
         self.bg_color_button.set_homogeneous(False)
         self.bg_color_button.connect(
@@ -1450,6 +1490,7 @@ class EditorMenus (GObject.GObject):
             self._editor.get_textview().can_spell_check())
         self.spell_check_toggle.set_active(window.get_app().pref.get(
             "editors", "general", "spell_check", default=True))
+        self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.setup_menu()  FIN")
 
 
 class ComboToolItem(Gtk.ToolItem):

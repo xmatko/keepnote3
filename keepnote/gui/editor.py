@@ -24,6 +24,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
@@ -43,6 +45,8 @@ class KeepNoteEditor (Gtk.Box):
 
     def __init__(self, app):
         GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.editor.KeepNoteEditor.__init__()")
         self._app = app
         self._notebook = None
         self._textview = None

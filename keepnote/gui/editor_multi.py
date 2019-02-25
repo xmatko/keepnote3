@@ -27,6 +27,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
@@ -48,6 +50,8 @@ class MultiEditor (KeepNoteEditor):
 
     def __init__(self, app):
         KeepNoteEditor.__init__(self, app)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.editor_multi.MultiEditor.__init__()")
         self.show_all()
 
         self._notebook = None
@@ -67,6 +71,7 @@ class MultiEditor (KeepNoteEditor):
 
     def set_editor(self, editor):
         """Set the current child editor"""
+        self.logger.debug("keepnote.gui.editor_multi.MultiEditor.set_editor()  %s" % str(editor))
 
         # do nothing if editor is already set
         if editor == self._editor:
@@ -119,6 +124,7 @@ class MultiEditor (KeepNoteEditor):
 
     def set_notebook(self, notebook):
         """Set notebook for editor"""
+        self.logger.debug("keepnote.gui.editor_multi.MultiEditor.set_notebook()  %s" % str(notebook))
         self._notebook = notebook
         if self._editor:
             self._editor.set_notebook(notebook)
@@ -164,6 +170,7 @@ class MultiEditor (KeepNoteEditor):
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
+        self.logger.debug("keepnote.gui.editor_multi.MultiEditor.load_prefrences()")
         if self._editor:
             return self._editor.load_preferences(app_pref, first_open)
 
@@ -174,6 +181,7 @@ class MultiEditor (KeepNoteEditor):
 
     def add_ui(self, window):
         """Add editor UI to window"""
+        self.logger.debug("keepnote.gui.editor_multi.MultiEditor.add_ui()  %s" % str(window))
         self._window = window
         if self._editor:
             return self._editor.add_ui(window)
@@ -201,6 +209,8 @@ class ContentEditor (MultiEditor):
     """
 
     def __init__(self, app):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.editor_multi.ContentEditor.__init__()")
         MultiEditor.__init__(self, app)
 
         self._editors = {}
@@ -227,6 +237,7 @@ class ContentEditor (MultiEditor):
 
     def view_nodes(self, nodes):
 
+        self.logger.debug("keepnote.gui.editor_multi.ContentEditor.view_nodes()")
         if len(nodes) != 1:
             MultiEditor.view_nodes(self, [])
         else:
