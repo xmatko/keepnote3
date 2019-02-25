@@ -129,8 +129,8 @@ class PythonDialog (object):
         sw.add(self.output)
         self.vpaned.add2(sw)
         
-        self.output.get_buffer().tag_table.add(self.error_tag)
-        self.output.get_buffer().tag_table.add(self.info_tag)
+        self.output.get_buffer().get_tag_table().add(self.error_tag)
+        self.output.get_buffer().get_tag_table().add(self.info_tag)
 
         self.dialog.show_all()
 
