@@ -253,12 +253,14 @@ class FileChooserDialog (Gtk.FileChooserDialog):
 
     def __init__(self, title=None, parent=None,
                  action=Gtk.FileChooserAction.OPEN,
-                 buttons=None, backend=None,
+                 buttons=None, 
                  app=None,
                  persistent_path=None):
-        GObject.GObject.__init__(self, title=title, parent=parent,
-                                       action=action, buttons=buttons, backend=backend)
-
+        GObject.GObject.__init__(self)
+        #self.logger = logging.getLogger('keepnote')
+        #self.logger.debug("keepnote.gui.__init__.FileChooserDialog.__init__()")
+        if buttons:
+            self.add_buttons(*buttons)
         self._app = app
         self._persistent_path = persistent_path
 
@@ -367,7 +369,7 @@ class Action (Gtk.Action):
 class ToggleAction (Gtk.ToggleAction):
     def __init__(self, name, stockid, label=None,
                  accel="", tooltip="", func=None, icon=None):
-        GObject.GObject.__init__(self, name, label, tooltip, stockid)
+        GObject.GObject.__init__(self, name=name, label=label, tooltip=tooltip, stock_id=stockid)
         self.func = func
         self.accel = accel
         self.icon = icon
@@ -497,6 +499,7 @@ class KeepNote (keepnote.KeepNote):
         if self._current_window is None:
             self._current_window = window
 
+        self.logger.debug("keepnote.gui.__init__.KeepNote.new_window()  END")
         return window
 
     def get_current_window(self):
@@ -679,7 +682,7 @@ class KeepNote (keepnote.KeepNote):
         self.logger.debug("keepnote.gui.Keepnote.begin_auto_save()")
         """Begin autosave callbacks"""
 
-        if self.pref.get("autosave", default=""):
+        if self.pref.get("autosave", default=True):
             self._auto_saving = True
 
             if not self._auto_save_registered:
@@ -969,6 +972,7 @@ class KeepNote (keepnote.KeepNote):
     # extension methods
 
     def init_extensions_windows(self, windows=None, exts=None):
+        self.logger.debug("keepnote.gui.__init__.KeepNote.init_extensions_windows()")
         """Initialize all extensions for a window"""
 
         if exts is None:
