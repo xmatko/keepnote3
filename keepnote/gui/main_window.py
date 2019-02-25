@@ -170,10 +170,13 @@ class KeepNoteWindow (Gtk.Window):
         self.viewer_box.pack_start(self.viewer, True, True, 0)
 
         # add viewer menus
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.init_layout() Add viewer menus")
         self.viewer.add_ui(self)
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.init_layout() FIN")
 
     def setup_systray(self):
         """Setup systray for window"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.setup_systray() %s" % str(self._tray_icon))
         # system tray icon
         if not self._tray_icon:
             self._tray_icon = Gtk.StatusIcon()
@@ -199,6 +202,7 @@ class KeepNoteWindow (Gtk.Window):
 
     def new_viewer(self):
         """Creates a new viewer for this window"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.new_viewer()")
 
         #viewer = ThreePaneViewer(self._app, self)
         viewer = TabbedViewer(self._app, self)
@@ -212,18 +216,22 @@ class KeepNoteWindow (Gtk.Window):
 
     def add_viewer(self, viewer):
         """Adds a viewer to the window"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.add_viewer() : name=%s", viewer._viewer_name)
         self._viewers.append(viewer)
 
     def remove_viewer(self, viewer):
         """Removes a viewer from the window"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.remove_viewer()")
         self._viewers.remove(viewer)
 
     def get_all_viewers(self):
         """Returns list of all viewers associated with window"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_all_viewers()")
         return self._viewers
 
     def get_all_notebooks(self):
         """Returns all notebooks loaded by all viewers"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_all_notebooks()")
         return set(filter(lambda n: n is not None,
                           (v.get_notebook() for v in self._viewers)))
 
@@ -343,6 +351,7 @@ class KeepNoteWindow (Gtk.Window):
 
     def load_preferences(self, first_open=False):
         """Load preferences"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.load_preferences()")
         p = self._app.pref
 
         # notebook
@@ -382,6 +391,7 @@ class KeepNoteWindow (Gtk.Window):
         self._uimanager.set_force_stock(
             p.get("look_and_feel", "use_stock_icons", default=False))
         self.viewer.load_preferences(self._app.pref, first_open)
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.load_preferences()   END")
 
     def save_preferences(self):
         """Save preferences"""
@@ -396,6 +406,7 @@ class KeepNoteWindow (Gtk.Window):
 
     def set_recent_notebooks_menu(self, recent_notebooks):
         """Set the recent notebooks in the file menu"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.set_recent_notebooks_menu()")
         menu = self._uimanager.get_widget(
             "/main_menu_bar/File/Open Recent Notebook")
 
@@ -445,6 +456,7 @@ class KeepNoteWindow (Gtk.Window):
         """Launches New NoteBook dialog"""
         self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.on_new_notebook()")
         '''
+        # FIXME: The custom FileChooserDialog class does not display the entry bar to set a notebook name
         dialog = FileChooserDialog(
             _("New Notebook"), self,
             action=Gtk.FileChooserAction.SAVE,
@@ -472,13 +484,13 @@ class KeepNoteWindow (Gtk.Window):
 
     def on_open_notebook(self):
         """Launches Open NoteBook dialog"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.on_open_notebook()")
 
         dialog = Gtk.FileChooserDialog(
             _("Open Notebook"), self,
-            action=Gtk.FileChooserAction.SELECT_FOLDER,
+            action=Gtk.FileChooserAction.SELECT_FOLDER,    
             buttons=(_("Cancel"), Gtk.ResponseType.CANCEL,
                      _("Open"), Gtk.ResponseType.OK))
-
         def on_folder_changed(filechooser):
             folder = unicode_gtk(filechooser.get_current_folder())
             if os.path.exists(os.path.join(folder, notebooklib.PREF_FILE)):
@@ -491,13 +503,15 @@ class KeepNoteWindow (Gtk.Window):
             dialog.set_current_folder(path)
 
         file_filter = Gtk.FileFilter()
-        file_filter.add_pattern("*.nbk")
         file_filter.set_name(_("Notebook (*.nbk)"))
+        file_filter.add_pattern("*.nbk")
+        # This allow to browse onto directories
+        file_filter.add_mime_type("inode/directory")
         dialog.add_filter(file_filter)
 
         file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*")
-        file_filter.set_name(_("All files (*.*)"))
+        file_filter.set_name(_("All files"))
         dialog.add_filter(file_filter)
 
         response = dialog.run()
@@ -1023,14 +1037,6 @@ class KeepNoteWindow (Gtk.Window):
 
     def on_about(self):
         """Display about dialog"""
-
-        def func(dialog, link, data):
-            try:
-                self._app.open_webpage(link)
-            except KeepNoteError, e:
-                self.error(e.msg, e, sys.exc_info()[2])
-        Gtk.about_dialog_set_url_hook(func, None)
-
         about = Gtk.AboutDialog()
         about.set_name(keepnote.PROGRAM_NAME)
         about.set_version(keepnote.PROGRAM_VERSION_TEXT)
@@ -1044,7 +1050,7 @@ class KeepNoteWindow (Gtk.Window):
         if os.path.exists(license_file):
             about.set_license(open(license_file).read())
 
-        #about.set_authors(["Matt Rasmussen <rasmus@alum.mit.edu>"])
+        about.set_authors(["Matt Rasmussen <rasmus@alum.mit.edu>"])
 
         about.set_transient_for(self)
         about.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
@@ -1056,7 +1062,7 @@ class KeepNoteWindow (Gtk.Window):
 
     def set_status(self, text, bar="status"):
         """Sets a status message in the status bar"""
-        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.set_status()")
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.set_status() text: %s" % str(text))
         if bar == "status":
             self.status_bar.pop(0)
             self.status_bar.push(0, text)
