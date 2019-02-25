@@ -37,6 +37,7 @@ import traceback
 import logging
 import uuid
 import zipfile
+import logging
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -103,9 +104,9 @@ except ImportError:
 # globals / constants
 
 PROGRAM_NAME = u"KeepNote3"
-PROGRAM_VERSION_MAJOR = 0
-PROGRAM_VERSION_MINOR = 7
-PROGRAM_VERSION_RELEASE = 9
+PROGRAM_VERSION_MAJOR = 3
+PROGRAM_VERSION_MINOR = 0
+PROGRAM_VERSION_RELEASE = 1
 PROGRAM_VERSION = (PROGRAM_VERSION_MAJOR,
                    PROGRAM_VERSION_MINOR,
                    PROGRAM_VERSION_RELEASE)
@@ -118,9 +119,10 @@ else:
     PROGRAM_VERSION_TEXT = "%d.%d" % (PROGRAM_VERSION_MAJOR,
                                       PROGRAM_VERSION_MINOR)
 
-WEBSITE = u"http://keepnote.org"
+WEBSITE = u"https://github.com/xmatko/keepnote3"
+WEBSITE_ORIGINAL = u"http://keepnote.org"
 LICENSE_NAME = u"GPL version 2"
-COPYRIGHT = u"Copyright Matt Rasmussen 2011."
+COPYRIGHT = u"Copyright Nicolas Matkowski 2019\nCopyright Matt Rasmussen 2011."
 TRANSLATOR_CREDITS = (
     u"Chinese: hu dachuan <hdccn@sina.com>\n"
     u"French: tb <thibaut.bethune@gmail.com>\n"
