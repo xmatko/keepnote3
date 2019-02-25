@@ -31,6 +31,10 @@ import thread
 import threading
 import traceback
 
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GObject
 
 
 #=============================================================================
@@ -97,21 +101,15 @@ else:
         # we must be running (3)
         basedir = dirname(realpath(sys.argv[0]))
 
-keepnote.set_basedir(basedir)
-
-
-
-
 #=============================================================================
 # keepnote imports
-import keepnote
 from keepnote.commands import get_command_executor, CommandExecutor
 from keepnote.teefile import TeeFileStream
-from keepnote.logger import create_logger
+import keepnote.gui
 import keepnote.compat.pref
 _ = keepnote.translate
 
-logger = logging.getLogger('keepnote')
+keepnote.set_basedir(basedir)
 
 
 #=============================================================================
@@ -203,6 +201,36 @@ def start_error_log(show_errors):
     keepnote.log_message(stderr_except_msg)
 
 
+## Create a logger
+# @param logfilename
+# @param loglevel
+# @return logging handle
+def create_logger(logfilename, loglevel):
+    logger = logging.getLogger('keepnote')
+    logger.setLevel(loglevel)
+    logger.propagate = 0
+
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(threadName)-12s - %(levelname)-8s : %(message)s')
+
+    # create file handler (fh)
+    fh = logging.FileHandler(logfilename)
+    fh.setLevel(logging.DEBUG)        # set logging level for handler
+    fh.setFormatter(formatter)    # add formatter to handler
+    logger.addHandler(fh)            # add handler to logger
+
+    # create console handler (ch)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+    logger.info("Logfile = " + logfilename)
+    date = time.strftime("%d/%m/%Y - %H:%M:%S")
+    logger.info("Date = " + date)
+    return logger
+
+
 def parse_argv(argv):
     """Parse arguments"""
 
@@ -221,10 +249,6 @@ def parse_argv(argv):
 def setup_threading():
     """Initialize threading environment"""
 
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk, GObject
-
     if keepnote.get_platform() == "windows":
         # HACK: keep gui thread active
         def sleeper():
@@ -239,10 +263,6 @@ def setup_threading():
 def gui_exec(function, *args, **kw):
     """Execute a function in the GUI thread"""
     
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk, GObjects
-
     sem = threading.Semaphore()
     sem.acquire()
 
@@ -262,16 +282,19 @@ def gui_exec(function, *args, **kw):
 
 
 def start_gui(argv, options, args, cmd_exec):
-    import keepnote.gui
 
-    # GObject introspection imports
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk, GObject
+    """This starts the KeepNote3 GUI
 
+    It inits the gui modules then calls the Gtk.main() event loop
+
+    :param argv: argv
+    :param type: **
+
+    """
     # setup threading environment
-    setup_threading()
+    #setup_threading()
 
+    logger = logging.getLogger('keepnote')
     logger.info("Start GUI (GTK %d.%d.%d)" % (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION))
     # create app
     app = keepnote.gui.KeepNote(basedir)
@@ -281,6 +304,7 @@ def start_gui(argv, options, args, cmd_exec):
     
     # begin gtk event loop
     if need_gui:
+        logger.info("Beging gtk event loop")
         Gtk.main()
 
 
@@ -396,6 +420,10 @@ def list_commands(app):
 def main(argv):
     """Main execution"""    
 
+    # create logger
+    create_logger("keepnote.log", logging.DEBUG)
+
+    # get command line options
     options, args = parse_argv(argv)
     
     # init preference dir
@@ -405,10 +433,6 @@ def main(argv):
 
     # start error log
     start_error_log(options.show_errors)
-
-    # create logger
-    # TODO: get logfile and loglevel from options/preferences
-    create_logger("keepnote.log", logging.DEBUG)
 
     # get command executor
     if options.newproc:
