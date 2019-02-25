@@ -27,7 +27,7 @@
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 
 def parse_utf(text):
@@ -80,7 +80,7 @@ class DragDropTestDialog (object):
     def on_drag_and_drop_test_motion(self, textview, drag_context,
                                      x, y, timestamp):
         buf = self.drag_win.mime.get_buffer()
-        target = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
+        target = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
         if target != "":
             textview.drag_dest_set_target_list([(target, 0, 0)])
 
@@ -98,14 +98,15 @@ class DragDropTestDialog (object):
         drag_context.finish(False, False, eventtime)
 
     def on_drag_and_drop_test_paste(self, textview):
-        clipboard = self.main_window.get_clipboard(selection="CLIPBOARD")
+        #clipboard = self.main_window.get_clipboard(selection=Gdk.Atom(atom_name="CLIPBOARD", only_if_exists=False))
+        clipboard = self.main_window.get_clipboard(selection=Gdk.SELECTION_CLIPBOARD)
         targets = clipboard.wait_for_targets()
         textview.get_buffer().insert_at_cursor(
             "clipboard.targets = " + str(targets) + "\n")
         textview.stop_emission('paste-clipboard')
 
         buf = self.drag_win.mime.get_buffer()
-        target = buf.get_text(buf.get_start_iter(), buf.get_end_iter())
+        target = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
         if target != "":
             clipboard.request_contents(
                 target, self.on_drag_and_drop_test_contents)
