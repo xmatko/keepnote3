@@ -44,8 +44,11 @@ BULLET_PAR_INDENT = 12  # hard-coded for 'Sans 10'
 BULLET_FONT_SIZE = 10
 
 
+def debug_print_tag(tag, *data):
+    print("\t" + str(tag))
+
 def color_to_string(color):
-    """Converts a Gtk.Color to a RGB string (#rrrrggggbbbb)"""
+    """Converts a Gdk.Color to a RGB string (#rrrrggggbbbb)"""
     redstr = hex(color.red)[2:]
     greenstr = hex(color.green)[2:]
     bluestr = hex(color.blue)[2:]
@@ -59,7 +62,6 @@ def color_to_string(color):
         bluestr = "0" + bluestr
 
     return "#%s%s%s" % (redstr, greenstr, bluestr)
-
 
 def color_tuple_to_string(color):
     """Converts a color tuple (r,g,b) to a RGB string (#rrrrggggbbbb)"""

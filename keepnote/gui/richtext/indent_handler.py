@@ -292,7 +292,7 @@ class IndentHandler (object):
             it = pos.copy()
             it.forward_char()
             while True:
-                match = it.forward_search(BULLET_STR, 0, par_end)
+                match = it.forward_search(BULLET_STR, Gtk.TextSearchFlags(0), par_end)
                 if not match:
                     it.backward_char()
                     pos, par_end = get_paragraph(it)

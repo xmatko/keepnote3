@@ -33,6 +33,7 @@ import random
 import StringIO
 import urlparse
 import uuid
+import logging
 from xml.sax.saxutils import escape
 
 # GObject introspection imports
@@ -253,6 +254,8 @@ class RichTextIO (object):
     """Read/Writes the contents of a RichTextBuffer to disk"""
 
     def __init__(self):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.__init__()")
         self._html_buffer = HtmlBuffer()
 
     def save(self, textbuffer, filename, title=None, stream=None):
@@ -292,6 +295,9 @@ class RichTextIO (object):
         filename   -- HTML filename to load (optional if stream given)
         stream     -- output stream for HTML file (optional)
         """
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()")
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()   textview: %s" % str(textview))
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()   textbuffer: %s" % str(textbuffer))
         # unhook expensive callbacks
         textbuffer.block_signals()
         if textview:
@@ -311,31 +317,39 @@ class RichTextIO (object):
             buffer_contents = self._html_buffer.read(infile)
             textbuffer.insert_contents(buffer_contents,
                                        textbuffer.get_start_iter())
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 5")
             infile.close()
 
             # put cursor at begining
             textbuffer.place_cursor(textbuffer.get_start_iter())
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 7")
 
         except (HtmlError, IOError, Exception), e:
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT EXCEPT")
             err = e
             textbuffer.clear()
             if textview:
                 textview.set_buffer(textbuffer)
             ret = False
         else:
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 8")
             # finish loading
             self._load_images(textbuffer, filename)
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 9")
             if textview:
                 textview.set_buffer(textbuffer)
                 textview.show_all()
             ret = True
 
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 10")
         # rehook up callbacks
         textbuffer.unblock_signals()
         if textview:
             textview.enable_spell_check(spell)
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 6")
             textview.enable()
 
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 7")
         textbuffer.set_modified(False)
 
         # reraise error
@@ -344,7 +358,9 @@ class RichTextIO (object):
 
     def _load_images(self, textbuffer, html_filename):
         """Load images present in textbuffer"""
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO._load_images()")
         for kind, it, param in iter_buffer_anchors(textbuffer, None, None):
+            self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO._load_images() for loop")
             child, widgets = param
             if isinstance(child, RichTextImage):
                 self._load_image(textbuffer, child, html_filename)
@@ -399,6 +415,8 @@ class RichTextView (Gtk.TextView):
 
     def __init__(self, textbuffer=None):
         GObject.GObject.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextView.__init__()")
 
         self._textbuffer = None
         self._buffer_callbacks = []
@@ -598,7 +616,7 @@ class RichTextView (Gtk.TextView):
 
     def on_button_press(self, widget, event):
         """Process context popup menu"""
-        if event.button == 1 and event.type == Gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS:
             # double left click
 
             x, y = self.window_to_buffer_coords(Gtk.TextWindowType.TEXT,
@@ -1475,6 +1493,7 @@ class RichTextView (Gtk.TextView):
 
     def get_font(self):
         """Get the font under the cursor"""
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextView.get_font()")
         if self._textbuffer:
             return self._textbuffer.get_font()
         else:

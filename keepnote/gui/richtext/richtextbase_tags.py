@@ -28,7 +28,7 @@
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk
 
 
 #=============================================================================
@@ -44,7 +44,8 @@ class RichTextBaseTagTable (Gtk.TextTagTable):
     # two sizes, or two justifications.
 
     def __init__(self):
-        Gtk.TextTagTable.__init__(self)
+        #Gtk.TextTagTable.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._tag_classes = {}
         self._tag2class = {}
@@ -185,8 +186,7 @@ class RichTextTagClass (object):
 class RichTextTag (Gtk.TextTag):
     """A TextTag in a RichTextBuffer"""
     def __init__(self, name, **kargs):
-        #Gtk.TextTag.__init__(self, name)
-        Gtk.TextTag.__init__(self)
+        GObject.GObject.__init__(self, name=name)
         self._count = 0
 
         for key, val in kargs.iteritems():

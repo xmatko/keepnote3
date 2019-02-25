@@ -24,6 +24,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GObject
+
 from keepnote.linked_list import LinkedList
 from keepnote.linked_tree import LinkedTreeNode
 from keepnote.util import PushIter
@@ -72,7 +78,7 @@ def iter_buffer_contents(textbuffer, start=None, end=None,
         # namely, advance it2 towards it
         while True:
             # find next achor
-            ret = it2.forward_search(ANCHOR_CHAR, (), stop)
+            ret = it2.forward_search(ANCHOR_CHAR, Gtk.TextSearchFlags(0), stop)
 
             if ret:
                 # anchor found
@@ -132,18 +138,22 @@ def iter_buffer_anchors(textbuffer, start=None, end=None):
     start      -- starting position (TextIter)
     end        -- ending position (TextIter)
     """
+    logger = logging.getLogger('keepnote')
+    logger.debug("keepnote.gui.richtext.textbuffer_tools.iter_buffer_anchors()")
     # initialize iterators
     if start is None:
         it = textbuffer.get_start_iter()
     else:
         it = start.copy()
 
+    logger.debug("keepnote.gui.richtext.textbuffer_tools.iter_buffer_anchors() it:%s " % str(it))
     if end is None:
         end = textbuffer.get_end_iter()
 
+    logger.debug("keepnote.gui.richtext.textbuffer_tools.iter_buffer_anchors() end:%s " % str(end))
     while True:
         # find next achor
-        ret = it.forward_search(ANCHOR_CHAR, (), end)
+        ret = it.forward_search(ANCHOR_CHAR, Gtk.TextSearchFlags(0), end)
         if not ret:
             break
 

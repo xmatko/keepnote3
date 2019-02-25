@@ -24,6 +24,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
@@ -55,6 +57,8 @@ class FontHandler (GObject.GObject):
     """
     def __init__(self, textbuffer):
         GObject.GObject.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.__init__()  textbuffer: %s" % str(textbuffer))
 
         self._buf = textbuffer
         self._current_tags = []
@@ -108,6 +112,8 @@ class FontHandler (GObject.GObject):
         return self._current_tags
 
     def set_current_tags(self, tags):
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.set_current_tags()  tags:%s" % str(tags))
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.set_current_tags()  tags:%s" % str(list(tags)))
         """Sets the currently active tags"""
         self._current_tags = list(tags)
         self.emit("font-change", self.get_font())
@@ -236,6 +242,7 @@ class FontHandler (GObject.GObject):
     def get_font(self, font=None):
         """Returns the active font under the cursor"""
 
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.get_font()")
         # get iter for retrieving font
         it2 = self._buf.get_selection_bounds()
 
@@ -249,11 +256,24 @@ class FontHandler (GObject.GObject):
         current_tags = set(self._current_tags)
 
         # get the text attributes and font at the iter
-        attr = Gtk.TextAttributes()
-        self._default_attr.copy_values(attr)
-        it.get_attributes(attr)
-        tags = it.get_tags()
+        #attr = Gtk.TextAttributes()
 
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.get_font() POINT 1")
+        tattr = it.get_attributes()
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.get_font() POINT 2")
+        attr = tattr[1]
+        self._default_attr.copy_values(attr)
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.get_font() POINT 3")
+        print("attr", attr)
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.get_font() POINT 2")
+        tags = it.get_tags()
+        
+        self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.get_font()         DEBUG !!!!!!")
+        print("it", type(it))
+        print("attr", type(attr))
+        print("tags", type(tags))
+        print("self._buf", type(self._buf))
+        print("self._buf.tag_table", type(self._buf.tag_table))
         # create font object and return
         if font is None:
             font = self.get_font_class()()

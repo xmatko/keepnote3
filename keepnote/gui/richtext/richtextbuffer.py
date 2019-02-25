@@ -28,6 +28,8 @@
 import os
 import tempfile
 import urllib2
+import logging
+
 from itertools import chain
 
 import gi
@@ -64,6 +66,7 @@ from .richtext_tags import \
     RichTextIndentTag, \
     RichTextLinkTag, \
     color_to_string, \
+    debug_print_tag, \
     get_attr_size
 
 
@@ -507,7 +510,7 @@ class RichTextImage (RichTextAnchor):
             #self._widgets[None].grab_focus()
             self.emit("selected")
 
-            if event.type == Gdk._2BUTTON_PRESS:
+            if event.type == Gdk.EventType.BUTTON_PRESS:
                 # double left click activates image
                 self.emit("activated")
 
@@ -528,7 +531,8 @@ class RichTextFont (RichTextBaseFont):
 
     def __init__(self):
         RichTextBaseFont.__init__(self)
-
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextFont.__init__()")
         # TODO: remove hard-coding
         self.mods = {}
         self.justify = "left"
@@ -543,7 +547,7 @@ class RichTextFont (RichTextBaseFont):
     def set_font(self, attr, tags, current_tags, tag_table):
         # set basic font attr
         RichTextBaseFont.set_font(self, attr, tags, current_tags, tag_table)
-
+        self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextFont.set_font()")
         font = attr.font
 
         if font:
@@ -565,16 +569,36 @@ class RichTextFont (RichTextBaseFont):
             #style = Pango.Style.NORMAL
 
         # get colors
-        self.fg_color = color_to_string(attr.fg_color)
-        self.bg_color = color_to_string(attr.bg_color)
+        '''
+        # DEBUG START
+        color = Gdk.RGBA(red=0.20, green=0.20, blue=0.42, alpha=0.5)
+        self.logger.debug("color=%s : %s  %s" % (str(color), str(color.to_string()), str(color.to_color())))
+        color.parse("#7f2244")
+        color.parse("#7f8f22234456")
+        self.logger.debug("color=%s : %s  %s %s" % (str(color), str(color.to_string()), str(color.to_color()), color_to_string(color.to_color())))
+        # DEBUG END
+        '''
+
+
+        self.fg_color = color_to_string(attr.appearance.fg_color)
+        self.bg_color = color_to_string(attr.appearance.bg_color)
 
         mod_class = tag_table.get_tag_class("mod")
 
         tag_set = set(tags)
 
+        ''' DEBUG START '''
+        #self.logger.debug("tag_table=%s" % (str(tag_table)))
+        tag_table.foreach(debug_print_tag, None)
+        ''' DEBUG END '''
+        print("mod_class", type(mod_class))
+        print("tags", type(tags))
+        print("tag_set", type(tag_set))
+        print("current_tags", type(current_tags))
         # set modifications (current tags override)
         self.mods = {}
         for tag in mod_class.tags:
+            self.logger.debug("tag:%s" % tag.get_property("name"))
             self.mods[tag.get_property("name")] = (tag in current_tags or
                                                    tag in tag_set)
         self.mods["tt"] = (self.mods["tt"] or self.family == "Monospace")
@@ -624,6 +648,8 @@ class RichTextBuffer (RichTextBaseBuffer):
     """
 
     def __init__(self, table=RichTextTagTable()):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextBuffer.__init__() table:%s" % str(table))
         RichTextBaseBuffer.__init__(self, table)
 
         # indentation handler
@@ -774,6 +800,7 @@ class RichTextBuffer (RichTextBaseBuffer):
         return self.font_handler.get_current_tags()
 
     def set_current_tags(self, tags):
+        self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextBuffer.set_current_tags() tags:%s" % str(tags))
         return self.font_handler.set_current_tags(tags)
 
     def can_be_current_tag(self, tag):
@@ -798,6 +825,7 @@ class RichTextBuffer (RichTextBaseBuffer):
         return self.font_handler.clear_current_tag_class(tag)
 
     def get_font(self, font=None):
+        self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextBuffer.get_font()")
         return self.font_handler.get_font(font)
 
     #============================================================
@@ -950,6 +978,10 @@ class RichTextBuffer (RichTextBaseBuffer):
 
     #==============================================
     # Child callbacks
+
+    def enable(self):
+        self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextBuffer.enable()")
+        self.enable()
 
     def _on_child_selected(self, child):
         """Callback for when child object is selected

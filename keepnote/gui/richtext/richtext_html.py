@@ -27,6 +27,8 @@
 # python imports
 import sys
 import re
+import logging
+
 from HTMLParser import HTMLParser
 from xml.sax.saxutils import escape
 
@@ -825,6 +827,8 @@ class HtmlBuffer (HTMLParser):
     """Read and write HTML for a RichTextBuffer"""
 
     def __init__(self, out=None):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.richtext_html.HtmlBuffer.__init__()")
         HTMLParser.__init__(self)
 
         self._out = out

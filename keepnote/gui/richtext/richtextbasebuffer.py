@@ -24,6 +24,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
@@ -113,9 +115,11 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
     """
 
     def __init__(self, tag_table=RichTextBaseTagTable()):
-        #Gtk.TextBuffer.__init__(self, tag_table=tag_table)
-        GObject.GObject.__init__(self, tag_table=tag_table)
-        tag_table.add_textbuffer(self)
+        GObject.GObject.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.richtext.richtextbasebuffer.RichTextBaseBuffer.__init__()  tag_table:%s" % str(tag_table))
+        self.tag_table = tag_table
+        self.tag_table.add_textbuffer(self)
 
         # undo handler
         self._undo_handler = UndoHandler(self)
@@ -153,6 +157,9 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
             self.connect("changed", self._undo_handler.on_changed)
         ]
 
+    def get_tag_table(self):
+        return self.tag_table
+
     def block_signals(self):
         """Block all signal handlers"""
         for signal in self._signals:
@@ -185,7 +192,13 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
 
     def get_insert_iter(self):
         """Return TextIter for insert point"""
-        return self.get_iter_at_mark(self.get_insert())
+        self.logger.debug("keepnote.gui.richtext.richtextbasebuffer.RichTextBaseBuffer.get_insert_iter()") 
+        mk = self.get_insert()
+        it = self.get_iter_at_mark(mk)
+        print("it", it)
+        print("mk", mk)
+        #return self.get_iter_at_mark(self.get_insert())
+        return it
 
     #==========================================================
     # restrict cursor and insert
