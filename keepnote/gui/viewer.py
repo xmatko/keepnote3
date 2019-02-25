@@ -26,6 +26,7 @@
 
 # python imports
 import uuid
+import logging
 
 # GObject introspection imports
 import gi
@@ -43,17 +44,19 @@ _ = keepnote.translate
 class Viewer (Gtk.Box):
 
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
-        #GObject.GObject.__init__(self, False, 0)
         GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.viewer.Viewer.__init__()")
         self._app = app
         self._main_window = parent
         self._viewerid = viewerid if viewerid else unicode(uuid.uuid4())
+        self.logger.debug("viewer_name=%s" % (viewer_name))
         self._viewer_name = viewer_name
 
         self._notebook = None
         self._history = NodeHistory()
 
-        # register viewer
+        # register viewer to main window
         self._main_window.add_viewer(self)
 
     def get_id(self):
@@ -143,21 +146,26 @@ class Viewer (Gtk.Box):
     # search
 
     def start_search_result(self):
+        """ Overidable """
         pass
 
     def add_search_result(self, node):
+        """ Overidable """
         pass
 
     def end_search_result(self):
+        """ Overidable """
         pass
 
     #================================================
     # UI management
 
     def add_ui(self, window):
+        """ Overidable """
         pass
 
     def remove_ui(self, window):
+        """ Overidable """
         pass
 
 

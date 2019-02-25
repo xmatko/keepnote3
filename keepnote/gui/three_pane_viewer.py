@@ -24,6 +24,9 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
@@ -66,6 +69,8 @@ class ThreePaneViewer (Viewer):
     def __init__(self, app, main_window, viewerid=None):
         Viewer.__init__(self, app, main_window, viewerid,
                         viewer_name="three_pane_viewer")
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.__init__()")
         self._ui_ready = False
 
         # node selections
@@ -167,6 +172,7 @@ class ThreePaneViewer (Viewer):
 
     def set_notebook(self, notebook):
         """Set the notebook for the viewer"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.set_notebook()")
         # add/remove reference to notebook
         self._app.ref_notebook(notebook)
         if self._notebook is not None:
@@ -174,11 +180,13 @@ class ThreePaneViewer (Viewer):
 
         # deregister last notebook, if it exists
         if self._notebook:
+            self.logger.debug("  Deregister last notebook, if it exists")
             self._notebook.node_changed.remove(
                 self.on_notebook_node_changed)
 
         # setup listeners
         if notebook:
+            self.logger.debug("  Setup listeners")
             notebook.node_changed.add(self.on_notebook_node_changed)
 
         # set notebook
@@ -187,15 +195,22 @@ class ThreePaneViewer (Viewer):
         self.listview.set_notebook(notebook)
         self.treeview.set_notebook(notebook)
 
+        self.logger.debug("  Get popup menu")
         if self.treeview.get_popup_menu():
+            self.logger.debug("  Get popup menu treeview iconmenu.set_notebook")
             self.treeview.get_popup_menu().iconmenu.set_notebook(notebook)
+            self.logger.debug("  Get popup menu listview iconmenu.set_notebook")
             self.listview.get_popup_menu().iconmenu.set_notebook(notebook)
 
             colors = (self._notebook.pref.get("colors", default=DEFAULT_COLORS)
                       if self._notebook else DEFAULT_COLORS)
+            self.logger.debug("  Get popup menu treeview fgcolor_menu.set_colors")
             self.treeview.get_popup_menu().fgcolor_menu.set_colors(colors)
+            self.logger.debug("  Get popup menu treeview bgcolor_menu.set_colors")
             self.treeview.get_popup_menu().bgcolor_menu.set_colors(colors)
+            self.logger.debug("  Get popup menu listview fgcolor_menu.set_colors")
             self.listview.get_popup_menu().fgcolor_menu.set_colors(colors)
+            self.logger.debug("  Get popup menu listview bgcolor_menu.set_colors")
             self.listview.get_popup_menu().bgcolor_menu.set_colors(colors)
 
         # restore selections
@@ -206,6 +221,7 @@ class ThreePaneViewer (Viewer):
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.load_prefrences()")
         p = app_pref.get("viewers", "three_pane_viewer", define=True)
         self.set_view_mode(p.get("view_mode", DEFAULT_VIEW_MODE))
         self.paned2.set_property("position-set", True)
@@ -227,6 +243,7 @@ class ThreePaneViewer (Viewer):
 
         # reload ui
         if self._ui_ready:
+            self.logger.debug("  reload ui")
             self.remove_ui(self._main_window)
             self.add_ui(self._main_window)
 
@@ -705,6 +722,7 @@ class ThreePaneViewer (Viewer):
     def add_ui(self, window):
         """Add the view's UI to a window"""
 
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.add_ui()")
         assert window == self._main_window
 
         self._ui_ready = True
@@ -722,11 +740,13 @@ class ThreePaneViewer (Viewer):
         uimanager.ensure_update()
 
         # setup toolbar
+        self.logger.debug("  setup toolbar")
         self.back_button = uimanager.get_widget("/main_tool_bar/Viewer/Back")
         self.forward_button = uimanager.get_widget(
             "/main_tool_bar/Viewer/Forward")
 
         # setup editor
+        self.logger.debug("  setup editor")
         self.editor.add_ui(window)
 
         # TODO: Try to add accellerator to popup menu
@@ -735,6 +755,7 @@ class ThreePaneViewer (Viewer):
         #menu.set_accel_path(CONTEXT_MENU_ACCEL_PATH)
 
         # treeview context menu
+        self.logger.debug("  treeview context menu")
         menu1 = uimanager.get_widget(
             "/popup_menus/treeview_popup").get_submenu()
         self.treeview.set_popup_menu(menu1)
@@ -742,6 +763,7 @@ class ThreePaneViewer (Viewer):
         menu1.set_accel_group(uimanager.get_accel_group())
 
         # treeview icon menu
+        self.logger.debug("  treeview icon menu")
         menu1.iconmenu = self._setup_icon_menu()
         item = uimanager.get_widget(
             "/popup_menus/treeview_popup/Change Note Icon")
@@ -749,6 +771,7 @@ class ThreePaneViewer (Viewer):
         item.show()
 
         # treeview fg color menu
+        self.logger.debug("  treeview fg color menu")
         menu1.fgcolor_menu = self._setup_color_menu("fg")
         item = uimanager.get_widget(
             "/popup_menus/treeview_popup/Change Fg Color")
@@ -756,6 +779,7 @@ class ThreePaneViewer (Viewer):
         item.show()
 
         # treeview bg color menu
+        self.logger.debug("  treeview bg color menu")
         menu1.bgcolor_menu = self._setup_color_menu("bg")
         item = uimanager.get_widget(
             "/popup_menus/treeview_popup/Change Bg Color")
@@ -763,6 +787,7 @@ class ThreePaneViewer (Viewer):
         item.show()
 
         # listview context menu
+        self.logger.debug("  listview context menu")
         menu2 = uimanager.get_widget(
             "/popup_menus/listview_popup").get_submenu()
         self.listview.set_popup_menu(menu2)
@@ -770,6 +795,7 @@ class ThreePaneViewer (Viewer):
         menu2.set_accel_path(CONTEXT_MENU_ACCEL_PATH)
 
         # listview icon menu
+        self.logger.debug("  listview icon menu")
         menu2.iconmenu = self._setup_icon_menu()
         item = uimanager.get_widget(
             "/popup_menus/listview_popup/Change Note Icon")
@@ -777,6 +803,7 @@ class ThreePaneViewer (Viewer):
         item.show()
 
         # listview fg color menu
+        self.logger.debug("  listview fg color menu")
         menu2.fgcolor_menu = self._setup_color_menu("fg")
         item = uimanager.get_widget(
             "/popup_menus/listview_popup/Change Fg Color")
@@ -784,6 +811,7 @@ class ThreePaneViewer (Viewer):
         item.show()
 
         # listview bg color menu
+        self.logger.debug("  listview bg color menu")
         menu2.bgcolor_menu = self._setup_color_menu("bg")
         item = uimanager.get_widget(
             "/popup_menus/listview_popup/Change Bg Color")
@@ -792,6 +820,7 @@ class ThreePaneViewer (Viewer):
 
     def _setup_icon_menu(self):
         """Setup the icon menu"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._setup_icon_menu()")
         iconmenu = IconMenu()
         iconmenu.connect(
             "set-icon",
@@ -808,6 +837,7 @@ class ThreePaneViewer (Viewer):
 
     def _setup_color_menu(self, kind):
         """Setup the icon menu"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._setup_color_menu()")
 
         def on_set_color(w, color):
             for node in self.get_selected_nodes():
@@ -827,6 +857,7 @@ class ThreePaneViewer (Viewer):
                     self._notebook, colors)
 
         def on_new_colors(notebook, colors):
+            self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._setup_color_menu.on_new_colors()")
             if self._notebook == notebook:
                 menu.set_colors(colors)
 

@@ -24,6 +24,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
@@ -45,10 +47,14 @@ class TwoWayDict (object):
 
     def __init__(self):
 
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.tabbed_viewer.TwoWayDict.__init__()")
         self._lookup1 = {}
         self._lookup2 = {}
 
     def add(self, item1, item2):
+        self.logger.debug("TwoWayDict.add item 1: %s" % str(item1))
+        self.logger.debug("TwoWayDict.add item 2: %s" % str(item2))
         self._lookup1[item1] = item2
         self._lookup2[item2] = item1
 
@@ -64,13 +70,15 @@ class TabbedViewer (Viewer):
 
     def __init__(self, app, main_window, viewerid=None,
                  default_viewer=ThreePaneViewer):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.tabbed_viewer.TabbedViewer.__init__()")
         Viewer.__init__(self, app, main_window, viewerid,
                         viewer_name="tabbed_viewer")
         self._default_viewer = default_viewer
         self._current_viewer = None
         self._callbacks = {}
         self._ui_ready = False
-        self._null_viewer = Viewer(app, main_window)
+        self._null_viewer = Viewer(app, main_window, viewer_name="null_viewer")
         self._tab_names = {}
 
         # TODO: move to the app?
@@ -112,6 +120,7 @@ class TabbedViewer (Viewer):
     def new_tab(self, viewer=None, init="current_node"):
         """Open a new tab with a viewer"""
 
+        self.logger.debug("keepnote.gui.tabbed_viewer.TabbedViewer.new_tab()")
         # TODO: make new tab appear next to existing tab
 
         # create viewer and add to notebook
@@ -262,7 +271,7 @@ class TabbedViewer (Viewer):
 
     def _on_button_press(self, widget, event):
         if (self.get_toplevel().get_focus() == self._tabs and
-                event.button == 1 and event.type == Gdk._2BUTTON_PRESS):
+                event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS):
             # double click, start tab name editing
             label = self._tabs.get_tab_label(self._tabs.get_nth_page(
                 self._tabs.get_current_page()))
@@ -531,6 +540,8 @@ class TabLabel (Gtk.Box):
     def __init__(self, tabs, viewer, icon, text):
         GObject.GObject.__init__(self, orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
 
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.tabbed_viewer.TabLabel.__init__()")
         #self.name = None
 
         self.tabs = tabs
