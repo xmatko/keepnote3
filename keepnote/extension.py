@@ -25,6 +25,8 @@
 
 import imp
 import os
+import logging
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -189,6 +191,8 @@ class Extension (object):
     visible = True
 
     def __init__(self, app):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.extension.Extension.__init__()")
         self._app = app
         self._info = {}
         self._enabled = False
