@@ -76,6 +76,7 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
+        self.logger.debug("keepnote.gui.listview.ListView.load_prefrences()")
         self.set_date_formats(app_pref.get("timestamp_formats"))
         self.set_rules_hint(
             app_pref.get("look_and_feel", "listview_rules",
@@ -87,6 +88,7 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
 
     def set_notebook(self, notebook):
         """Set the notebook for listview"""
+        self.logger.debug("keepnote.gui.listview.ListView.set_notebook()")
         if notebook != self._notebook and self._notebook is not None:
             self._notebook.get_listeners("table_changed").remove(
                 self._on_table_changed)
@@ -168,7 +170,7 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
         self.model.connect("sort-column-changed", self._sort_column_changed)
 
     def setup_columns(self):
-
+        self.logger.debug("keepnote.gui.listview.ListView.setup_columns()")
         self.clear_columns()
 
         if self._notebook is None:
@@ -208,6 +210,7 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
 
     def _add_column(self, attr, cell_attr=None):
 
+        self.logger.debug("keepnote.gui.listview.ListView._add_columns()")
         # get attribute definition from notebook
         attr_def = self._notebook.attr_defs.get(attr)
 
@@ -320,7 +323,7 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
             # popup menu
             return self.popup_menu(event.x, event.y, event.button, event.time)
 
-        if event.button == 1 and event.type == Gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS:
             model, paths = self.get_selection().get_selected_rows()
             # double click --> goto node
             if len(paths) > 0:
@@ -394,8 +397,8 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
 
         # expand rows
         for node in roots:
-            self.expand_to_path(treemodel.get_path_from_node(
-                self.model, node, self.rich_model.get_node_column_pos()))
+            self.expand_to_path(Gtk.TreePath.new_from_indices(treemodel.get_path_from_node(
+                self.model, node, self.rich_model.get_node_column_pos())))
 
         # disable if no roots
         if len(roots) == 0:
@@ -464,7 +467,7 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
             path = treemodel.get_path_from_node(
                 self.model, page, self.rich_model.get_node_column_pos())
             assert path is not None
-        self.set_cursor_on_cell(path, self.title_column, self.title_text, True)
+        self.set_cursor_on_cell(Gtk.TreePath.new_from_indices(path), self.title_column, self.title_text, True)
         path, col = self.get_cursor()
         self.scroll_to_cell(path)
 

@@ -23,11 +23,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
+
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk, Gdk
 
 # keepnote imports
 from keepnote.gui import treemodel
@@ -41,6 +42,8 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
 
     def __init__(self):
         basetreeview.KeepNoteBaseTreeView.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.treeview.KeepNoteTreeView.__init__()")
 
         self._notebook = None
 
@@ -67,6 +70,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
 
     def _setup_columns(self):
 
+        self.logger.debug("keepnote.gui.treeview.TreeView._setup_columns()")
         self.clear_columns()
 
         if self._notebook is None:
@@ -103,7 +107,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             # popup menu
             return self.popup_menu(event.x, event.y, event.button, event.time)
 
-        if event.button == 1 and event.type == Gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS:
             nodes = self.get_selected_nodes()
             if len(nodes) > 0:
                 # double click --> goto node
@@ -113,7 +117,9 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
     # actions
 
     def set_notebook(self, notebook):
+        self.logger.debug("keepnote.gui.treeview.TreeView.set_notebook() notebook: %s" % str(notebook))
         basetreeview.KeepNoteBaseTreeView.set_notebook(self, notebook)
+        self.logger.debug("keepnote.gui.treeview.TreeView.set_notebook() self._notebook: %s" % str(self._notebook))
 
         if self._notebook is None:
             self.model.set_root_nodes([])
@@ -132,12 +138,13 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             self._setup_columns()
 
             if root.get_attr("expanded", True):
-                self.expand_to_path((0,))
+                #self.expand_to_path((0,))
+                self.expand_to_path(Gtk.TreePath.new_from_indices((0,)))
 
     def edit_node(self, node):
         path = treemodel.get_path_from_node(
             self.model, node,
             self.rich_model.get_node_column_pos())
         GObject.idle_add(lambda: self.set_cursor_on_cell(
-            path, self.column, self.title_text, True))
+            Gtk.TreePath.new_from_indices(path), self.column, self.title_text, True))
         #GObject.idle_add(lambda: self.scroll_to_cell(path))

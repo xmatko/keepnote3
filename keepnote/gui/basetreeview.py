@@ -50,8 +50,9 @@ MIME_TREE_COPY = "application/x-keepnote-tree-copy"
 MIME_NODE_CUT = "application/x-keepnote-node-cut"
 
 # treeview drag and drop config
-DROP_URI = Gtk.TargetEntry("text/uri-list", 0, 1)
-DROP_TREE_MOVE = Gtk.TargetEntry("drop_node", Gtk.TargetFlags.SAME_APP, 0)
+#DROP_URI = Gtk.TargetEntry(target="text/uri-list", flags=0, info=1)
+DROP_URI = Gtk.TargetEntry(target="text/uri-list", flags=Gtk.TargetFlags.SAME_APP, info=1)
+DROP_TREE_MOVE = Gtk.TargetEntry(target="drop_node", flags=Gtk.TargetFlags.SAME_APP, info=0)
 #DROP_NO = ("drop_no", Gtk.TargetFlags.SAME_WIDGET, 0)
 
 
@@ -108,6 +109,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def __init__(self):
         GObject.GObject.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.__init__()")
 
         self.model = None
         self.rich_model = None
@@ -163,17 +166,19 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         self.connect("drag-data-get", self._on_drag_data_get)
         self.connect("drag-data-received", self._on_drag_data_received)
 
-        self.logger = logging.getLogger('keepnote')
+        self.logger.warning("Set drag and drop sources/dest makes these Gdk errors")
         # configure drag and drop events
         # FIXME: set drag source and dest makes:
         # Gdk-CRITICAL **: 18:29:08.145: gdk_atom_intern: assertion 'atom_name != NULL' failed
         self.enable_model_drag_source(
             Gdk.ModifierType.BUTTON1_MASK, [DROP_TREE_MOVE], Gdk.DragAction.MOVE)
         # FIXME: Is this drag_source_set useful ?
+        '''
         self.drag_source_set(
             Gdk.ModifierType.BUTTON1_MASK,
             [DROP_TREE_MOVE],
             Gdk.DragAction.MOVE)
+        '''
 
         self.enable_model_drag_dest([DROP_TREE_MOVE, DROP_URI],
                                     Gdk.DragAction.MOVE |
@@ -181,6 +186,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                                     Gdk.DragAction.LINK)
 
         # FIXME: Is this drag_dest_set useful ?
+        '''
         self.drag_dest_set(
             Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.MOTION,
             [DROP_TREE_MOVE, DROP_URI],
@@ -190,6 +196,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             Gdk.DragAction.LINK |
             Gdk.DragAction.PRIVATE |
             Gdk.DragAction.ASK)
+        '''
 
     def set_master_node(self, node):
         self._master_node = node
@@ -201,6 +208,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         return self._master_node
 
     def set_notebook(self, notebook):
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.set_notebook()")
         self._notebook = notebook
 
         # NOTE: not used yet
@@ -270,13 +278,16 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 "row-has-child-toggled", self.on_row_has_child_toggled)
 
     def set_popup_menu(self, menu):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_popup_menu()")
         self._menu = menu
 
     def get_popup_menu(self):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.get_popup_menu()")
         return self._menu
 
     def popup_menu(self, x, y, button, time):
         """Display popup menu"""
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.popup_menu()")
         if self._menu is None:
             return
 
@@ -290,7 +301,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             self.get_selection().unselect_all()
             self.get_selection().select_path(path)
 
-        self._menu.popup(None, None, None, button, time)
+        self._menu.popup(parent_menu_shell=None, parent_menu_item=None, func=None, data=None, button=button, activate_time=time)
         self._menu.show()
         return True
 
@@ -309,6 +320,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def _add_title_render(self, column, attr):
 
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView._add_title_render()")
         # make sure icon attributes are in model
         self._add_model_column(self._attr_icon)
         self._add_model_column(self._attr_icon_open)
@@ -327,6 +339,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def _add_text_render(self, column, attr, editable=False,
                          validator=TextRendererValidator()):
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView._add_text_render()")
         # cell renderer text
         cell = Gtk.CellRendererText()
         cell.set_fixed_height_from_font(1)
@@ -335,6 +348,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                              self.rich_model.get_column_by_name(attr).pos)
 
         column.add_attribute(
+            #cell, 'cell-background',
             cell, 'cell-background',
             self.rich_model.add_column(
                 "title_bgcolor", str,
@@ -488,7 +502,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         self.cancel_editing()
 
         # save scrolling
-        self.__scroll = self.widget_to_tree_coords(0, 0)
+        self.__scroll = self.convert_widget_to_tree_coords(0, 0)
 
     def _on_node_changed_end(self, model, nodes):
 
@@ -517,7 +531,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                     # visible (i.e. len(path)>1) in treeview
                     if (parent and self.is_node_expanded(parent) and
                             len(path) > 1):
-                        self.expand_row(path[:-1], False)
+                        self.expand_row(Gtk.TreePath.new_from_indices(path[:-1]), False)
 
                     if self.is_node_expanded(node):
                         self.expand_row(path, False)
@@ -531,7 +545,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 path2 = get_path_from_node(
                     self.model, node, self.rich_model.get_node_column_pos())
                 if (path2 is not None and
-                        (len(path2) <= 1 or self.row_expanded(path2[:-1]))):
+                        (len(path2) <= 1 or self.row_expanded(Gtk.TreePath.new_from_indices(path2[:-1])))):
                     # reselect and scroll to node
                     selection.select_path(path2)
 
@@ -634,7 +648,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                                       self.rich_model.get_node_column_pos())
             if path is not None:
                 if len(path) > 1:
-                    self.expand_to_path(path[:-1])
+                    #self.expand_to_path(path[:-1])
+                    self.expand_to_path(Gtk.TreePath.new_from_indices(path[:-1]))
                 self.set_cursor(path)
                 GObject.idle_add(lambda: self.scroll_to_cell(path))
         else:
@@ -939,7 +954,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
         # get mouse poistion in tree coordinates
         x, y = self.get_pointer()
-        x, y = self.widget_to_tree_coords(x, y - header_height[0])
+        x, y = self.convert_widget_to_tree_coords(x, y - header_height[0])
 
         # get visible rect in tree coordinates
         rect = self.get_visible_rect()

@@ -25,6 +25,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import logging
 
 # GObject introspection imports
 import gi
@@ -32,7 +33,8 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gtk
 # GenericTreeModel implementation for pygtk compatibility
 # from https://github.com/GNOME/pygobject/blob/master/pygtkcompat/generictreemodel.py
-from keepnote.pygtkcompat import GenericTreeModel
+#from keepnote.pygtkcompat import GenericTreeModel
+from pygtkcompat.generictreemodel import GenericTreeModel
 
 def get_path_from_node(model, node, node_col):
     """
@@ -112,7 +114,11 @@ class BaseTreeModel (GenericTreeModel):
     def __init__(self, roots=[]):
 
         GObject.GObject.__init__(self)
-        self.set_property("leak-references", False)
+        GenericTreeModel.__init__(self)
+
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__()")
+        #self.set_property("leak-references", False)
 
         self._notebook = None
         self._roots = []
@@ -135,6 +141,7 @@ class BaseTreeModel (GenericTreeModel):
         Set the notebook for this model
         A notebook must be set before any nodes can be added to the model
         """
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_notebook() notebook: %s" % str(notebook))
 
         # unhook listeners for old notebook. if it exists
         if self._notebook is not None:
@@ -151,6 +158,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def append_column(self, column):
         """Append a new column to the treemodel"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.append_column() column: %s" % str(column))
         assert column.name not in self._columns_lookup
 
         column.pos = len(self._columns)
@@ -171,6 +179,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def add_column(self, name, coltype, get):
         """Append column only if it does not already exist"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.add_column() name: %s" % str(name))
         col = self.get_column_by_name(name)
         if col is None:
             col = TreeModelColumn(name, coltype, get=get)
@@ -190,12 +199,12 @@ class BaseTreeModel (GenericTreeModel):
         """Set the column that contains nodes"""
         self._node_column = col
 
-    
+    '''
     def create_tree_iter(self, node):
         return self.get_iter(self.on_get_path(node))
-
     def get_user_data(self, it):
         return self.on_get_iter(self.get_path(it))
+    '''
 
     #================================
     # master nodes and root nodes
@@ -227,11 +236,14 @@ class BaseTreeModel (GenericTreeModel):
 
     def set_root_nodes(self, roots=[]):
         """Set the root nodes of the model"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_root_nodes()")
         # clear the model
         self.clear()
 
         for node in roots:
-            self.append(node)
+            self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_root_nodes() node: %s" % str(node))
+            res = self.append(node)
+            self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_root_nodes() res: %s" % str(res))
 
         # we must have a notebook, so that we can react to NoteBook changes
         if len(roots) > 0:
@@ -243,6 +255,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def append(self, node):
         """Appends a node at the root level of the treemodel"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.append() node: %s" % str(node))
         index = len(self._roots)
         self._root_set[node] = index
         self._roots.append(node)
@@ -257,6 +270,7 @@ class BaseTreeModel (GenericTreeModel):
     def _on_node_changed(self, actions):
         """Callback for when a node changes"""
 
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel._on_node_changed() actions: %s" % str(actions))
         # notify listeners that changes in the model will start to occur
         nodes = [a[1] for a in actions if a[0] == "changed" or
                  a[0] == "changed-recurse"]
@@ -265,6 +279,7 @@ class BaseTreeModel (GenericTreeModel):
         for action in actions:
             act = action[0]
 
+            self.logger.debug("keepnote.gui.treemodel.BaseTreeModel._on_node_changed() act: %s" % str(act))
             if (act == "changed" or act == "changed-recurse" or
                     act == "added"):
                 node = action[1]
@@ -336,6 +351,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_get_iter(self, path):
         """Returns the node of a path"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel._on_get_iter() path: %s" % str(path))
         if path[0] >= len(self._roots):
             return None
 
@@ -351,6 +367,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_get_path(self, rowref):
         """Returns the path of a rowref"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_path() rowref: %s" % str(rowref))
         if rowref is None:
             return ()
 
@@ -362,8 +379,13 @@ class BaseTreeModel (GenericTreeModel):
             if node is None:
                 raise Exception("treeiter is not part of model")
         path.append(self._root_set[node])
+        #path = Gtk.TreePath.new_from_indices([1, 2])
+        #print("on_get_path: path", path)
+        #print("on_get_path: reversed(path)", list(reversed(path)))
+        #print("on_get_path: Gtk.TreePath.new_from_indices(path)", Gtk.TreePath.new_from_indices(list(reversed(path))).to_string())
+        print reversed(path)
 
-        return tuple(reversed(path))
+        return list(reversed(path))
 
     def on_get_value(self, rowref, column):
         """Returns a value from a row in the treemodel"""
@@ -457,6 +479,8 @@ class KeepNoteTreeModel (BaseTreeModel):
     """
     def __init__(self, roots=[]):
         BaseTreeModel.__init__(self, roots)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.treemodel.KeepNoteTreeModel.__init__()")
 
         self.fades = set()
 
