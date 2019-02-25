@@ -24,6 +24,7 @@
 
 # python imports
 import sys
+import logging
 
 # GObject introspection imports
 import gi
@@ -44,6 +45,8 @@ class Extension (extension.Extension):
 
     def __init__(self, app):
         extension.Extension.__init__(self, app)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.extension.Extension.__init__()")
 
         self.__windows = set()
         self.__uis = set()
@@ -72,8 +75,10 @@ class Extension (extension.Extension):
 
     def on_new_window(self, window):
         """Initialize extension for a particular window"""
+        self.logger.debug("keepnote.gui.extension.Extension.on_new_window()")
         if self._enabled:
             try:
+                # GTK Warnings when calling keepnote/extensions/*/__init__.py <ExtensionName>.on_add_ui
                 self.on_add_ui(window)
                 self.__uis.add(window)
             except Exception, e:
