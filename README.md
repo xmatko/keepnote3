@@ -9,7 +9,7 @@ As this project seems inactive since 2015, I decided to fork and rename it. By t
 KeepNote was originaly designed to be cross-platform (implemented in Python and PyGTK) and stores your notes in simple and easy to manipulate file formats (HTML and XML).
 
 ## Porting notes
-* pyGTK (Python GTK+ 2.0 bindings) do not support Python 3
+* pyGTK (Python GTK+ 2.0 bindings) does NOT support Python 3
 * PyGObject (Python GTK+ >=3.0 bindings) does support Python 2/3
 
 Following these statements, we should first port Keepnote to GTK3,

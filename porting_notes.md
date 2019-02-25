@@ -10,10 +10,16 @@ Next, we will port to Python 3
 
 ## Part 1: Migrating to GTK+3 / PyGObject
 
-Read the docs:
+https://pygobject.readthedocs.io/en/latest/
+
+* **[PyGObject API Refence](https://lazka.github.io/pgi-docs)**
+
+**Howto's**
+
 * [Porting from Static Bindings](https://pygobject.readthedocs.io/en/latest/guide/porting.html)  part of the PyGObject documentation, focusing on Python
 * [PyGObject - Introspection Porting](https://wiki.gnome.org/action/show/Projects/PyGObject/IntrospectionPorting?action=show&redirect=PyGObject%2FIntrospectionPorting) on the GNOME Wiki, focusing on Python
 * [GTK3 Porting guide](https://developer.sugarlabs.org/src/gtk3-porting-guide.md.html) from Sugar Toolkit developpers site
+
 
 ### PyGObject converting script
 
@@ -21,11 +27,41 @@ Read the docs:
 
 	./pygi-convert.sh mymodule.py
 
+
 ### Dependencies (Debian)
 * python-gi
 * python-gi-cairo
 * python-gi-dev ?
 
-**Note**: pour python 3 (later)
+### Misc
+#### gettext
+[https://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3](https://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3)
+
+seen in keepnote.gui.__init__
+
+#### lambda func
+https://medium.com/@happymishra66/lambda-map-and-filter-in-python-4935f248593
+
+#### Gtk.Builder connect signals to callback
+* [Connect signal callback to each object individually](https://stackoverflow.com/questions/51953389/gtk-glade-and-python-connecting-handlers-from-multiple-classes-with-the-connect)
+
+#### Gtk.GenericTreeView
+* [Simple script demonstrating a custom Gtk.TreeModel for Gtk 3 (known as GenericTreeModel in PyGtk 2).](
+https://gist.github.com/andialbrecht/4463278)
+* [python - GenericTreeModel with PyGObject Introspection Gtk+ 3? - Stack Overflow](https://stackoverflow.com/questions/11025700/generictreemodel-with-pygobject-introspection-gtk-3)
+* [gtk.GenericTreeModel](https://developer.gnome.org/pygtk/stable/class-pygtkgenerictreemodel.html))
+* [14.11. Le TreeModel générique](http://mcclinews.free.fr/python/pygtktutfr/sec-GenericTreeModel.html)
+
+https://stackoverflow.com/questions/11178743/gtk-3-0-how-to-use-a-gtk-treestore-with-custom-model-items
+
+#### VBox/HBox
+    GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+
+## Python 3
+### Dependencies (Debian)
 * python3-gi
 * python3-gi-cairo
+
+## Docs
+
+Using Sphinx: <https://gisellezeno.com/tutorials/sphinx-for-python-documentation.html>
