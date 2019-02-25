@@ -32,6 +32,7 @@ import re
 import urlparse
 import urllib2
 import uuid
+import logging
 import xml.etree.cElementTree as ET
 
 # keepnote imports
@@ -351,6 +352,7 @@ def attach_file(filename, node, index=None):
         raise e
 
 
+
 #=============================================================================
 # errors
 
@@ -557,9 +559,12 @@ BUILTIN_ATTR = ("nodeid", "parentids", "childrenids", "order")
 class NoteBookNode (object):
     """A general base class for all nodes in a NoteBook"""
 
+
     def __init__(self, title=u"", parent=None, notebook=None,
                  content_type=CONTENT_TYPE_DIR, conn=None,
                  attr=None):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.notebook.__init__.NoteBookNode.__init__()")
         self._notebook = notebook
         self._conn = conn if conn else self._notebook._conn
         self._parent = parent
@@ -614,6 +619,7 @@ class NoteBookNode (object):
 
     def get_attr(self, name, default=None):
         """Get the value of an attribute"""
+        #self.logger.debug("keepnote.notebook.__init__.NoteBookNode.get_attr(): %s " % str(default))
         return self._attr.get(name, default)
 
     def set_attr(self, name, value):
@@ -1146,6 +1152,7 @@ class NoteBookNode (object):
         if self._notebook:
             self._notebook.node_changed.resume(listener)
     '''
+
 
 
 class NodeAction (object):
@@ -1749,3 +1756,5 @@ class NoteBook (NoteBookNode):
         out = self.open_file(PREF_FILE, "w", "utf-8")
         out.write(u"<notebook></notebook>")
         out.close()
+
+
