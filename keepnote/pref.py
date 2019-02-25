@@ -91,7 +91,7 @@ def set_pref(pref, *args):
     else:
         keys = args[:-1]
         val = args[-1]
-        get_pref(pref, *keys[:-1])[keys[-1]] = val
+        get_pref(pref, *keys[:-1], define=True)[keys[-1]] = val
         return val
 
 
@@ -115,6 +115,7 @@ class Pref (object):
         type    -- ensure return value has this type,
                    otherwise return/set default
         """
+        #self.logger.debug("Pref.get: *args=%s, **kargs=%s" % (str(args), str(kargs)))
         return get_pref(self._data, *args, **kargs)
 
     def set(self, *args):
