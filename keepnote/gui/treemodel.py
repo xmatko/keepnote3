@@ -33,13 +33,18 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gtk
 # GenericTreeModel implementation for pygtk compatibility
 # from https://github.com/GNOME/pygobject/blob/master/pygtkcompat/generictreemodel.py
-#from keepnote.pygtkcompat import GenericTreeModel
-from pygtkcompat.generictreemodel import GenericTreeModel
+from keepnote.gui.generictreemodel import GenericTreeModel
+#from pygtkcompat.generictreemodel import GenericTreeModel
 
 def get_path_from_node(model, node, node_col):
     """
     Determine the path of a NoteBookNode 'node' in a Gtk.TreeModel 'model'
     """
+    logger = logging.getLogger('keepnote')
+    logger.debug("keepnote.gui.treemodel.get_path_from_node()")
+    print("model", model)
+    print("node", node)
+    print("node_col", node_col)
 
     # NOTE: I must make no assumptions about the type of the model
     # I could change that if I make a wrapper around TreeSortModel
@@ -97,6 +102,10 @@ class TreeModelColumn (object):
 
 def iter_children(model, it):
     """Iterate through the children of a row (it)"""
+    logger = logging.getLogger('keepnote')
+    logger.debug("keepnote.gui.treemodel.iter_children()")
+    logger.debug("model", model)
+    logger.debug("it", it)
 
     node = model.iter_children(it)
     while node:
@@ -118,7 +127,7 @@ class BaseTreeModel (GenericTreeModel):
 
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__()")
-        #self.set_property("leak-references", False)
+        self.set_property("leak-references", False)
 
         self._notebook = None
         self._roots = []
@@ -132,6 +141,7 @@ class BaseTreeModel (GenericTreeModel):
         self.set_root_nodes(roots)
 
         # add default node column
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__() APPEND_COLUMN")
         self.append_column(TreeModelColumn("node", object,
                                            get=lambda node: node))
         self.set_node_column(self.get_column_by_name("node"))
@@ -182,6 +192,7 @@ class BaseTreeModel (GenericTreeModel):
         self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.add_column() name: %s" % str(name))
         col = self.get_column_by_name(name)
         if col is None:
+            self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.add_column() APPEND_COLUMN")
             col = TreeModelColumn(name, coltype, get=get)
             self.append_column(col)
         return col
@@ -339,19 +350,24 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_get_flags(self):
         """Returns the flags of this treemodel"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_flags()  [GenericTreeModel implementation")
         return Gtk.TreeModelFlags.ITERS_PERSIST
 
     def on_get_n_columns(self):
         """Returns the number of columns in a treemodel"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_n_columns()  [GenericTreeModel implementation")
         return len(self._columns)
 
     def on_get_column_type(self, index):
         """Returns the type of a column in the treemodel"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_column_type()  [GenericTreeModel implementation")
+        print("index", index)
         return self._columns[index].type
 
     def on_get_iter(self, path):
         """Returns the node of a path"""
-        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel._on_get_iter() path: %s" % str(path))
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_iter()  [GenericTreeModel implementation")
+        print("path", path)
         if path[0] >= len(self._roots):
             return None
 
@@ -359,7 +375,7 @@ class BaseTreeModel (GenericTreeModel):
 
         for i in path[1:]:
             if i >= len(node.get_children()):
-                print path
+                print("path", path)
                 raise ValueError()
             node = node.get_children()[i]
 
@@ -367,7 +383,8 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_get_path(self, rowref):
         """Returns the path of a rowref"""
-        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_path() rowref: %s" % str(rowref))
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_path()  [GenericTreeModel implementation")
+        print("rowref", rowref)
         if rowref is None:
             return ()
 
@@ -383,16 +400,21 @@ class BaseTreeModel (GenericTreeModel):
         #print("on_get_path: path", path)
         #print("on_get_path: reversed(path)", list(reversed(path)))
         #print("on_get_path: Gtk.TreePath.new_from_indices(path)", Gtk.TreePath.new_from_indices(list(reversed(path))).to_string())
-        print reversed(path)
+        #print reversed(path)
 
         return list(reversed(path))
 
     def on_get_value(self, rowref, column):
         """Returns a value from a row in the treemodel"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_get_value()  [GenericTreeModel implementation")
+        print("rowref", rowref)
+        print("column", column)
         return self.get_column(column).get_value(rowref)
 
     def on_iter_next(self, rowref):
         """Returns the next sibling of a rowref"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_iter_next()  [GenericTreeModel implementation")
+        print("rowref", rowref)
         parent = rowref.get_parent()
 
         if parent is None or rowref in self._root_set:
@@ -413,6 +435,8 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_children(self, parent):
         """Returns the first child of a treeiter"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_iter_children()  [GenericTreeModel implementation")
+        print("parent", parent)
         if parent is None:
             if len(self._roots) > 0:
                 return self._roots[0]
@@ -425,10 +449,14 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_has_child(self, rowref):
         """Returns True of treeiter has children"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_iter_has_child()  [GenericTreeModel implementation")
+        print("rowref", rowref)
         return self._nested and rowref.has_children()
 
     def on_iter_n_children(self, rowref):
         """Returns the number of children of a treeiter"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_iter_n_children()  [GenericTreeModel implementation")
+        print("rowref", rowref)
         if rowref is None:
             return len(self._roots)
         if not self._nested:
@@ -438,6 +466,9 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_nth_child(self, parent, n):
         """Returns the n'th child of a treeiter"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_iter_nth_child()  [GenericTreeModel implementation")
+        print("parent", parent)
+        print("n", n)
         if parent is None:
             if n >= len(self._roots):
                 return None
@@ -455,6 +486,8 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_parent(self, child):
         """Returns the parent of a treeiter"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.on_iter_parent()  [GenericTreeModel implementation")
+        print("child", child)
         if child in self._root_set:
             return None
         else:
@@ -481,6 +514,7 @@ class KeepNoteTreeModel (BaseTreeModel):
         BaseTreeModel.__init__(self, roots)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treemodel.KeepNoteTreeModel.__init__()")
+        print("roots", roots)
 
         self.fades = set()
 
