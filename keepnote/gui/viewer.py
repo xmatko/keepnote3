@@ -43,8 +43,18 @@ _ = keepnote.translate
 
 class Viewer (Gtk.Box):
 
+    __gsignals__ = {
+            'error': (GObject.SIGNAL_RUN_FIRST, None, (str, object)),
+            'status': (GObject.SIGNAL_RUN_LAST, None, (str, str)),
+            'history-changed': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+            'window-request': (GObject.SignalFlags.RUN_LAST, None, (str,)),
+            'modified': (GObject.SignalFlags.RUN_LAST, None, (bool,)),
+            'current-node': (GObject.SignalFlags.RUN_LAST, None, (object,))
+              }
+
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
-        GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        #GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.viewer.Viewer.__init__()")
         self._app = app
@@ -168,7 +178,7 @@ class Viewer (Gtk.Box):
         """ Overidable """
         pass
 
-
+'''
 GObject.type_register(Viewer)
 GObject.signal_new("error", Viewer, GObject.SignalFlags.RUN_LAST,
                    None, (str, object))
@@ -182,3 +192,5 @@ GObject.signal_new("modified", Viewer, GObject.SignalFlags.RUN_LAST,
                    None, (bool,))
 GObject.signal_new("current-node", Viewer, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
+'''
+
