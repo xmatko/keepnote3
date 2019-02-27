@@ -56,6 +56,7 @@ class TextEditor (KeepNoteEditor):
 
     def __init__(self, app):
         KeepNoteEditor.__init__(self, app)
+        self.logger.debug("keepnote.gui.editor_text.TextEditor.__init__()")
         self._app = app
         self._notebook = None
 
@@ -92,6 +93,8 @@ class TextEditor (KeepNoteEditor):
 
     def set_notebook(self, notebook):
         """Set notebook for editor"""
+        self.logger.debug("keepnote.gui.editor_text.TextEditor.set_notebook()")
+        print("notebook", notebook)
         # set new notebook
         self._notebook = notebook
 
@@ -143,6 +146,8 @@ class TextEditor (KeepNoteEditor):
 
     def view_nodes(self, nodes):
         """View a node(s) in the editor"""
+        self.logger.debug("keepnote.gui.editor_text.TextEditor.view_nodes()")
+        print("nodes", nodes)
 
         # editor cannot view multiple nodes at once
         # if asked to, it will view none
@@ -187,6 +192,7 @@ class TextEditor (KeepNoteEditor):
             self.emit("view-node", nodes[0])
 
     def _save_cursor(self):
+        self.logger.debug("keepnote.gui.editor_text.TextEditor._save_cursor()")
         if self._page is not None:
             it = self._textview.get_buffer().get_iter_at_mark(
                 self._textview.get_buffer().get_insert())
@@ -195,6 +201,7 @@ class TextEditor (KeepNoteEditor):
             x, y = self._textview.window_to_buffer_coords(
                 Gtk.TextWindowType.TEXT, 0, 0)
             it = self._textview.get_iter_at_location(x, y)
+            print("it", it)
             self._page_scrolls[self._page] = it[1].get_offset()
 
     def _load_cursor(self):
@@ -280,6 +287,9 @@ class TextEditor (KeepNoteEditor):
             try:
                 self._app.open_webpage(url)
             except KeepNoteError, e:
+                self.logger.debug("keepnote.gui.editor_text.TextEditor._on_visit_url() ERROR")
+                print("e", e)
+                print("e.msg", e.msg)
                 self.emit("error", e.msg, e)
 
 
