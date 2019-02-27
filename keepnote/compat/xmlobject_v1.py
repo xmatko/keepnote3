@@ -313,18 +313,18 @@ if __name__ == "__main__":
             Tag("external_apps", tags=[
                 TagMany("app",
                         iterfunc=lambda s: range(len(s.apps)),
-                        get=lambda (s,i), x: s.apps.append(x),
-                        set=lambda (s,i): s.apps[i])]),
+                        get=lambda s,i, x: s.apps.append(x),
+                        set=lambda s,i: s.apps[i])]),
             Tag("external_apps2", tags=[
                 TagMany("app",
                         iterfunc=lambda s: range(len(s.apps2)),
                         before=lambda s,i: s.apps2.append([None, None]),
                         tags=[Tag("name",
-                                  get=lambda (s,i),x: s.apps2[i].__setitem__(0, x),
-                                  set=lambda (s,i): s.apps2[i][0]),
+                                  get=lambda s,i,x: s.apps2[i].__setitem__(0, x),
+                                  set=lambda s,i: s.apps2[i][0]),
                               Tag("prog",
-                                  get=lambda (s,i),x: s.apps2[i].__setitem__(1,x),
-                                  set=lambda (s,i): s.apps2[i][1])
+                                  get=lambda s,i,x: s.apps2[i].__setitem__(1,x),
+                                  set=lambda s,i: s.apps2[i][1])
                         ])
             ]),
         ]))

@@ -101,8 +101,8 @@ class WaitDialog (object):
             # filter for messages we process
             messages = filter(lambda x: isinstance(x, tuple) and len(x) == 2,
                               self._task.get_messages())
-            texts = filter(lambda (a, b): a == "text", messages)
-            details = filter(lambda (a, b): a == "detail", messages)
+            texts = filter(lambda a, b: a == "text", messages)
+            details = filter(lambda a, b: a == "detail", messages)
 
             # update text
             if len(texts) > 0:

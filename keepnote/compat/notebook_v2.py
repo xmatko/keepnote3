@@ -999,9 +999,9 @@ g_notebook_pref_parser = xmlo.XmlObject(
         xmlo.Tag("quick_pick_icons", tags=[
             xmlo.TagMany("icon",
                 iterfunc=lambda s: range(len(s.quick_pick_icons)),
-                get=lambda (s,i),x:
+                get=lambda s,i,x:
                     s.quick_pick_icons.append(x),
-                set=lambda (s,i): s.quick_pick_icons[i])
+                set=lambda s,i: s.quick_pick_icons[i])
         ])
     ]))
 

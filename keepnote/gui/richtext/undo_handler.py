@@ -194,7 +194,7 @@ class TagAction (Action):
         # TODO: I can probably discard iter's.  Maybe make argument to
         # iter_buffer_contents
         self.contents = filter(
-            lambda (kind, it, param):
+            lambda kind, it, param:
             kind in ("begin", "end") and param == self.tag,
             buffer_contents_iter_to_offset(
                 iter_buffer_contents(self.textbuffer, start, end)))
