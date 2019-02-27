@@ -60,5 +60,7 @@ https://gist.github.com/andialbrecht/4463278)
 * python3-gi
 * python3-gi-cairo
 
+<http://python3porting.com/stdlib.html>
+
 # Documentation generator
 Using Sphinx: <https://gisellezeno.com/tutorials/sphinx-for-python-documentation.html>
