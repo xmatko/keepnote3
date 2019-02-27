@@ -74,10 +74,10 @@ import keepnote.xdg
 # these are imported here, so that py2exe can auto-discover them
 
 import base64
-import htmlentitydefs
+import html.entities
 from keepnote import tarfile
 import random
-import sgmllib
+#import sgmllib
 import string
 import xml.dom.minidom
 import xml.sax.saxutils
@@ -103,7 +103,7 @@ except ImportError:
 #=============================================================================
 # globals / constants
 
-PROGRAM_NAME = u"KeepNote3"
+PROGRAM_NAME = "KeepNote3"
 PROGRAM_VERSION_MAJOR = 3
 PROGRAM_VERSION_MINOR = 0
 PROGRAM_VERSION_RELEASE = 1
@@ -119,36 +119,36 @@ else:
     PROGRAM_VERSION_TEXT = "%d.%d" % (PROGRAM_VERSION_MAJOR,
                                       PROGRAM_VERSION_MINOR)
 
-WEBSITE = u"https://github.com/xmatko/keepnote3"
-WEBSITE_ORIGINAL = u"http://keepnote.org"
-LICENSE_NAME = u"GPL version 2"
-COPYRIGHT = u"Copyright Nicolas Matkowski 2019\nCopyright Matt Rasmussen 2011."
+WEBSITE = "https://github.com/xmatko/keepnote3"
+WEBSITE_ORIGINAL = "http://keepnote.org"
+LICENSE_NAME = "GPL version 2"
+COPYRIGHT = "Copyright Nicolas Matkowski 2019\nCopyright Matt Rasmussen 2011."
 TRANSLATOR_CREDITS = (
-    u"Chinese: hu dachuan <hdccn@sina.com>\n"
-    u"French: tb <thibaut.bethune@gmail.com>\n"
-    u"French: Sebastien KALT <skalt@throka.org>\n"
-    u"German: Jan Rimmek <jan.rimmek@mhinac.de>\n"
-    u"Japanese: Toshiharu Kudoh <toshi.kd2@gmail.com>\n"
-    u"Italian: Davide Melan <davide.melan@gmail.com>\n"
-    u"Polish: Bernard Baraniewski <raznaya2010(at)rambler(dot)ru>\n"
-    u"Russian: Hikiko Mori <hikikomori.dndz@gmail.com>\n"
-    u"Spanish: Klemens Hackel <click3d at linuxmail (dot) org>\n"
-    u"Slovak: Slavko <linux@slavino.sk>\n"
-    u"Swedish: Morgan Antonsson <morgan.antonsson@gmail.com>\n"
-    u"Turkish: Yuce Tekol <yucetekol@gmail.com>\n"
+    "Chinese: hu dachuan <hdccn@sina.com>\n"
+    "French: tb <thibaut.bethune@gmail.com>\n"
+    "French: Sebastien KALT <skalt@throka.org>\n"
+    "German: Jan Rimmek <jan.rimmek@mhinac.de>\n"
+    "Japanese: Toshiharu Kudoh <toshi.kd2@gmail.com>\n"
+    "Italian: Davide Melan <davide.melan@gmail.com>\n"
+    "Polish: Bernard Baraniewski <raznaya2010(at)rambler(dot)ru>\n"
+    "Russian: Hikiko Mori <hikikomori.dndz@gmail.com>\n"
+    "Spanish: Klemens Hackel <click3d at linuxmail (dot) org>\n"
+    "Slovak: Slavko <linux@slavino.sk>\n"
+    "Swedish: Morgan Antonsson <morgan.antonsson@gmail.com>\n"
+    "Turkish: Yuce Tekol <yucetekol@gmail.com>\n"
 )
 
 
-BASEDIR = os.path.dirname(unicode(__file__, FS_ENCODING))
+BASEDIR = os.path.dirname(str(__file__, FS_ENCODING))
 PLATFORM = None
 
-USER_PREF_DIR = u"keepnote"
-USER_PREF_FILE = u"keepnote.xml"
-USER_LOCK_FILE = u"lockfile"
-USER_ERROR_LOG = u"error-log.txt"
-USER_EXTENSIONS_DIR = u"extensions"
-USER_EXTENSIONS_DATA_DIR = u"extensions_data"
-PORTABLE_FILE = u"portable.txt"
+USER_PREF_DIR = "keepnote"
+USER_PREF_FILE = "keepnote.xml"
+USER_LOCK_FILE = "lockfile"
+USER_ERROR_LOG = "error-log.txt"
+USER_EXTENSIONS_DIR = "extensions"
+USER_EXTENSIONS_DATA_DIR = "extensions_data"
+PORTABLE_FILE = "portable.txt"
 
 
 #=============================================================================
@@ -157,7 +157,7 @@ PORTABLE_FILE = u"portable.txt"
 # TODO: cleanup, make get/set_basedir symmetrical
 
 def get_basedir():
-    return os.path.dirname(unicode(__file__, FS_ENCODING))
+    return os.path.dirname(str(__file__, FS_ENCODING))
 
 
 def set_basedir(basedir):
@@ -205,8 +205,8 @@ def ensure_unicode(text, encoding="utf8"):
         return None
 
     # make sure text is unicode
-    if not isinstance(text, unicode):
-        return unicode(text, encoding)
+    if not isinstance(text, str):
+        return str(text, encoding)
     return text
 
 
@@ -223,7 +223,7 @@ def unicode_gtk(text):
     """
     if text is None:
         return None
-    return unicode(text, "utf8")
+    return str(text, "utf8")
 
 
 def print_error_log_header(out=None):
@@ -301,7 +301,7 @@ def translate(message):
 
 def get_locale_dir():
     """Returns KeepNote's locale directory"""
-    return get_resource(u"rc", u"locale")
+    return get_resource("rc", "locale")
 
 
 _ = translate
@@ -313,7 +313,7 @@ _ = translate
 
 def get_home():
     """Returns user's HOME directory"""
-    home = ensure_unicode(os.getenv(u"HOME"), FS_ENCODING)
+    home = ensure_unicode(os.getenv("HOME"), FS_ENCODING)
     if home is None:
         raise EnvError("HOME environment variable must be specified")
     return home
@@ -361,7 +361,7 @@ def get_user_extensions_data_dir(pref_dir=None, home=None):
 
 def get_system_extensions_dir():
     """Returns system-wide extensions directory"""
-    return os.path.join(BASEDIR, u"extensions")
+    return os.path.join(BASEDIR, "extensions")
 
 
 def get_user_documents(home=None):
@@ -373,10 +373,10 @@ def get_user_documents(home=None):
         return home
 
     elif p == "windows":
-        return unicode(mswin.get_my_documents(), FS_ENCODING)
+        return str(mswin.get_my_documents(), FS_ENCODING)
 
     else:
-        return u""
+        return ""
 
 
 def get_user_pref_file(pref_dir=None, home=None):
@@ -547,43 +547,43 @@ class ExternalApp (object):
 
 
 DEFAULT_EXTERNAL_APPS = [
-    ExternalApp("file_launcher", "File Launcher", u""),
-    ExternalApp("web_browser", "Web Browser", u""),
-    ExternalApp("file_explorer", "File Explorer", u""),
-    ExternalApp("text_editor", "Text Editor", u""),
-    ExternalApp("image_editor", "Image Editor", u""),
-    ExternalApp("image_viewer", "Image Viewer", u""),
-    ExternalApp("screen_shot", "Screen Shot", u"")
+    ExternalApp("file_launcher", "File Launcher", ""),
+    ExternalApp("web_browser", "Web Browser", ""),
+    ExternalApp("file_explorer", "File Explorer", ""),
+    ExternalApp("text_editor", "Text Editor", ""),
+    ExternalApp("image_editor", "Image Editor", ""),
+    ExternalApp("image_viewer", "Image Viewer", ""),
+    ExternalApp("screen_shot", "Screen Shot", "")
 ]
 
 
 def get_external_app_defaults():
     if get_platform() == "windows":
         files = ensure_unicode(
-            os.environ.get(u"PROGRAMFILES", u"C:\\Program Files"), FS_ENCODING)
+            os.environ.get("PROGRAMFILES", "C:\\Program Files"), FS_ENCODING)
 
         return [
-            ExternalApp("file_launcher", "File Launcher", u"explorer.exe"),
+            ExternalApp("file_launcher", "File Launcher", "explorer.exe"),
             ExternalApp("web_browser", "Web Browser",
-                        files + u"\\Internet Explorer\\iexplore.exe"),
-            ExternalApp("file_explorer", "File Explorer", u"explorer.exe"),
+                        files + "\\Internet Explorer\\iexplore.exe"),
+            ExternalApp("file_explorer", "File Explorer", "explorer.exe"),
             ExternalApp("text_editor", "Text Editor",
-                        files + u"\\Windows NT\\Accessories\\wordpad.exe"),
-            ExternalApp("image_editor", "Image Editor", u"mspaint.exe"),
+                        files + "\\Windows NT\\Accessories\\wordpad.exe"),
+            ExternalApp("image_editor", "Image Editor", "mspaint.exe"),
             ExternalApp("image_viewer", "Image Viewer",
-                        files + u"\\Internet Explorer\\iexplore.exe"),
+                        files + "\\Internet Explorer\\iexplore.exe"),
             ExternalApp("screen_shot", "Screen Shot", "")
         ]
 
     elif get_platform() == "unix":
         return [
-            ExternalApp("file_launcher", "File Launcher", u"xdg-open"),
-            ExternalApp("web_browser", "Web Browser", u""),
-            ExternalApp("file_explorer", "File Explorer", u""),
-            ExternalApp("text_editor", "Text Editor", u""),
-            ExternalApp("image_editor", "Image Editor", u""),
-            ExternalApp("image_viewer", "Image Viewer", u"display"),
-            ExternalApp("screen_shot", "Screen Shot", u"import")
+            ExternalApp("file_launcher", "File Launcher", "xdg-open"),
+            ExternalApp("web_browser", "Web Browser", ""),
+            ExternalApp("file_explorer", "File Explorer", ""),
+            ExternalApp("text_editor", "Text Editor", ""),
+            ExternalApp("image_editor", "Image Editor", ""),
+            ExternalApp("image_viewer", "Image Viewer", "display"),
+            ExternalApp("screen_shot", "Screen Shot", "import")
         ]
     else:
         return DEFAULT_EXTERNAL_APPS
@@ -669,12 +669,12 @@ class KeepNotePreferences (Pref):
 
             out = safefile.open(get_user_pref_file(self._pref_dir), "w",
                                 codec="utf-8")
-            out.write(u'<?xml version="1.0" encoding="UTF-8"?>\n'
-                      u'<keepnote>\n'
-                      u'<pref>\n')
+            out.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                      '<keepnote>\n'
+                      '<pref>\n')
             plist.dump(self._data, out, indent=4, depth=4)
-            out.write(u'</pref>\n'
-                      u'</keepnote>\n')
+            out.write('</pref>\n'
+                      '</keepnote>\n')
 
             out.close()
 
@@ -1061,11 +1061,11 @@ class KeepNote (object):
             proc = subprocess.Popen(cmd)
         except OSError as e:
             raise KeepNoteError(
-                _(u"Error occurred while opening file with %s.\n\n"
-                  u"program: '%s'\n\n"
-                  u"file: '%s'\n\n"
-                  u"error: %s")
-                % (app.title, app.prog, filename, unicode(e)), e)
+                _("Error occurred while opening file with %s.\n\n"
+                  "program: '%s'\n\n"
+                  "file: '%s'\n\n"
+                  "error: %s")
+                % (app.title, app.prog, filename, str(e)), e)
 
         # wait for process to return
         # TODO: perform waiting in gtk loop
@@ -1114,7 +1114,7 @@ class KeepNote (object):
             # use win32api to take screenshot
             # create temp file
 
-            f, imgfile = tempfile.mkstemp(u".bmp", filename)
+            f, imgfile = tempfile.mkstemp(".bmp", filename)
             os.close(f)
             mswin.screenshot.take_screenshot(imgfile)
         else:
