@@ -24,6 +24,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+
 from .textbuffer_tools import \
     move_to_start_of_line, \
     move_to_end_of_line, \
@@ -292,7 +297,7 @@ class IndentHandler (object):
             it = pos.copy()
             it.forward_char()
             while True:
-                match = it.forward_search(BULLET_STR, Gtk.TextSearchFlags(0), par_end)
+                match = it.forward_search(BULLET_STR, Gtk.TextSearchFlags.TEXT_ONLY, par_end)
                 if not match:
                     it.backward_char()
                     pos, par_end = get_paragraph(it)

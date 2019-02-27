@@ -623,7 +623,7 @@ class RichTextView (Gtk.TextView):
                                                 int(event.x), int(event.y))
             it = self.get_iter_at_location(x, y)
 
-            if self.click_iter(it):
+            if self.click_iter(it[1]):
                 self.stop_emission("button-press-event")
 
     def click_iter(self, it=None):

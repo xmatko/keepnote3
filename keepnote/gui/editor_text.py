@@ -196,7 +196,7 @@ class TextEditor (KeepNoteEditor):
         if self._page is not None:
             it = self._textview.get_buffer().get_iter_at_mark(
                 self._textview.get_buffer().get_insert())
-            self._page_cursors[self._page] = it[1].get_offset()
+            self._page_cursors[self._page] = it.get_offset()
 
             x, y = self._textview.window_to_buffer_coords(
                 Gtk.TextWindowType.TEXT, 0, 0)
@@ -218,7 +218,7 @@ class TextEditor (KeepNoteEditor):
             it = buf.get_iter_at_offset(offset)
             mark = buf.create_mark(None, it, True)
             self._textview.scroll_to_mark(
-                mark, 0.49, use_align=True, xalign=0.0)
+                mark, 0.49, use_align=True, xalign=0.0, yalign=0.0)
             buf.delete_mark(mark)
 
     def save(self):

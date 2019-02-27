@@ -546,7 +546,6 @@ class RichTextFont (RichTextBaseFont):
 
     def set_font(self, attr, tags, current_tags, tag_table):
         # set basic font attr
-        RichTextBaseFont.set_font(self, attr, tags, current_tags, tag_table)
         self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextFont.set_font()")
         font = attr.font
 
