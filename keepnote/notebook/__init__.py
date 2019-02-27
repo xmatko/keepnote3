@@ -29,8 +29,8 @@ import mimetypes
 import os
 import sys
 import re
-import urlparse
-import urllib2
+import urllib.parse
+import urllib.request
 import uuid
 import logging
 import xml.etree.cElementTree as ET
@@ -682,7 +682,7 @@ class NoteBookNode (object):
 
         try:
             # attempt url parse
-            parts = urlparse.urlparse(filename)
+            parts = urllib.parse.urlparse(filename)
 
             if os.path.exists(filename) or parts[0] == "":
                 # perform local copy
@@ -691,7 +691,7 @@ class NoteBookNode (object):
             else:
                 # perform download
                 out = self.open_file(new_filename, "w")
-                infile = urllib2.urlopen(filename)
+                infile = urllib.request.urlopen(filename)
                 while True:
                     data = infile.read(1024*4)
                     if data == "":

@@ -28,10 +28,9 @@
 # python imports
 from collections import defaultdict
 import contextlib
-import httplib
+import http.client
 import json
 import urllib
-import urlparse
 
 # keepnote imports
 from keepnote import plist
@@ -109,12 +108,12 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._version = version
 
     def connect(self, url):
-        parts = urlparse.urlsplit(url)
+        parts = urllib.parse.urlsplit(url)
 
         self._netloc = parts.netloc
         self._prefix = parts.path + 'nodes/'
         self._notebook_prefix = parts.path
-        self._conn = httplib.HTTPConnection(self._netloc)
+        self._conn = http.client.HTTPConnection(self._netloc)
         self._title_cache.clear()
         #self._conn.set_debuglevel(1)
 
@@ -132,9 +131,9 @@ class NoteBookConnectionHttp (NoteBookConnection):
     def _request(self, action, url, body=None, headers={}):
         try:
             return self._conn.request(action, url, body, headers)
-        except httplib.ImproperConnectionState:
+        except http.client.ImproperConnectionState:
             # restart connection
-            self._conn = httplib.HTTPConnection(self._netloc)
+            self._conn = http.client.HTTPConnection(self._netloc)
             return self._request(action, url, body, headers)
 
     def load_data(self, stream):
@@ -163,9 +162,9 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request('POST', format_node_path(self._prefix, nodeid),
                       body_content)
         result = self._conn.getresponse()
-        if result.status == httplib.FORBIDDEN:
+        if result.status == http.client.FORBIDDEN:
             raise connlib.NodeExists()
-        elif result.status != httplib.OK:
+        elif result.status != http.client.OK:
             raise connlib.ConnectionError("unexpected error")
 
         self._title_cache.update_attr(attr)
@@ -174,7 +173,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
 
         self._request('GET', format_node_path(self._prefix, nodeid))
         result = self._conn.getresponse()
-        if result.status == httplib.OK:
+        if result.status == http.client.OK:
             try:
                 attr = self.load_data(result)
                 self._title_cache.update_attr(attr)
@@ -191,9 +190,9 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request('PUT', format_node_path(self._prefix, nodeid),
                       body_content)
         result = self._conn.getresponse()
-        if result.status == httplib.NOT_FOUND:
+        if result.status == http.client.NOT_FOUND:
             raise connlib.UnknownNode()
-        elif result.status != httplib.OK:
+        elif result.status != http.client.OK:
             raise connlib.ConnectionError()
         self._title_cache.update_attr(attr)
 
@@ -201,9 +200,9 @@ class NoteBookConnectionHttp (NoteBookConnection):
 
         self._request('DELETE', format_node_path(self._prefix, nodeid))
         result = self._conn.getresponse()
-        if result.status == httplib.NOT_FOUND:
+        if result.status == http.client.NOT_FOUND:
             raise connlib.UnknownNode()
-        elif result.status != httplib.OK:
+        elif result.status != http.client.OK:
             raise connlib.ConnectionError()
         self._title_cache.remove(nodeid)
 
@@ -213,7 +212,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
         # HEAD nodeid/filename
         self._request('HEAD', format_node_path(self._prefix, nodeid))
         result = self._conn.getresponse()
-        return result.status == httplib.OK
+        return result.status == http.client.OK
 
     def get_rootid(self):
         """Returns nodeid of notebook root node"""
@@ -221,9 +220,9 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request('GET', format_node_path(self._prefix))
         result = self._conn.getresponse()
 
-        if result.status == httplib.NOT_FOUND:
+        if result.status == http.client.NOT_FOUND:
             raise connlib.UnknownNode()
-        if result.status != httplib.OK:
+        if result.status != http.client.OK:
             raise connlib.ConnectionError()
 
         # Currently only the first rootid is returned.
@@ -268,7 +267,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
             self._request(
                 'GET', format_node_path(self._prefix, nodeid, filename))
             result = self._conn.getresponse()
-            if result.status == httplib.OK:
+            if result.status == http.client.OK:
                 stream = contextlib.closing(result)
                 stream.read = result.read
                 stream.close = result.close
@@ -310,7 +309,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request(
             'DELETE', format_node_path(self._prefix, nodeid, filename))
         result = self._conn.getresponse()
-        if result.status != httplib.OK:
+        if result.status != http.client.OK:
             raise connlib.FileError()
 
     def create_dir(self, nodeid, filename):
@@ -323,7 +322,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request(
             'PUT', format_node_path(self._prefix, nodeid, filename))
         result = self._conn.getresponse()
-        if result.status != httplib.OK:
+        if result.status != http.client.OK:
             raise connlib.FileError()
 
     def list_dir(self, nodeid, filename="/"):
@@ -338,7 +337,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request(
             'GET', format_node_path(self._prefix, nodeid, filename))
         result = self._conn.getresponse()
-        if result.status == httplib.OK:
+        if result.status == http.client.OK:
             try:
                 if self._version == 1:
                     return self.load_data(result)
@@ -357,7 +356,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
         self._request(
             'HEAD', format_node_path(self._prefix, nodeid, filename))
         result = self._conn.getresponse()
-        return result.status == httplib.OK
+        return result.status == http.client.OK
 
     #---------------------------------
     # indexing/querying
@@ -370,7 +369,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
             'POST', format_node_path(self._notebook_prefix) + "?index",
             body_content)
         result = self._conn.getresponse()
-        if result.status == httplib.OK:
+        if result.status == http.client.OK:
             try:
                 return self.load_data(result)
             except Exception as e:

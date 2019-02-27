@@ -86,9 +86,9 @@ import xml.sax.saxutils
 GETTEXT_DOMAIN
 base64
 get_unique_filename_list
-htmlentitydefs
+html.entities
 random
-sgmllib
+#sgmllib
 string
 tarfile
 xml

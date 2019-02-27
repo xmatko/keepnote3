@@ -27,7 +27,7 @@
 # python imports
 import os
 import tempfile
-import urllib2
+import urllib.request
 import logging
 
 from itertools import chain
@@ -99,8 +99,8 @@ def download_file(url, filename):
 
     try:
         # open url and download image
-        opener = urllib2.build_opener()
-        request = urllib2.Request(url)
+        opener = urllib.request.build_opener()
+        request = urllib.request.Request(url)
         request.add_header('User-Agent', USER_AGENT)
         infile = opener.open(request)
 

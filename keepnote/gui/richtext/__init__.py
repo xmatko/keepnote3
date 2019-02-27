@@ -30,8 +30,8 @@ from itertools import chain
 import os
 import re
 import random
-import StringIO
-import urlparse
+from io import StringIO
+import urllib.parse
 import uuid
 import logging
 from xml.sax.saxutils import escape
@@ -905,7 +905,7 @@ class RichTextView (Gtk.TextView):
 
         # setup variables
         if url is not None:
-            parts = urlparse.urlsplit(url)
+            parts = urllib.parse.urlsplit(url)
             url = url
             if parts.hostname:
                 host = parts.hostname
@@ -1038,7 +1038,7 @@ class RichTextView (Gtk.TextView):
 
         elif "text/html" in selection_data.target:
             # set html
-            stream = StringIO.StringIO()
+            stream = StringIO()
             self._html_buffer.set_output(stream)
             self._html_buffer.write(contents,
                                     self._textbuffer.tag_table,
@@ -1214,7 +1214,7 @@ class RichTextView (Gtk.TextView):
 
     def parse_html(self, html):
         contents = list(self._html_buffer.read(
-            StringIO.StringIO(html), partial=True, ignore_errors=True))
+            StringIO(html), partial=True, ignore_errors=True))
 
         # scan contents
         for kind, pos, param in contents:
