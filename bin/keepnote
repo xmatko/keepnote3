@@ -211,7 +211,8 @@ def create_logger(logfilename, loglevel):
     logger.propagate = 0
 
     # create formatter
-    formatter = logging.Formatter('%(asctime)s - %(threadName)-12s - %(levelname)-8s : %(message)s')
+    #formatter = logging.Formatter('%(asctime)s - %(threadName)-12s - %(levelname)-8s : %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(levelname)-8s : %(message)s')
 
     # create file handler (fh)
     fh = logging.FileHandler(logfilename)
