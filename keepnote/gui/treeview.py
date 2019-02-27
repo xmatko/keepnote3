@@ -68,6 +68,14 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         self._setup_columns()
         self.set_sensitive(False)
 
+    def load_preferences(self, app_pref, first_open=False):
+        """Load application preferences"""
+        pass
+
+    def save_preferences(self, app_pref):
+        """Save application preferences"""
+        pass
+
     def _setup_columns(self):
 
         self.logger.debug("keepnote.gui.treeview.TreeView._setup_columns()")
@@ -140,6 +148,10 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             if root.get_attr("expanded", True):
                 #self.expand_to_path((0,))
                 self.expand_to_path(Gtk.TreePath.new_from_indices((0,)))
+
+    def save(self):
+        """Fake function"""
+        pass
 
     def edit_node(self, node):
         path = treemodel.get_path_from_node(

@@ -99,7 +99,6 @@ class TreeModelColumn (object):
         self.attr = attr
         self.get_value = get
 
-
 def iter_children(model, it):
     """Iterate through the children of a row (it)"""
     logger = logging.getLogger('keepnote')
@@ -514,7 +513,6 @@ class KeepNoteTreeModel (BaseTreeModel):
         BaseTreeModel.__init__(self, roots)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treemodel.KeepNoteTreeModel.__init__()")
-        print("roots", roots)
 
         self.fades = set()
 
