@@ -72,7 +72,7 @@ def on_browse(parent, title, filename, entry,
 class Section (object):
     """A Section in the Options Dialog"""
 
-    def __init__(self, key, dialog, app, label=u"", icon=None):
+    def __init__(self, key, dialog, app, label="", icon=None):
         self.key = key
         self.dialog = dialog
         self.label = label
@@ -104,7 +104,7 @@ class Section (object):
 class GeneralSection (Section):
 
     def __init__(self, key, dialog, app,
-                 label=u"", icon="keepnote-16x16.png"):
+                 label="", icon="keepnote-16x16.png"):
         Section.__init__(self, key, dialog, app, label, icon)
 
         self.notebook = None
@@ -250,7 +250,7 @@ class GeneralSection (Section):
 
 class LookAndFeelSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon="lookandfeel.png"):
+    def __init__(self, key, dialog, app, label="", icon="lookandfeel.png"):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
@@ -333,7 +333,7 @@ class LookAndFeelSection (Section):
 
 class LanguageSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon=None):
+    def __init__(self, key, dialog, app, label="", icon=None):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
@@ -382,7 +382,7 @@ class LanguageSection (Section):
 
 class HelperAppsSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon=None):
+    def __init__(self, key, dialog, app, label="", icon=None):
         Section.__init__(self, key, dialog, app, label, icon)
 
         self.entries = {}
@@ -462,7 +462,7 @@ class HelperAppsSection (Section):
 
 class DatesSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon="time.png"):
+    def __init__(self, key, dialog, app, label="", icon="time.png"):
         Section.__init__(self, key, dialog, app, label, icon)
 
         self.date_xml = Gtk.Builder()
@@ -484,7 +484,7 @@ class DatesSection (Section):
 
 class EditorSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon=None):
+    def __init__(self, key, dialog, app, label="", icon=None):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
@@ -522,7 +522,7 @@ class EditorSection (Section):
 
 class AllNoteBooksSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon="folder.png"):
+    def __init__(self, key, dialog, app, label="", icon="folder.png"):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
@@ -538,7 +538,7 @@ class AllNoteBooksSection (Section):
 
 class NoteBookSection (Section):
 
-    def __init__(self, key, dialog, app, notebook, label=u"",
+    def __init__(self, key, dialog, app, notebook, label="",
                  icon="folder.png"):
         Section.__init__(self, key, dialog, app, label, icon)
         self.entries = {}
@@ -584,7 +584,7 @@ class NoteBookSection (Section):
 
             self.notebook_index_dir.set_text(
                 self.notebook.pref.get("index_dir",
-                                       default=u"", type=basestring))
+                                       default="", type=str))
 
     def save_options(self, app):
         if self.notebook is not None:
@@ -601,7 +601,7 @@ class NoteBookSection (Section):
 
 class ExtensionsSection (Section):
 
-    def __init__(self, key, dialog, app, label=u"", icon=None):
+    def __init__(self, key, dialog, app, label="", icon=None):
         Section.__init__(self, key, dialog, app, label, icon)
 
         self.app = app
@@ -984,7 +984,7 @@ class ApplicationOptionsDialog (object):
         if icon is None:
             icon = "note.png"
 
-        if isinstance(icon, basestring):
+        if isinstance(icon, str):
             pixbuf = keepnote.gui.get_resource_pixbuf(icon, size=size)
         else:
             pixbuf = icon
