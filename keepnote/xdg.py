@@ -45,7 +45,7 @@ g_config_dirs = None
 g_data_dirs = None
 
 
-class XdgError (StandardError):
+class XdgError (Exception):
     pass
 
 

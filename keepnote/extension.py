@@ -42,7 +42,7 @@ EXTENSION_EXT = u".kne"  # filename extension for KeepNote Extensions
 INFO_FILE = u"info.xml"
 
 
-class DependencyError (StandardError):
+class DependencyError (Exception):
     """Exception for dependency error"""
     def __init__(self, ext, dep):
         self.ext = ext

@@ -219,14 +219,14 @@ def replace_vars(text, values):
 #=============================================================================
 
 
-class RichTextError (StandardError):
+class RichTextError (Exception):
     """Class for errors with RichText"""
 
     # NOTE: this is only used for saving and loading in textview
     # should this stay here?
 
     def __init__(self, msg, error):
-        StandardError.__init__(self, msg)
+        Exception.__init__(self, msg)
         self.msg = msg
         self.error = error
 

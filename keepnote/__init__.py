@@ -485,11 +485,11 @@ def log_message(message, out=None):
 # Exceptions
 
 
-class EnvError (StandardError):
+class EnvError (Exception):
     """Exception that occurs when environment variables are ill-defined"""
 
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
 
@@ -500,9 +500,9 @@ class EnvError (StandardError):
             return self.msg
 
 
-class KeepNoteError (StandardError):
+class KeepNoteError (Exception):
     def __init__(self, msg, error=None):
-        StandardError.__init__(self, msg)
+        Exception.__init__(self, msg)
         self.msg = msg
         self.error = error
 
@@ -516,11 +516,11 @@ class KeepNoteError (StandardError):
         return self.msg
 
 
-class KeepNotePreferenceError (StandardError):
+class KeepNotePreferenceError (Exception):
     """Exception that occurs when manipulating preferences"""
 
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
 

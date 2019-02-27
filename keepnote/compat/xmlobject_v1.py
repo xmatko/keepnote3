@@ -46,7 +46,7 @@ ELEMENT_NODE = xml.dom.Node.ELEMENT_NODE
 
 
 
-class XmlError (StandardError):
+class XmlError (Exception):
     """Error for parsing XML"""
     pass
 

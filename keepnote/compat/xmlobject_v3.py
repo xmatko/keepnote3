@@ -41,7 +41,7 @@ from keepnote import safefile
 
 
 
-class XmlError (StandardError):
+class XmlError (Exception):
     """Error for parsing XML"""
     pass
 

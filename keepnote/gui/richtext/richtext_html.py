@@ -390,7 +390,7 @@ class LiHtmlTagDom (HtmlTagDom):
         self.kind = kind
 
 
-class HtmlError (StandardError):
+class HtmlError (Exception):
     """Error for HTML parsing"""
     pass
 
