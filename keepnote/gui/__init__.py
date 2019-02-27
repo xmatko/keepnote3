@@ -512,7 +512,10 @@ class KeepNote (keepnote.KeepNote):
 
     def open_notebook(self, filename, window=None, task=None):
         """Open notebook"""
+        '''
+        # Remove update / compat functionnality
         from keepnote.gui import dialog_update_notebook
+        '''
 
         # HACK
         if isinstance(self._conns.get(filename),
@@ -525,6 +528,8 @@ class KeepNote (keepnote.KeepNote):
                            e, sys.exc_info()[2])
                 return None
 
+            '''
+            # Remove update / compat functionnality
             if version < notebooklib.NOTEBOOK_FORMAT_VERSION:
                 dialog = dialog_update_notebook.UpdateNoteBookDialog(
                     self, window)
@@ -532,6 +537,7 @@ class KeepNote (keepnote.KeepNote):
                     self.error(_("Cannot open notebook (version too old)"))
                     Gdk.threads_leave()
                     return None
+            '''
 
         # load notebook in background
         def update(task):

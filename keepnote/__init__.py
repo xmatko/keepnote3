@@ -593,6 +593,7 @@ class KeepNotePreferences (Pref):
     """Preference data structure for the KeepNote application"""
 
     def __init__(self, pref_dir=None, home=None):
+        self.logger = logging.getLogger('keepnote')
         Pref.__init__(self)
         if pref_dir is None:
             self._pref_dir = get_user_pref_dir(home)
@@ -639,10 +640,14 @@ class KeepNotePreferences (Pref):
                 p = root.find("pref")
                 if p is None:
                     # convert from old preference version
+                    self.logger.warning("keepnote.__init__.KeepNotePreferences.read(): Reading old pref not implemented !")
+                    '''
                     import keepnote.compat.pref as old
                     old_pref = old.KeepNotePreferences()
                     old_pref.read(get_user_pref_file(self._pref_dir))
                     data = old_pref._get_data()
+                    '''
+                    data = None
                 else:
                     # get data object from xml
                     d = p.find("dict")

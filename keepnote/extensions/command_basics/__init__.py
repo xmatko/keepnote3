@@ -36,7 +36,8 @@ import gobject
 import keepnote
 from keepnote import AppCommand
 import keepnote.notebook
-import keepnote.notebook.update
+# Remove update / compat functionnality
+#import keepnote.notebook.update
 import keepnote.extension
 import keepnote.gui.extension
 
@@ -86,9 +87,12 @@ class Extension (keepnote.gui.extension.Extension):
             AppCommand("search-titles", self.on_search_titles,
                        metavar="TEXT",
                        help="search notes by title"),
+            '''
+            # Remove update / compat functionnality
             AppCommand("upgrade", self.on_upgrade_notebook,
                        metavar="[v VERSION] NOTEBOOK...",
                        help="upgrade a notebook"),
+            '''
 
             # misc
             AppCommand("screenshot", self.on_screenshot,
@@ -306,6 +310,8 @@ class Extension (keepnote.gui.extension.Extension):
         return window, notebook
 
 
+    '''
+    # Remove update / compat functionnality
     def on_upgrade_notebook(self, app, args):
 
         version = keepnote.notebook.NOTEBOOK_FORMAT_VERSION
@@ -327,3 +333,4 @@ class Extension (keepnote.gui.extension.Extension):
                                  (version, filename))
             keepnote.notebook.update.update_notebook(filename, version, 
                                                      verify=True)
+    '''

@@ -105,7 +105,6 @@ else:
 from keepnote.commands import get_command_executor, CommandExecutor
 from keepnote.teefile import TeeFileStream
 import keepnote.gui
-import keepnote.compat.pref
 _ = keepnote.translate
 
 keepnote.set_basedir(basedir)
@@ -427,9 +426,7 @@ def main(argv):
     options, args = parse_argv(argv)
     
     # init preference dir
-    keepnote.compat.pref.check_old_user_pref_dir()
-    if not os.path.exists(keepnote.get_user_pref_dir()):
-        keepnote.init_user_pref_dir()
+    keepnote.init_user_pref_dir()
 
     # start error log
     start_error_log(options.show_errors)
