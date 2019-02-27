@@ -33,7 +33,7 @@ import time
 # import sqlite
 try:
     import pysqlite2.dbapi2 as sqlite
-except Exception, e:
+except Exception as e:
     import sqlite3 as sqlite
 #sqlite.enable_shared_cache(True)
 #sqlite.threadsafety = 0
@@ -87,7 +87,7 @@ class NoteBookIndex (NodeIndex):
             #self.con.execute(u"PRAGMA read_uncommitted = true;")
 
             self.init_index(auto_clear=auto_clear)
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -114,7 +114,7 @@ class NoteBookIndex (NodeIndex):
                 self.con.commit()
             except:
                 self.open()
-        except Exception, e:
+        except Exception as e:
             self._on_corrupt(e, sys.exc_info()[2])
 
     def clear(self):
@@ -181,7 +181,7 @@ class NoteBookIndex (NodeIndex):
             #if not self._need_index:
             #    self._need_index = self.check_index()
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
 
             keepnote.log_message("reinitializing index '%s'\n" %
@@ -321,7 +321,7 @@ class NoteBookIndex (NodeIndex):
             if commit:
                 self.con.commit()
 
-        except Exception, e:
+        except Exception as e:
             keepnote.log_error("error index node %s '%s'" %
                                (nodeid, attr.get("title", "")))
             self._on_corrupt(e, sys.exc_info()[2])
@@ -342,7 +342,7 @@ class NoteBookIndex (NodeIndex):
             if commit:
                 self.con.commit()
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
 
     #-------------------------
@@ -384,7 +384,7 @@ class NoteBookIndex (NodeIndex):
             path.reverse()
             return path
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -425,7 +425,7 @@ class NoteBookIndex (NodeIndex):
             path.reverse()
             return path
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -449,7 +449,7 @@ class NoteBookIndex (NodeIndex):
                     "basename": row[2],
                     "mtime": row[3]}
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -473,7 +473,7 @@ class NoteBookIndex (NodeIndex):
                                 WHERE parentid=?""", (nodeid,))
             return list(self.cur.fetchall())
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -486,7 +486,7 @@ class NoteBookIndex (NodeIndex):
                                 WHERE parentid=?""", (nodeid,))
             return self.cur.fetchone() is not None
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -495,7 +495,7 @@ class NoteBookIndex (NodeIndex):
 
         try:
             return self.search_node_titles(self.cur, title)
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 

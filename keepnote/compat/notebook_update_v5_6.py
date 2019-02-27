@@ -160,7 +160,7 @@ def convert_node_attr(filename, filename2, attr_defs=g_attr_defs_lookup):
         attr = read_attr_v5(filename, attr_defs)
         attr["version"] = 6
         write_attr_v6(filename2, attr)
-    except Exception, e:
+    except Exception as e:
         keepnote.log_error("cannot convert %s: %s\n" % (filename, str(e)),
                            sys.exc_info()[2])
 

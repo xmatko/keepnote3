@@ -335,10 +335,10 @@ class RichTextEditor (KeepNoteEditor):
                         self._page.get_page_file(), "r", "utf-8"))
                 self._load_cursor()
 
-            except RichTextError, e:
+            except RichTextError as e:
                 self.clear_view()
                 self.emit("error", e.msg, e)
-            except Exception, e:
+            except Exception as e:
                 self.clear_view()
                 self.emit("error", "Unknown error", e)
 
@@ -402,10 +402,10 @@ class RichTextEditor (KeepNoteEditor):
                 self._page.set_attr_timestamp("modified_time")
                 self._page.save()
 
-            except RichTextError, e:
+            except RichTextError as e:
                 self.emit("error", e.msg, e)
 
-            except NoteBookError, e:
+            except NoteBookError as e:
                 self.emit("error", e.msg, e)
 
     def save_needed(self):
@@ -474,7 +474,7 @@ class RichTextEditor (KeepNoteEditor):
         else:
             try:
                 self._app.open_webpage(url)
-            except KeepNoteError, e:
+            except KeepNoteError as e:
                 self.emit("error", e.msg, e)
 
     def _on_make_link(self, editor):
@@ -598,7 +598,7 @@ class RichTextEditor (KeepNoteEditor):
             # insert image
             self.insert_image(imgfile, "screenshot.png")
 
-        except Exception, e:
+        except Exception as e:
             # catch exceptions for screenshot program
             self.emit("window-request", "restore")
             self.emit("error",
@@ -609,7 +609,7 @@ class RichTextEditor (KeepNoteEditor):
         try:
             if os.path.exists(imgfile):
                 os.remove(imgfile)
-        except OSError, e:
+        except OSError as e:
             self.emit("error",
                       _("%s was unable to remove temp file for screenshot") %
                       keepnote.PROGRAM_NAME)
@@ -676,7 +676,7 @@ class RichTextEditor (KeepNoteEditor):
 
             try:
                 self.insert_image(filename, imgname2)
-            except Exception, e:
+            except Exception as e:
                 # TODO: make exception more specific
                 self.emit("error",
                           _("Could not insert image '%s'") % filename, e)

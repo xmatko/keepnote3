@@ -928,7 +928,7 @@ class HtmlBuffer (HTMLParser):
             self.feed(infile.read())
             self.close()
 
-        except Exception, e:
+        except Exception as e:
             log_error(e, sys.exc_info()[2])
             # reraise error if not ignored
             self.close()

@@ -67,7 +67,7 @@ def get_lock_file(lockfile):
             acquire = True
             break
 
-        except OSError, e:
+        except OSError as e:
             if e.errno != errno.EEXIST:
                 # unknown error, re-raise
                 raise
@@ -79,7 +79,7 @@ def get_lock_file(lockfile):
                 acquire = False
                 break
 
-            except OSError, e:
+            except OSError as e:
                 if e.errno != errno.ENOENT:
                     # unknown error, re-raise
                     raise
@@ -130,7 +130,7 @@ def open_socket(port=None, start_port=4000, end_port=10000, tries=10):
             s.bind(("localhost", port2))
             s.listen(1)
             break
-        except socket.error, e:
+        except socket.error as e:
             print >>sys.stderr, "could not open socket:", str(e)
             port2 = None
 
@@ -201,7 +201,7 @@ def process_connection(conn, addr, passwd, execfunc):
         conn.shutdown(socket.SHUT_RDWR)
         conn.close()
 
-    except socket.error, e:
+    except socket.error as e:
         # socket error, close connection
         print >>sys.stderr, e, ": error with connection"
         conn.close()

@@ -243,7 +243,7 @@ class BaseNoteBookHttpServer(object):
 
             return self.json_response(attr)
 
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'node not found ' + str(e))
 
@@ -261,7 +261,7 @@ class BaseNoteBookHttpServer(object):
 
         try:
             self.conn.create_node(nodeid, attr)
-        except connlib.NodeExists, e:
+        except connlib.NodeExists as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'node already exists.' + str(e))
 
@@ -277,7 +277,7 @@ class BaseNoteBookHttpServer(object):
 
         try:
             self.conn.update_node(nodeid, attr)
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'node not found ' + str(e))
 
@@ -288,7 +288,7 @@ class BaseNoteBookHttpServer(object):
         nodeid = urllib.unquote(nodeid)
         try:
             self.conn.delete_node(nodeid)
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'node not found ' + str(e))
 
@@ -328,10 +328,10 @@ class BaseNoteBookHttpServer(object):
                     # TODO: return stream.
                     return stream.read()
 
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'cannot find node ' + str(e))
-        except connlib.FileError, e:
+        except connlib.FileError as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'Could not read file ' + str(e))
 
@@ -363,10 +363,10 @@ class BaseNoteBookHttpServer(object):
                 stream.write(request.body.read())
                 stream.close()
 
-            except connlib.UnknownNode, e:
+            except connlib.UnknownNode as e:
                 keepnote.log_error()
                 abort(NOT_FOUND, 'cannot find node ' + str(e))
-            except connlib.FileError, e:
+            except connlib.FileError as e:
                 keepnote.log_error()
                 abort(FORBIDDEN, 'Could not write file ' + str(e))
 
@@ -382,10 +382,10 @@ class BaseNoteBookHttpServer(object):
         try:
             # delete file/dir
             self.conn.delete_file(nodeid, filename)
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'cannot find node ' + str(e))
-        except connlib.FileError, e:
+        except connlib.FileError as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'cannot delete file ' + str(e))
 
@@ -425,7 +425,7 @@ class NoteBookHttpServer(BaseNoteBookHttpServer):
 
         try:
             self.conn.create_node(nodeid, attr)
-        except connlib.NodeExists, e:
+        except connlib.NodeExists as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'node already exists.' + str(e))
 

@@ -755,7 +755,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         # set new attr and catch errors
         try:
             node.set_attr(attr, new_val)
-        except NoteBookError, e:
+        except NoteBookError as e:
             self.emit("error", e.msg, e)
 
         # reselect node
@@ -1233,7 +1233,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 index = new_parent.get_children().index(source_node)
                 # NOTE: we update index in case moving source_node changes
                 # the drop path
-            except NoteBookError, e:
+            except NoteBookError as e:
                 # TODO: think about whether finish should always be false
                 drag_context.finish(False, False, eventtime)
                 self.emit("error", e.msg, e)

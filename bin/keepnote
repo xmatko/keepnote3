@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 #
 #  KeepNote - note-taking and organization
@@ -20,14 +20,13 @@
 #
 
 # python imports
-import exceptions
 import sys
 import os
 from os.path import basename, dirname, realpath, join, isdir
 import logging, inspect
 import time
 import optparse
-import thread
+#import thread
 import threading
 import traceback
 
@@ -408,15 +407,15 @@ def list_commands(app):
     commands = app.get_commands()
     commands.sort(key=lambda x: x.name)
 
-    print
-    print "available commands:"
+    print("")
+    print("available commands:")
     for command in commands:
-        print " " + command.name,
+        print(" " + command.name),
         if command.metavar:
-            print " " + command.metavar,            
+            print(" " + command.metavar)
         if command.help:
-            print " -- " + command.help,
-        print
+            print(" -- " + command.help)
+        print("")
 
 def main(argv):
     """Main execution"""    
@@ -469,10 +468,10 @@ def main(argv):
 # catch any exceptions that occur
 try:
     main(sys.argv)
-except exceptions.SystemExit, e:
+except exceptions.SystemExit as e:
     # sys.exit() was called
     pass
-except Exception, e:
+except Exception as e:
     traceback.print_exc()
     sys.stderr.flush()
 

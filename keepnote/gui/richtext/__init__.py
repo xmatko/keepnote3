@@ -282,7 +282,7 @@ class RichTextIO (object):
                                     textbuffer.tag_table,
                                     title=title)
             out.close()
-        except IOError, e:
+        except IOError as e:
             raise RichTextError("Could not save '%s'." % filename, e)
 
         textbuffer.set_modified(False)
@@ -324,7 +324,7 @@ class RichTextIO (object):
             textbuffer.place_cursor(textbuffer.get_start_iter())
             self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT 7")
 
-        except (HtmlError, IOError, Exception), e:
+        except (HtmlError, IOError, Exception) as e:
             self.logger.debug("keepnote.gui.richtext.__init__.RichTextIO.load()    POINT EXCEPT")
             err = e
             textbuffer.clear()

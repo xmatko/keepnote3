@@ -328,7 +328,7 @@ def read_attr(filename, set_extra=True):
     """
     try:
         tree = ET.ElementTree(file=filename)
-    except Exception, e:
+    except Exception as e:
         raise ConnectionError(
             _(u"Error reading meta data file '%s'" % filename), e)
 
@@ -643,7 +643,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
                              (filename, new_filename))
         try:
             os.rename(filename, new_filename)
-        except OSError, e:
+        except OSError as e:
             raise ConnectionError(u"unable to store lost file '%s'"
                                   % filename, e)
 
@@ -720,7 +720,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             os.makedirs(path)
             self._write_attr(attr_file, nodeid, attr)
 
-        except OSError, e:
+        except OSError as e:
             raise ConnectionError(_("Cannot create node"), e)
 
         # Finish initializing root.
@@ -840,7 +840,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
 
         try:
             os.rename(path, new_path)
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _(u"Cannot rename '%s' to '%s'" % (path, new_path)), e)
 
@@ -867,7 +867,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
 
         try:
             shutil.rmtree(path)
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _(u"Do not have permission to delete"), e)
 
@@ -899,7 +899,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
 
         try:
             files = os.listdir(path)
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _(u"Do not have permission to read folder contents: %s")
                 % path, e)
@@ -909,7 +909,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             if os.path.exists(get_node_meta_file(path2)):
                 try:
                     yield self._read_node(nodeid, path2, _full=_full)
-                except ConnectionError, e:
+                except ConnectionError as e:
                     keepnote.log_error(u"error reading %s" % path2)
                     continue
                     # TODO: raise warning, not all children read
@@ -1027,7 +1027,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
 
         try:
             write_attr(filename, nodeid, self._attr_mask)
-        except Exception, e:
+        except Exception as e:
             raise
             raise ConnectionError(
                 _("Cannot write meta data" + " " + filename + ":" + str(e)), e)

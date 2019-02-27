@@ -420,7 +420,7 @@ def init_user_pref_dir(pref_dir=None, home=None):
 
     # make directory
     if not os.path.exists(pref_dir):
-        os.makedirs(pref_dir, 0700)
+        os.makedirs(pref_dir, 0o700)
 
     # init empty pref file
     pref_file = get_user_pref_file(pref_dir)
@@ -623,7 +623,7 @@ class KeepNotePreferences (Pref):
             try:
                 init_user_pref_dir(self._pref_dir)
                 self.write()
-            except Exception, e:
+            except Exception as e:
                 raise KeepNotePreferenceError(
                     "Cannot initialize preferences", e)
 
@@ -654,7 +654,7 @@ class KeepNotePreferences (Pref):
                 # set data
                 self._data.clear()
                 self._data.update(data)
-        except Exception, e:
+        except Exception as e:
             raise KeepNotePreferenceError("Cannot read preferences", e)
 
         # notify listeners
@@ -678,7 +678,7 @@ class KeepNotePreferences (Pref):
 
             out.close()
 
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             log_error(e, sys.exc_info()[2])
             raise NoteBookError(_("Cannot save preferences"), e)
 
@@ -1059,7 +1059,7 @@ class KeepNote (object):
         # execute command
         try:
             proc = subprocess.Popen(cmd)
-        except OSError, e:
+        except OSError as e:
             raise KeepNoteError(
                 _(u"Error occurred while opening file with %s.\n\n"
                   u"program: '%s'\n\n"
@@ -1187,7 +1187,7 @@ class KeepNote (object):
                     log_message(_("enabling extension '%s'\n") % ext.key)
                     ext.enable(True)
 
-            except extension.DependencyError, e:
+            except extension.DependencyError as e:
                 # could not enable due to failed dependency
                 log_message(_("  skipping extension '%s':\n") % ext.key)
                 for dep in ext.get_depends():
@@ -1195,7 +1195,7 @@ class KeepNote (object):
                         log_message(_("    failed dependency: %s\n") %
                                     repr(dep))
 
-            except Exception, e:
+            except Exception as e:
                 # unknown error
                 log_error(e, sys.exc_info()[2])
 
@@ -1281,7 +1281,7 @@ class KeepNote (object):
         try:
             entry.ext = extension.import_extension(
                 self, entry.get_key(), entry.filename)
-        except KeepNotePreferenceError, e:
+        except KeepNotePreferenceError as e:
             log_error(e, sys.exc_info()[2])
             return None
 
@@ -1345,7 +1345,7 @@ class KeepNote (object):
             new_names = set(self._extensions.keys()) - exts
             new_exts = [self.get_extension(name) for name in new_names]
 
-        except Exception, e:
+        except Exception as e:
             self.error(_("Unable to install extension '%s'") % filename,
                        e, tracebk=sys.exc_info()[2])
 

@@ -179,7 +179,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
                 attr = self.load_data(result)
                 self._title_cache.update_attr(attr)
                 return attr
-            except Exception, e:
+            except Exception as e:
                 raise connlib.ConnectionError(
                     "unexpected error '%s'" % str(e), e)
         else:
@@ -345,7 +345,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
                 else:
                     data = self.load_data(result)
                     return data['files']
-            except Exception, e:
+            except Exception as e:
                 raise connlib.ConnectionError(
                     "unexpected response '%s'" % str(e), e)
         else:
@@ -373,7 +373,7 @@ class NoteBookConnectionHttp (NoteBookConnection):
         if result.status == httplib.OK:
             try:
                 return self.load_data(result)
-            except Exception, e:
+            except Exception as e:
                 raise connlib.ConnectionError(
                     "unexpected response '%s'" % str(e), e)
 

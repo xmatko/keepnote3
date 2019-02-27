@@ -240,7 +240,7 @@ def execute(code, vars, stdout, stderr):
     sys.stderr = stderr
     try:
         exec(code, vars)
-    except Exception, e:
+    except Exception as e:
         keepnote.log_error(e, sys.exc_info()[2], stderr)
     sys.stdout = __stdout
     sys.stderr = __stderr
