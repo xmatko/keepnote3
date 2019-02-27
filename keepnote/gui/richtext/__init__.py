@@ -39,7 +39,7 @@ from xml.sax.saxutils import escape
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GObject, Pango
+from gi.repository import GObject, Gtk, Gdk, Pango
 
 # try to import spell check
 try:
@@ -240,7 +240,7 @@ class RichTextError (StandardError):
 class RichTextMenu (Gtk.Menu):
     """A popup menu for child widgets in a RichTextView"""
     def __inti__(self):
-        GObject.GObject.__init__(self)
+        Gtk.Menu.__init__(self)
         self._child = None
 
     def set_child(self, child):
@@ -414,7 +414,7 @@ class RichTextView (Gtk.TextView):
     """A RichText editor widget"""
 
     def __init__(self, textbuffer=None):
-        GObject.GObject.__init__(self)
+        Gtk.TextView.__init__(self)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.richtext.__init__.RichTextView.__init__()")
 

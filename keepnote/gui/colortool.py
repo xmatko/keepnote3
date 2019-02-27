@@ -145,7 +145,7 @@ class ColorTextImage (Gtk.Image):
     """Image widget that display a color box with and without text"""
 
     def __init__(self, width, height, letter, border=True):
-        GObject.GObject.__init__(self)
+        Gtk.Image.__init__(self)
         self.logger = logging.getLogger('keepnote')
         #self.logger.debug("keepnote.gui.colortool.ColorTextImage.__init__()")
         self.width = width
@@ -234,7 +234,7 @@ class ColorMenu (Gtk.Menu):
     """Color picker menu"""
 
     def __init__(self, colors=DEFAULT_COLORS):
-        GObject.GObject.__init__(self)
+        Gtk.Menu.__init__(self)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.colortool.ColorMenu.__init__()")
         self.width = 7
@@ -375,7 +375,7 @@ class ColorTool (Gtk.MenuToolButton):
     """Abstract base class for a ColorTool"""
 
     def __init__(self, icon, default):
-        GObject.GObject.__init__(self, icon_widget=self.icon, label="")
+        Gtk.MenuToolButton.__init__(self, icon_widget=self.icon, label="")
         self.icon = icon
         self.color = None
         self.colors = DEFAULT_COLORS
@@ -483,7 +483,7 @@ class BgColorTool (ColorTool):
 class ColorSelectionDialog (Gtk.ColorSelectionDialog):
 
     def __init__(self, title="Choose color"):
-        GObject.GObject.__init__(self, title)
+        Gtk.ColorSelectionDialog.__init__(self, title)
         self.colorsel.set_has_opacity_control(False)
 
         # hide default gtk pallete
@@ -572,7 +572,7 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
 
 class ColorPallete (Gtk.IconView):
     def __init__(self, colors=DEFAULT_COLORS, nrows=1, ncols=7):
-        GObject.GObject.__init__(self)
+        Gtk.IconView.__init__(self)
         self._model = Gtk.ListStore(GdkPixbuf.Pixbuf, object)
         self._cell_size = [30, 20]
 

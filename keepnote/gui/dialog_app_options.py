@@ -30,7 +30,7 @@ import sys, os, logging
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 # keepnote imports
 import keepnote
@@ -732,7 +732,7 @@ class ExtensionsSection (Section):
 
 class ExtensionWidget (Gtk.EventBox):
     def __init__(self, app, ext):
-        GObject.GObject.__init__(self)
+        Gtk.EventBox.__init__(self)
 
         self.app = app
         self.enabled = ext.is_enabled()

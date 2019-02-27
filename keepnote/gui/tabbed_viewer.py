@@ -538,7 +538,7 @@ class TabbedViewer (Viewer):
 class TabLabel (Gtk.Box):
 
     def __init__(self, tabs, viewer, icon, text):
-        GObject.GObject.__init__(self, orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
 
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.tabbed_viewer.TabLabel.__init__()")

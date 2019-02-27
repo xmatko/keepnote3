@@ -44,8 +44,7 @@ class RichTextBaseTagTable (Gtk.TextTagTable):
     # two sizes, or two justifications.
 
     def __init__(self):
-        #Gtk.TextTagTable.__init__(self)
-        GObject.GObject.__init__(self)
+        Gtk.TextTagTable.__init__(self)
 
         self._tag_classes = {}
         self._tag2class = {}
@@ -186,7 +185,7 @@ class RichTextTagClass (object):
 class RichTextTag (Gtk.TextTag):
     """A TextTag in a RichTextBuffer"""
     def __init__(self, name, **kargs):
-        GObject.GObject.__init__(self, name=name)
+        Gtk.TextTag.__init__(self, name=name)
         self._count = 0
 
         for key, val in kargs.iteritems():

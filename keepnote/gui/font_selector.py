@@ -27,14 +27,14 @@
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject, Gtk
+from gi.repository import Gtk
 
 
 class FontSelector (Gtk.ComboBox):
     """ComboBox for selection Font family"""
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.ComboBox.__init__(self)
 
         self._list = Gtk.ListStore(str)
         self.set_model(self._list)

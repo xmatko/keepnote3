@@ -108,7 +108,6 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
     """Base class for treeviews of a NoteBook notes"""
 
     def __init__(self):
-        #GObject.GObject.__init__(self)
         Gtk.TreeView.__init__(self)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.__init__()")

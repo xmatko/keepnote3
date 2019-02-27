@@ -27,7 +27,7 @@
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GObject, Pango
+from gi.repository import Gtk, Gdk, Pango
 
 # richtext imports
 from .richtextbase_tags import \

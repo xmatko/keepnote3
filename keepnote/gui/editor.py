@@ -44,7 +44,7 @@ class KeepNoteEditor (Gtk.Box):
     """
 
     def __init__(self, app):
-        GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.editor.KeepNoteEditor.__init__()")
         self._app = app

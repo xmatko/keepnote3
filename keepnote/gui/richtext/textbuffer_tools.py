@@ -26,9 +26,10 @@
 
 import logging
 
+# GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk
 
 from keepnote.linked_list import LinkedList
 from keepnote.linked_tree import LinkedTreeNode

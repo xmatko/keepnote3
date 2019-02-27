@@ -29,7 +29,7 @@ import logging
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject
+from gi.repository import GObject, Gtk
 
 from .undo_handler import InsertAction
 

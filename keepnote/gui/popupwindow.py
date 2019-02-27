@@ -2,14 +2,14 @@
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject, Gtk
+from gi.repository import Gtk
 
 
 class PopupWindow (Gtk.Window):
     """A customizable popup window"""
 
     def __init__(self, parent):
-        GObject.GObject.__init__(self, Gtk.WindowType.POPUP)
+        Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
         self.set_type_hint(Gdk.WindowTypeHint.MENU)
         self.set_transient_for(parent.get_toplevel())
         self.set_flags(Gtk.CAN_FOCUS)

@@ -1498,7 +1498,7 @@ class ComboToolItem(Gtk.ToolItem):
     __gtype_name__ = "ComboToolItem"
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.ToolItem.__init__(self)
 
         self.set_border_width(2)
         self.set_homogeneous(False)
@@ -1521,7 +1521,7 @@ class ComboToolAction(Gtk.Action):
     __gtype_name__ = "ComboToolAction"
 
     def __init__(self, name, label, tooltip, stock_id):
-        GObject.GObject.__init__(self, name, label, tooltip, stock_id)
+        Gtk.Action.__init__(self, name, label, tooltip, stock_id)
 
     def set_tool_item_type(menuaction, gtype):
         old_value = getattr(self, "set_tool_item_type", _unset)

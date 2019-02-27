@@ -34,7 +34,7 @@ import locale, gettext
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GObject, GdkPixbuf
+from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 
 # keepnote imports
 import keepnote
@@ -256,7 +256,7 @@ class FileChooserDialog (Gtk.FileChooserDialog):
                  buttons=None, 
                  app=None,
                  persistent_path=None):
-        GObject.GObject.__init__(self)
+        Gtk.FileChooserDialog.__init__(self)
         #self.logger = logging.getLogger('keepnote')
         #self.logger.debug("keepnote.gui.__init__.FileChooserDialog.__init__()")
         if buttons:
@@ -287,7 +287,7 @@ class UIManager (Gtk.UIManager):
     """Specialization of UIManager for use in KeepNote"""
 
     def __init__(self, force_stock=False):
-        GObject.GObject.__init__(self)
+        Gtk.UIManager.__init__(self)
         self.connect("connect-proxy", self._on_connect_proxy)
         self.connect("disconnect-proxy", self._on_disconnect_proxy)
 
@@ -356,7 +356,7 @@ class Action (Gtk.Action):
     def __init__(self, name, stockid=None, label=None,
                  accel="", tooltip="", func=None,
                  icon=None):
-        GObject.GObject.__init__(self, name=name, label=label, tooltip=tooltip, stock_id=stockid)
+        Gtk.Action.__init__(self, name=name, label=label, tooltip=tooltip, stock_id=stockid)
         self.func = func
         self.accel = accel
         self.icon = icon
@@ -369,7 +369,7 @@ class Action (Gtk.Action):
 class ToggleAction (Gtk.ToggleAction):
     def __init__(self, name, stockid, label=None,
                  accel="", tooltip="", func=None, icon=None):
-        GObject.GObject.__init__(self, name=name, label=label, tooltip=tooltip, stock_id=stockid)
+        Gtk.Action.__init__(self, name=name, label=label, tooltip=tooltip, stock_id=stockid)
         self.func = func
         self.accel = accel
         self.icon = icon

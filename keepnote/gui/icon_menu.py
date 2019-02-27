@@ -42,7 +42,7 @@ class IconMenu (Gtk.Menu):
     """Icon picker menu"""
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.Menu.__init__(self)
 
         self._notebook = None
 

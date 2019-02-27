@@ -53,7 +53,6 @@ class Viewer (Gtk.Box):
               }
 
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
-        #GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.viewer.Viewer.__init__()")
@@ -178,8 +177,8 @@ class Viewer (Gtk.Box):
         """ Overidable """
         pass
 
-'''
 GObject.type_register(Viewer)
+'''
 GObject.signal_new("error", Viewer, GObject.SignalFlags.RUN_LAST,
                    None, (str, object))
 GObject.signal_new("status", Viewer, GObject.SignalFlags.RUN_LAST,

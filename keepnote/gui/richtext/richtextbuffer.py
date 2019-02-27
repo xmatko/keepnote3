@@ -34,7 +34,7 @@ from itertools import chain
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import GObject, Gtk, Gdk
 
 # TODO: remove
 # keepnote imports
@@ -124,7 +124,7 @@ class BaseWidget (Gtk.EventBox):
     """Widgets in RichTextBuffer must support this interface"""
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        Gtk.EventBox.__init__(self)
 
         # TODO: will this be configurable?
         # set to white background

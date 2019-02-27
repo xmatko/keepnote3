@@ -41,7 +41,7 @@ class LinkEditor (Gtk.Frame):
     """Widget for editing KeepNote links"""
 
     def __init__(self):
-        GObject.GObject.__init__(self, name="Link editor")
+        Gtk.Frame.__init__(self, name="Link editor")
 
         self.use_text = False
         self.current_url = None

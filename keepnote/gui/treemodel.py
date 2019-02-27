@@ -121,7 +121,6 @@ class BaseTreeModel (GenericTreeModel):
 
     def __init__(self, roots=[]):
 
-        GObject.GObject.__init__(self)
         GenericTreeModel.__init__(self)
 
         self.logger = logging.getLogger('keepnote')

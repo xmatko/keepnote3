@@ -29,7 +29,7 @@ import logging
 # GObject introspection imports
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject
+from gi.repository import GObject, Gtk
 
 # import textbuffer tools
 from .textbuffer_tools import \
@@ -115,7 +115,7 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
     """
 
     def __init__(self, tag_table=RichTextBaseTagTable()):
-        GObject.GObject.__init__(self)
+        Gtk.TextBuffer.__init__(self)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.richtext.richtextbasebuffer.RichTextBaseBuffer.__init__()  tag_table:%s" % str(tag_table))
         self.tag_table = tag_table

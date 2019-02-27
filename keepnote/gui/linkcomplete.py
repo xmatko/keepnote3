@@ -12,7 +12,7 @@ from keepnote.gui.popupwindow import PopupWindow
 class LinkPicker (Gtk.TreeView):
 
     def __init__(self, maxwidth=450):
-        GObject.GObject.__init__(self)
+        Gtk.TreeView.__init__(self)
         self._maxwidth = maxwidth
 
         self.set_headers_visible(False)

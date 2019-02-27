@@ -35,7 +35,7 @@ Next, we will port to Python 3
  (seen in keepnote.gui.__init__)
 * **lambda func**: <https://medium.com/@happymishra66/lambda-map-and-filter-in-python-4935f248593>
 * **Gtk.Builder connect signals to callback**: [Connect signal callback to each object individually](https://stackoverflow.com/questions/51953389/gtk-glade-and-python-connecting-handlers-from-multiple-classes-with-the-connect)
-* **VBox/HBox**: GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+* **VBox/HBox**: Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
 ### Major issues
 #### Gtk.GenericTreeView

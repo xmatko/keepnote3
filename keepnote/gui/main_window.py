@@ -77,7 +77,7 @@ class KeepNoteWindow (Gtk.Window):
     """Main windows for KeepNote"""
 
     def __init__(self, app, winid=None):
-        GObject.GObject.__init__(self, type=Gtk.WindowType.TOPLEVEL)
+        Gtk.Window.__init__(self, type=Gtk.WindowType.TOPLEVEL)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.__init__()")
 
@@ -1486,7 +1486,7 @@ GObject.signal_new("error", KeepNoteWindow, GObject.SignalFlags.RUN_LAST,
 class SearchBox (Gtk.Entry):
 
     def __init__(self, window):
-        GObject.GObject.__init__(self)
+        Gtk.Entry.__init__(self)
 
         self._window = window
 
