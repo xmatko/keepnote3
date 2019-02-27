@@ -46,6 +46,8 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
 
     def __init__(self):
         basetreeview.KeepNoteBaseTreeView.__init__(self)
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.gui.treeview.KeepNoteListView.__init__()")
         self._sel_nodes = None
         self._columns_set = False
         self._current_table = "default"

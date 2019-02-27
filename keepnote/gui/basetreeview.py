@@ -108,7 +108,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
     """Base class for treeviews of a NoteBook notes"""
 
     def __init__(self):
-        GObject.GObject.__init__(self)
+        #GObject.GObject.__init__(self)
+        Gtk.TreeView.__init__(self)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.__init__()")
 
@@ -199,12 +200,15 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         '''
 
     def set_master_node(self, node):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_master_node()")
+        print("node", node)
         self._master_node = node
 
         if self.rich_model:
             self.rich_model.set_master_node(node)
 
     def get_master_node(self):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.get_master_node()")
         return self._master_node
 
     def set_notebook(self, notebook):
@@ -219,6 +223,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 self.model.set_notebook(notebook)
 
     def set_get_node(self, get_node_func=None):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_get_node()")
 
         if get_node_func is None:
             self._get_node = self._get_node_default
@@ -226,13 +231,15 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             self._get_node = get_node_func
 
     def _get_node_default(self, nodeid):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView._get_node_default()")
         if self._notebook is None:
             return None
         return self._notebook.get_node_by_id(nodeid)
 
     def set_model(self, model):
         """Set the model for the view"""
-
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_model()")
+        print("model", model)
         # TODO: could group signal IDs into lists, for each detach
         # if model already attached, disconnect all of its signals
         if self.model is not None:
@@ -258,7 +265,9 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 self.rich_model = self.model.get_model()
             else:
                 self.rich_model = model
-
+            print("self.model", self.model)
+            print("self.rich_model", self.rich_model)
+            print("self._notebook", self._notebook)
             # init signals for model
             self.rich_model.set_notebook(self._notebook)
             self.changed_start_id = self.rich_model.connect(
@@ -309,18 +318,20 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
     # columns
 
     def clear_columns(self):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.clear_columns()")
         for col in reversed(self.get_columns()):
             self.remove_column(col)
 
     def get_column_by_attr(self, attr):
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.get_column_by_attr()")
+        print("attr", attr)
         for col in self.get_columns():
             if col.attr == attr:
                 return col
         return None
 
     def _add_title_render(self, column, attr):
-
-        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView._add_title_render()")
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView._add_title_render()")
         # make sure icon attributes are in model
         self._add_model_column(self._attr_icon)
         self._add_model_column(self._attr_icon_open)
@@ -339,7 +350,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def _add_text_render(self, column, attr, editable=False,
                          validator=TextRendererValidator()):
-        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView._add_text_render()")
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView._add_text_render()")
         # cell renderer text
         cell = Gtk.CellRendererText()
         cell.set_fixed_height_from_font(1)
@@ -372,6 +383,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def _add_pixbuf_render(self, column, attr, attr_open=None):
 
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView._add_pixbuf_render()")
         cell = Gtk.CellRendererPixbuf()
         column.pack_start(cell, False)
         column.add_attribute(cell, 'pixbuf',
@@ -417,8 +429,11 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def _add_model_column(self, attr, add_sort=True, mapfunc=lambda x: x):
 
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView._add_model_column()")
+        print("attr", attr)
         # get attribute definition from notebook
         attr_def = self._notebook.attr_defs.get(attr)
+        print("attr_def", attr_def)
 
         # get datatype
         if attr_def is not None:
@@ -427,6 +442,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         else:
             datatype = "string"
             default = ""
+        print("datatype", datatype)
+        print("default", default)
 
         # value fetching
         get = lambda node: mapfunc(node.get_attr(attr, default))
@@ -640,7 +657,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def select_nodes(self, nodes):
         """Select nodes in treeview"""
-
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.select_nodes()")
+        print("nodes", nodes)
         # NOTE: for now only select one node
         if len(nodes) > 0:
             node = nodes[0]
@@ -658,13 +676,18 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def on_select_changed(self, treeselect):
         """Callback for when selection changes"""
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.on_select_changed()")
+        print("treeselect", treeselect)
         nodes = self.get_selected_nodes()
+        print("nodes", nodes)
         self.emit("select-nodes", nodes)
         return True
 
     def get_selected_nodes(self):
         """Returns a list of currently selected nodes"""
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.get_selected_nodes()")
         iters = self.get_selected_iters()
+        print("iters", iters)
         if len(iters) == 0:
             if self.editing_path:
                 node = self._get_node_from_path(self.editing_path)
