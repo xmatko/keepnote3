@@ -106,6 +106,20 @@ class TextRendererValidator (object):
 
 class KeepNoteBaseTreeView (Gtk.TreeView):
     """Base class for treeviews of a NoteBook notes"""
+    __gsignals__ = {
+        'goto-node'        : (GObject.SignalFlags.RUN_LAST, None, (GObject.GObject,)),
+        'activate-node'    : (GObject.SignalFlags.RUN_LAST, None, (GObject.GObject,)),
+        'delete-node'      : (GObject.SignalFlags.RUN_LAST, None, (GObject.GObject,)),
+        'goto-parent-node' : (GObject.SignalFlags.RUN_LAST, None, ()),
+        'copy-clipboard'   : (GObject.SignalFlags.RUN_LAST, None, ()),
+        'copy-tree-clipboard' : (GObject.SignalFlags.RUN_LAST, None, ()),
+        'cut-clipboard' : (GObject.SignalFlags.RUN_LAST, None, ()),
+        'paste-clipboard' : (GObject.SignalFlags.RUN_LAST, None, ()),
+        'select-nodes' : (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,)),
+        'edit-node' : (GObject.SignalFlags.RUN_LAST, None, (GObject.GObject, str, str,)),
+        'drop-file' : (GObject.SignalFlags.RUN_LAST, None, (GObject.GObject, int, str,)),
+        'error' : (GObject.SignalFlags.RUN_LAST, None, (str, GObject.GObject,))
+        }
 
     def __init__(self):
         #GObject.GObject.__init__(self)
@@ -380,6 +394,9 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             cell.set_property("editable", True)
 
         return cell
+
+    def _set_cell_text(self, column, model, it, ignored):
+        pass
 
     def _add_pixbuf_render(self, column, attr, attr_open=None):
 
@@ -1274,6 +1291,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
 
 GObject.type_register(KeepNoteBaseTreeView)
+'''
 GObject.signal_new("goto-node", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
 GObject.signal_new(
@@ -1307,3 +1325,5 @@ GObject.signal_new("drop-file", KeepNoteBaseTreeView,
                    None, (object, int, str))
 GObject.signal_new("error", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
                    None, (str, object,))
+'''
+
