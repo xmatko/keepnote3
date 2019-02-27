@@ -35,6 +35,11 @@ import uuid
 import logging
 import xml.etree.cElementTree as ET
 
+# GObject introspection imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+
 # keepnote imports
 from keepnote.listening import Listeners
 from keepnote.timestamp import get_timestamp
@@ -556,15 +561,21 @@ def iter_attr_tables(lst):
 BUILTIN_ATTR = ("nodeid", "parentids", "childrenids", "order")
 
 
-class NoteBookNode (object):
+class NoteBookNode (GObject.GObject):
     """A general base class for all nodes in a NoteBook"""
+    title = GObject.property(type=str)
+    version = GObject.property(type=int)
+    content_type = GObject.property(type=str)
 
+    def __repr__(self):
+        return "%s" % self.get_attr("name")
 
     def __init__(self, title=u"", parent=None, notebook=None,
                  content_type=CONTENT_TYPE_DIR, conn=None,
                  attr=None):
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.notebook.__init__.NoteBookNode.__init__()")
+        GObject.GObject.__init__(self)
         self._notebook = notebook
         self._conn = conn if conn else self._notebook._conn
         self._parent = parent
@@ -1154,6 +1165,7 @@ class NoteBookNode (object):
     '''
 
 
+GObject.type_register(NoteBookNode)
 
 class NodeAction (object):
     pass
