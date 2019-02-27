@@ -465,7 +465,7 @@ def main(argv):
 # catch any exceptions that occur
 try:
     main(sys.argv)
-except exceptions.SystemExit as e:
+except SystemExit as e:
     # sys.exit() was called
     pass
 except Exception as e:
