@@ -1,7 +1,11 @@
 *.pyc
+*.bak
 keepnote.log
 core
 keepnote-clean-config.sh
 keepnote-config.sh
 keepnote-testrun.sh
 test_notebook
+KeepNoteWindows-templatelayout.glade
+docs/
+test_notebook*/
