@@ -150,9 +150,9 @@ def get_orphandir(nodepath, nodeid=None):
 #=============================================================================
 # functions for ensuring valid filenames in notebooks
 
-REGEX_SLASHES = re.compile(ur"[/\\]")
-REGEX_BAD_CHARS = re.compile(ur"[\*\?'&<>|`:;]")
-REGEX_LEADING_UNDERSCORE = re.compile(ur"^__+")
+REGEX_SLASHES = re.compile(r'[/\\]')
+REGEX_BAD_CHARS = re.compile(r'[\*\?\'&<>|`:;]')
+REGEX_LEADING_UNDERSCORE = re.compile(r'^__+')
 
 
 def get_valid_filename(filename, default=u"folder",

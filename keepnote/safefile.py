@@ -32,9 +32,13 @@ import tempfile
 
 # NOTE: bypass easy_install's monkey patching of file
 # easy_install does not correctly emulate 'file'
+'''
 if type(file) != type:
     # HACK: this works as long as sys.stdout is not patched
     file = type(sys.stdout)
+'''
+file = type(sys.stdout)
+
 
 
 def open(filename, mode="r", tmp=None, codec=None):

@@ -32,7 +32,7 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.elementtree.ElementTree as ET
-from StringIO import StringIO
+from io import StringIO
 import base64
 import datetime
 import re

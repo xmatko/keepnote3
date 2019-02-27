@@ -474,7 +474,7 @@ g_default_attr_defs = [
     AttrDef(
         "content_type", "string", "Content type", default=CONTENT_TYPE_DIR),
     AttrDef("title", "string", "Title"),
-    AttrDef("order", "integer", "Order", default=sys.maxint),
+    AttrDef("order", "integer", "Order", default=sys.maxsize),
     AttrDef("created_time", "timestamp", "Created time"),
     AttrDef("modified_time", "timestamp", "Modified time"),
     AttrDef("expanded", "bool", "Expaned", default=True),
