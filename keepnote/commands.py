@@ -30,7 +30,7 @@ import os
 import random
 import socket
 import sys
-import thread
+import threading
 
 # keepnote libs
 import keepnote
@@ -61,7 +61,7 @@ def get_lock_file(lockfile):
     while True:
         try:
             # try to create file with exclusive access
-            fd = os.open(lockfile, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0600)
+            fd = os.open(lockfile, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
 
             # creation succeeded, we have the lock
             acquire = True
@@ -156,7 +156,7 @@ def listen_commands(sock, connfunc, args):
         except socket.error:
             continue
 
-        thread.start_new_thread(connfunc, (conn, addr) + args)
+        threading.start_new_thread(connfunc, (conn, addr) + args)
 
 
 def process_connection(conn, addr, passwd, execfunc):
@@ -297,7 +297,7 @@ class CommandExecutor (object):
         self._execfunc = execfunc
 
         # start listening to socket for remote commands
-        thread.start_new_thread(listen_commands,
+        threading.start_new_thread(listen_commands,
                                 (sock, process_connection, (passwd,
                                                             self.execute)))
 
