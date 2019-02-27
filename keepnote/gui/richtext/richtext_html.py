@@ -29,7 +29,7 @@ import sys
 import re
 import logging
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from xml.sax.saxutils import escape
 
 # keepnote imports

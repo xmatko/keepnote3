@@ -188,7 +188,7 @@ class RichTextTag (Gtk.TextTag):
         Gtk.TextTag.__init__(self, name=name)
         self._count = 0
 
-        for key, val in kargs.iteritems():
+        for key, val in iter(kargs.items()):
             self.set_property(key.replace("_", "-"), val)
 
     def expires(self):
