@@ -512,7 +512,7 @@ class NoteBookNode (object):
         self._attr = {
             "title": title,
             "content_type": content_type,
-            "order": sys.maxint,
+            "order": sys.maxsize,
             "created_time": None,
             "modified_time": None,
             "expanded": False,

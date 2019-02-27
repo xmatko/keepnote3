@@ -462,7 +462,7 @@ g_default_attr_defs = [
     title_attr,
     AttrDef("Content type", unicode, "content_type",
                  default=lambda: CONTENT_TYPE_DIR),
-    AttrDef("Order", int, "order", default=lambda: sys.maxint),
+    AttrDef("Order", int, "order", default=lambda: sys.maxsize),
     created_time_attr,
     modified_time_attr,
     AttrDef("Expaned", bool, "expanded", default=lambda: True),
@@ -598,7 +598,7 @@ class NoteBookNode (object):
         self._attr = {
             "title": title,
             "content_type": content_type,
-            "order": sys.maxint,
+            "order": sys.maxsize,
             "created_time": None,
             "modified_time": None,
             "expanded": True,

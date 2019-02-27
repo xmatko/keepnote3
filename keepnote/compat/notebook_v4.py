@@ -435,7 +435,7 @@ g_default_attr_defs = [
     AttrDef("content_type", unicode, "Content type", 
             default=lambda: CONTENT_TYPE_DIR),
     AttrDef("title", unicode, "Title"),
-    AttrDef("order", int, "Order", default=lambda: sys.maxint),
+    AttrDef("order", int, "Order", default=lambda: sys.maxsize),
     AttrDef("created_time", int, "Created time", default=get_timestamp),
     AttrDef("modified_time", int, "Modified time", default=get_timestamp),
     AttrDef("expanded", bool, "Expaned", default=lambda: True),
@@ -956,7 +956,7 @@ class NoteBookNode (object):
         self._children = list(self._iter_children())
 
         # assign orders
-        self._children.sort(key=lambda x: x._attr.get("order", sys.maxint))
+        self._children.sort(key=lambda x: x._attr.get("order", sys.maxsize))
         self._set_child_order()
 
 

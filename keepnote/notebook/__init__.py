@@ -715,7 +715,7 @@ class NoteBookNode (object):
             self._attr["nodeid"] = new_nodeid()
         self._attr["parentids"] = [self._parent._attr["nodeid"]]
         self._attr["childrenids"] = []
-        self._attr.setdefault("order", sys.maxint)
+        self._attr.setdefault("order", sys.maxsize)
 
         self._init_attr()
 
@@ -1001,7 +1001,7 @@ class NoteBookNode (object):
         self._children = list(self._iter_children())
 
         # assign orders
-        self._children.sort(key=lambda x: x._attr.get("order", sys.maxint))
+        self._children.sort(key=lambda x: x._attr.get("order", sys.maxsize))
         self._set_child_order()
 
     def _iter_children(self):
