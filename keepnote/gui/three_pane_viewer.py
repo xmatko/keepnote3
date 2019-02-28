@@ -65,12 +65,14 @@ DEFAULT_VIEW_MODE = "vertical"
 
 class ThreePaneViewer (Viewer):
     """A viewer with a treeview, listview, and editor"""
+    name = 'three_pane_viewer'
 
     def __init__(self, app, main_window, viewerid=None):
-        Viewer.__init__(self, app, main_window, viewerid,
-                        viewer_name="three_pane_viewer")
         self.logger = logging.getLogger('keepnote')
-        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.__init__()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
+        self.logger.debug("\n***\n*** Starting instanciation of a ThreePaneViewer class\n***")
+        Viewer.__init__(self, app, main_window, viewerid,
+                        viewer_name=type(self).name)
         self._ui_ready = False
 
         # node selections

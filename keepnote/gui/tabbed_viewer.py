@@ -85,8 +85,7 @@ class TabbedViewer (Viewer):
         # TODO: move to the app?
         # viewer registry
         self._viewer_lookup = TwoWayDict()
-        self._viewer_lookup.add(ThreePaneViewer(app, main_window).get_name(),
-                                ThreePaneViewer)
+        self._viewer_lookup.add(ThreePaneViewer.name, ThreePaneViewer)
 
         # layout
         self.logger.info("Add Gtk.Notebook") 
