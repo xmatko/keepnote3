@@ -37,7 +37,7 @@ class OrderDict (dict):
                 dict.__setitem__(self, k, v)
         else:
             dict.__init__(self, *args, **kargs)
-            self._order = dict.keys(self)
+            self._order = list(dict.keys(self))
 
     # The following methods keep names in sync with dictionary keys
     def __setitem__(self, key, value):
