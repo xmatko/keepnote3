@@ -1101,7 +1101,7 @@ class KeepNoteWindow (Gtk.Window):
     def get_actions(self):
         """Set actions for main window menubar and return."""
         self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.get_actions()")
-        actions = map(
+        actions = list(map(
             lambda x: Action(*x),
             [
                 ("File", None, _("_File")),
@@ -1258,7 +1258,7 @@ class KeepNoteWindow (Gtk.Window):
                 ("About", Gtk.STOCK_ABOUT, _("_About"),
                  "", None,
                  lambda w: self.on_about())
-                ]) + [
+                ])) + [
 
             Action("Main Spacer Tool"),
             Action("Search Box Tool", None, None, "", _("Search All Notes")),

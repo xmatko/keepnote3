@@ -117,7 +117,7 @@ class TabbedViewer (Viewer):
     def iter_viewers(self):
         """Iterate through all viewers"""
         self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
-        for i in xrange(self._tabs.get_n_pages()):
+        for i in range(self._tabs.get_n_pages()):
             yield self._tabs.get_nth_page(i)
 
     def new_tab(self, viewer=None, init="current_node"):
