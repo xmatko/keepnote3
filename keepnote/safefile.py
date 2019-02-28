@@ -28,7 +28,7 @@ import codecs
 import os
 import sys
 import tempfile
-
+from io import FileIO 
 
 # NOTE: bypass easy_install's monkey patching of file
 # easy_install does not correctly emulate 'file'
@@ -37,9 +37,7 @@ if type(file) != type:
     # HACK: this works as long as sys.stdout is not patched
     file = type(sys.stdout)
 '''
-file = type(sys.stdout)
-
-
+file = FileIO
 
 def open(filename, mode="r", tmp=None, codec=None):
     """
@@ -70,7 +68,6 @@ class SafeFile (file):
         mode     -- write mode (default: 'w')
         tmp      -- specify tempfile
         """
-
         # set tempfile
         if "w" in mode and tmp is None:
             f, tmp = tempfile.mkstemp(".tmp", filename+"_", dir=".")
