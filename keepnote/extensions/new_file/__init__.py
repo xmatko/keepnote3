@@ -36,7 +36,6 @@ import xml.etree.cElementTree as etree
 _ = gettext.gettext
 
 import keepnote
-from keepnote import unicode_gtk
 from keepnote.notebook import NoteBookError
 from keepnote import notebook as notebooklib
 from keepnote import tasklib

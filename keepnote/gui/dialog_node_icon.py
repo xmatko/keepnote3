@@ -34,7 +34,6 @@ from gi.repository import GObject, Gtk
 
 # keepnote imports
 import keepnote
-from keepnote import unicode_gtk
 import keepnote.gui
 from keepnote.gui.icons import \
     guess_open_icon_filename, \
@@ -63,7 +62,7 @@ def browse_file(parent, title, filename=None):
     response = dialog.run()
 
     if response == Gtk.ResponseType.OK and dialog.get_filename():
-        filename = unicode_gtk(dialog.get_filename())
+        filename = dialog.get_filename()
     else:
         filename = None
 
@@ -142,8 +141,8 @@ class NodeIconDialog (object):
 
         if response == Gtk.ResponseType.OK:
             # icon filenames
-            icon_file = unicode_gtk(self.icon_entry.get_text())
-            icon_open_file = unicode_gtk(self.icon_open_entry.get_text())
+            icon_file = self.icon_entry.get_text()
+            icon_open_file = self.icon_open_entry.get_text()
 
             if icon_file.strip() == u"":
                 icon_file = u""
@@ -159,7 +158,7 @@ class NodeIconDialog (object):
         icons = []
 
         def func(model, path, it, user_data):
-            icons.append(unicode_gtk(self.quick_iconlist.get_value(it, 1)))
+            icons.append(self.quick_iconlist.get_value(it, 1))
 
         self.quick_iconlist.foreach(func, None)
 
@@ -170,7 +169,7 @@ class NodeIconDialog (object):
         icons = []
 
         def func(model, path, it, user_data):
-            icons.append(unicode_gtk(self.notebook_iconlist.get_value(it, 1)))
+            icons.append(self.notebook_iconlist.get_value(it, 1))
 
         self.notebook_iconlist.foreach(func, None)
 
@@ -213,7 +212,7 @@ class NodeIconDialog (object):
             for path in iconview.get_selected_items():
                 it = iconlist.get_iter(path)
                 icon = iconlist.get_value(it, 0)
-                iconfile = unicode_gtk(iconlist.get_value(it, 1))
+                iconfile = iconlist.get_value(it, 1)
                 return iconview, icon, iconfile
         return None, None, None
 
@@ -289,7 +288,7 @@ class NodeIconDialog (object):
 
     def on_icon_set_button_clicked(self, widget):
         """Callback for browse icon file"""
-        filename = unicode_gtk(self.icon_entry.get_text())
+        filename = self.icon_entry.get_text()
         filename = browse_file(self.dialog, _("Choose Icon"), filename)
 
         if filename:
@@ -298,7 +297,7 @@ class NodeIconDialog (object):
 
     def on_icon_open_set_button_clicked(self, widget):
         """Callback for browse open icon file"""
-        filename = unicode_gtk(self.icon_open_entry.get_text())
+        filename = self.icon_open_entry.get_text()
         filename = browse_file(self.dialog, _("Choose Open Icon"), filename)
         if filename:
             # set filename and preview

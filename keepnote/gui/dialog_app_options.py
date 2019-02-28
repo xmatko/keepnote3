@@ -34,7 +34,6 @@ from gi.repository import Gtk, Gdk, GdkPixbuf
 
 # keepnote imports
 import keepnote
-from keepnote import unicode_gtk
 from keepnote import get_resource
 from keepnote.gui.font_selector import FontSelector
 import keepnote.gui
@@ -206,9 +205,8 @@ class GeneralSection (Section):
         elif self.xml.get_object("default_notebook_radio").get_active():
             app.pref.set("use_last_notebook", False)
             app.pref.set("default_notebooks",
-                         [unicode_gtk(
-                             self.xml.get_object(
-                                 "default_notebook_entry").get_text())])
+                         [self.xml.get_object(
+                                 "default_notebook_entry").get_text()])
         else:
             app.pref.set("use_last_notebook", False)
             app.pref.set("default_notebooks", [])
@@ -457,7 +455,7 @@ class HelperAppsSection (Section):
             if key:
                 entry = self.entries.get(key, None)
                 if entry:
-                    app["prog"] = unicode_gtk(entry.get_text())
+                    app["prog"] = entry.get_text()
 
 
 class DatesSection (Section):
@@ -478,8 +476,8 @@ class DatesSection (Section):
     def save_options(self, app):
         # save date formatting
         for name in ["same_day", "same_month", "same_year", "diff_year"]:
-            app.pref.set("timestamp_formats", name, unicode_gtk(
-                self.date_xml.get_object("date_%s_entry" % name).get_text()))
+            app.pref.set("timestamp_formats", name, 
+                self.date_xml.get_object("date_%s_entry" % name).get_text())
 
 
 class EditorSection (Section):

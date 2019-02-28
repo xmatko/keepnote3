@@ -35,7 +35,6 @@ from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 
 # keepnote imports
 import keepnote
-from keepnote import unicode_gtk
 from keepnote.notebook import NoteBookError
 from keepnote.gui.icons import get_node_icon
 from keepnote.gui.treemodel import \
@@ -747,8 +746,6 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
         # remember editing state
         self.editing_path = None
-
-        new_text = unicode_gtk(new_text)
 
         # get node being edited
         node = self.model.get_value(self.model.get_iter(path), self._node_col)

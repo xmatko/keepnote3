@@ -41,7 +41,6 @@ import keepnote
 from keepnote import \
     KeepNoteError, \
     ensure_unicode, \
-    unicode_gtk, \
     FS_ENCODING
 from keepnote.notebook import \
     NoteBookError
@@ -482,7 +481,7 @@ class KeepNoteWindow (Gtk.Window):
         if response == Gtk.ResponseType.OK:
             # create new notebook
             if dialog.get_filename():
-                self.new_notebook(unicode_gtk(dialog.get_filename()))
+                self.new_notebook(dialog.get_filename())
 
         dialog.destroy()
 
@@ -496,7 +495,7 @@ class KeepNoteWindow (Gtk.Window):
             buttons=(_("Cancel"), Gtk.ResponseType.CANCEL,
                      _("Open"), Gtk.ResponseType.OK))
         def on_folder_changed(filechooser):
-            folder = unicode_gtk(filechooser.get_current_folder())
+            folder = filechooser.get_current_folder()
             if os.path.exists(os.path.join(folder, notebooklib.PREF_FILE)):
                 filechooser.response(Gtk.ResponseType.OK)
 
@@ -564,7 +563,7 @@ class KeepNoteWindow (Gtk.Window):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            url = unicode_gtk(entry.get_text())
+            url = entry.get_text()
             if url:
                 self.open_notebook(url)
 
@@ -1520,7 +1519,7 @@ class SearchBox (Gtk.Entry):
         # TODO: add parsing grammar
         # get words
         words = [x.lower() for x in
-                 unicode_gtk(self.get_text()).strip().split()]
+                 self.get_text().strip().split()]
 
         # clear listview
         self._window.get_viewer().start_search_result()
@@ -1626,7 +1625,7 @@ class SearchBox (Gtk.Entry):
         if not self._window.get_notebook():
             return
 
-        text = unicode_gtk(self.get_text())
+        text = self.get_text()
 
         self.search_box_list.clear()
         if len(text) > 0:

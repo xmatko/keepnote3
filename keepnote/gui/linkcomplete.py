@@ -5,7 +5,6 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import GObject, Gtk
 
 # keepnote imports
-from keepnote import unicode_gtk
 from keepnote.gui.popupwindow import PopupWindow
 
 
@@ -124,7 +123,7 @@ class LinkPickerPopup (PopupWindow):
             # accept selection
             if sel:
                 icon, title, nodeid = model[sel]
-                self.emit("pick-link", unicode_gtk(title), nodeid)
+                self.emit("pick-link", title, nodeid)
                 return True
 
         elif event.keyval == Gdk.KEY_Escape:
@@ -139,7 +138,7 @@ class LinkPickerPopup (PopupWindow):
             model, sel = self._link_picker.get_selection().get_selected()
             if sel:
                 icon, title, nodeid = model[sel]
-                self.emit("pick-link", unicode_gtk(title), nodeid)
+                self.emit("pick-link", title, nodeid)
 
         self._cursor_move = False
 

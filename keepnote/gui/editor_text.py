@@ -32,7 +32,7 @@ from gi.repository import GObject, Gtk
 # keepnote imports
 import keepnote
 from keepnote import \
-    KeepNoteError, unicode_gtk
+    KeepNoteError
 from keepnote.notebook import \
     NoteBookError, \
     parse_node_url, \
@@ -230,8 +230,8 @@ class TextEditor (KeepNoteEditor):
             try:
                 # save text data
                 buf = self._textview.get_buffer()
-                text = unicode_gtk(buf.get_text(buf.get_start_iter(),
-                                                buf.get_end_iter()))
+                text = buf.get_text(buf.get_start_iter(),
+                                                buf.get_end_iter())
                 out = self._page.open_file(
                     self._page.get_attr("payload_filename"), "w", "utf-8")
                 out.write(text)

@@ -37,7 +37,7 @@ from gi.repository import GObject, Gtk, Gdk
 # keepnote imports
 import keepnote
 from keepnote import \
-    KeepNoteError, is_url, unicode_gtk
+    KeepNoteError, is_url
 from keepnote.notebook import \
     NoteBookError, \
     get_node_url, \
@@ -660,7 +660,7 @@ class RichTextEditor (KeepNoteEditor):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            filename = unicode_gtk(dialog.get_filename())
+            filename = dialog.get_filename()
             dialog.destroy()
             if filename is None:
                 return
@@ -766,7 +766,7 @@ class RichTextEditor (KeepNoteEditor):
                 self.emit("error", _("Must specify a filename for the image."),
                           None)
             else:
-                filename = unicode_gtk(dialog.get_filename())
+                filename = dialog.get_filename()
                 try:
                     image.write(filename)
                 except Exception:

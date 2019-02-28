@@ -35,7 +35,6 @@ from gi.repository import Gtk
 
 # keepnote imports
 import keepnote
-from keepnote import unicode_gtk
 import keepnote.gui
 from keepnote import get_resource
 import keepnote.notebook as notebooklib
@@ -138,7 +137,7 @@ class MimeIcons:
         size = 16
         info = self.theme.lookup_icon(name, size, 0)
         if info:
-            return unicode_gtk(info.get_filename())
+            return info.get_filename()
         else:
             return default
 

@@ -34,7 +34,6 @@ import time
 #_ = gettext.gettext
 
 import keepnote
-from keepnote import unicode_gtk
 from keepnote.notebook import NoteBookError, get_unique_filename
 from keepnote import notebook as notebooklib
 from keepnote import tasklib
@@ -132,7 +131,7 @@ class Extension (extension.Extension):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK and dialog.get_filename():
-            filename = unicode_gtk(dialog.get_filename())
+            filename = dialog.get_filename()
             dialog.destroy()
 
             if u"." not in filename:
@@ -173,7 +172,7 @@ class Extension (extension.Extension):
         
 
         if response == Gtk.ResponseType.OK and dialog.get_filename():
-            archive_filename = unicode_gtk(dialog.get_filename())
+            archive_filename = dialog.get_filename()
             dialog.destroy()
 
         elif response == Gtk.ResponseType.CANCEL:
@@ -208,7 +207,7 @@ class Extension (extension.Extension):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK and dialog.get_filename():
-            notebook_filename = unicode_gtk(dialog.get_filename())
+            notebook_filename = dialog.get_filename()
             dialog.destroy()
 
             window.set_status("Restoring...")
