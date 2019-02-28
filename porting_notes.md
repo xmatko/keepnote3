@@ -67,3 +67,8 @@ https://gist.github.com/andialbrecht/4463278)
 
 # Documentation generator
 Using Sphinx: <https://gisellezeno.com/tutorials/sphinx-for-python-documentation.html>
+
+# Unitary testing
+* <http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-2/>
+* <https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest>
+
