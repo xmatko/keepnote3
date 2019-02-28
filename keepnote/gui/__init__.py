@@ -57,8 +57,8 @@ _ = keepnote.translate
 # constants
 
 MAX_RECENT_NOTEBOOKS = 20
-ACCEL_FILE = u"accel.txt"
-IMAGE_DIR = u"images"
+ACCEL_FILE = "accel.txt"
+IMAGE_DIR = "images"
 CONTEXT_MENU_ACCEL_PATH = "<main>/context_menu"
 
 DEFAULT_AUTOSAVE_TIME = 10 * 1000  # 10 sec (in msec)
@@ -459,7 +459,7 @@ class KeepNote (keepnote.KeepNote):
         for window in self._windows:
             window.load_preferences()
 
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.enable_fulltext_search(p.get("use_fulltext_search",
                                                   default=True))
 
@@ -636,7 +636,7 @@ class KeepNote (keepnote.KeepNote):
         """Save all opened notebooks"""
 
         # clear all window and viewer info in notebooks
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.pref.clear("windows", "ids")
             notebook.pref.clear("viewers", "ids")
 
@@ -645,7 +645,7 @@ class KeepNote (keepnote.KeepNote):
             window.save_notebook(silent=silent)
 
         # save all the notebooks
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.save()
 
         # let windows know about completed save
@@ -739,12 +739,12 @@ class KeepNote (keepnote.KeepNote):
         # TODO: maybe this belongs inside the node_icon_dialog?
 
         for node in nodes:
-            if icon_file == u"":
+            if icon_file == "":
                 node.del_attr("icon")
             elif icon_file is not None:
                 node.set_attr("icon", icon_file)
 
-            if icon_open_file == u"":
+            if icon_open_file == "":
                 node.del_attr("icon_open")
             elif icon_open_file is not None:
                 node.set_attr("icon_open", icon_open_file)
@@ -830,7 +830,7 @@ class KeepNote (keepnote.KeepNote):
 
         if response == Gtk.ResponseType.OK:
             if len(dialog.get_filenames()) > 0:
-                filenames = map(unicode_gtk, dialog.get_filenames())
+                filenames = list(map(unicode_gtk, dialog.get_filenames()))
                 self.attach_files(filenames, node,
                                   parent_window=parent_window)
 

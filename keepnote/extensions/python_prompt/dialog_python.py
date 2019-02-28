@@ -27,7 +27,6 @@
 # python imports
 import os
 import sys
-import StringIO
 
 # GObject introspection imports
 import gi
@@ -219,15 +218,15 @@ class PythonDialog (object):
 
     def print_info(self):
 
-        print "COMMON INFORMATION"
-        print "=================="
-        print
+        print("COMMON INFORMATION")
+        print("==================")
+        print()
 
         keepnote.print_runtime_info(sys.stdout)
 
-        print "Open notebooks"
-        print "--------------"
-        print "\n".join(n.get_path() for n in self.app.iter_notebooks())
+        print("Open notebooks")
+        print("--------------")
+        print("\n".join(n.get_path() for n in self.app.iter_notebooks()))
         
 
 
