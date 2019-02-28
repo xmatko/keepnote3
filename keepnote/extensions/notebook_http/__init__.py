@@ -27,7 +27,7 @@
 
 # python imports
 import sys
-import thread
+import threading
 
 # keepnote imports
 import keepnote
@@ -107,7 +107,7 @@ class Extension (keepnote.gui.extension.Extension):
         self._ports[port] = server
 
         keepnote.log_message("starting server:\n%s\n" % url)
-        thread.start_new_thread(server.serve_forever, ())
+        threading.start_new_thread(server.serve_forever, ())
 
         if host == "localhost":
             keepnote.log_message("NOTE: server is local only.  Use ssh port forwarding for security.\n")

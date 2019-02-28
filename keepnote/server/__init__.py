@@ -26,14 +26,14 @@
 #
 
 # python imports
-from cStringIO import StringIO
-from httplib import BAD_REQUEST
-from httplib import FORBIDDEN
-from httplib import NOT_FOUND
+from io import StringIO
+from http.client import BAD_REQUEST
+from http.client import FORBIDDEN
+from http.client import NOT_FOUND
 import json
 import mimetypes
 import os
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 # bottle imports
 from . import bottle
@@ -65,9 +65,9 @@ def format_node_path(prefix, nodeid="", filename=None):
     """
     nodeid = nodeid.replace("/", "%2F")
     if filename is not None:
-        return urllib.quote("%s%s/%s" % (prefix, nodeid, filename))
+        return urllib.parse.quote("%s%s/%s" % (prefix, nodeid, filename))
     else:
-        return urllib.quote(prefix + nodeid)
+        return urllib.parse.quote(prefix + nodeid)
 
 
 def format_node_url(host, prefix, nodeid, filename=None, port=80):
@@ -228,7 +228,7 @@ class BaseNoteBookHttpServer(object):
         """
         Read notebook node attr.
         """
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
 
         if 'all' in request.query:
             # Render a simple tree
@@ -252,7 +252,7 @@ class BaseNoteBookHttpServer(object):
         Create new notebook node.
         """
         if nodeid is not None:
-            nodeid = urllib.unquote(nodeid)
+            nodeid = urllib.parse.unquote(nodeid)
         else:
             nodeid = new_nodeid()
 
@@ -269,7 +269,7 @@ class BaseNoteBookHttpServer(object):
 
     def update_node_view(self, nodeid):
         """Update notebook node attr."""
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
 
         # update node
         data = request.body.read()
@@ -285,7 +285,7 @@ class BaseNoteBookHttpServer(object):
 
     def delete_node_view(self, nodeid):
         """Delete notebook node."""
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
         try:
             self.conn.delete_node(nodeid)
         except connlib.UnknownNode as e:
@@ -296,14 +296,14 @@ class BaseNoteBookHttpServer(object):
         """
         Check for node existence.
         """
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
         if not self.conn.has_node(nodeid):
             abort(NOT_FOUND, 'node not found')
 
     def read_file_view(self, nodeid, filename):
         """Access notebook file."""
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -339,8 +339,8 @@ class BaseNoteBookHttpServer(object):
         """
         Write node file.
         """
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -374,8 +374,8 @@ class BaseNoteBookHttpServer(object):
         """
         Delete node file.
         """
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -393,8 +393,8 @@ class BaseNoteBookHttpServer(object):
         """
         Check node file existence.
         """
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -413,7 +413,7 @@ class NoteBookHttpServer(BaseNoteBookHttpServer):
         Create new notebook node.
         """
         if nodeid is not None:
-            nodeid = urllib.unquote(nodeid)
+            nodeid = urllib.parse.unquote(nodeid)
         else:
             nodeid = new_nodeid()
 

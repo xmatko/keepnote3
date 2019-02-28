@@ -297,7 +297,9 @@ def start_gui(argv, options, args, cmd_exec):
     logger.info("Start GUI (GTK %d.%d.%d)" % (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION))
     # create app
     app = keepnote.gui.KeepNote(basedir)
+    logger.debug("GUI instanciated")
     app.init()
+    logger.debug("GUI initialized")
     cmd_exec.set_app(app)
     need_gui = execute_command(app, argv)
     

@@ -30,6 +30,7 @@ import os
 import random
 import socket
 import sys
+import logging
 import threading
 
 # keepnote libs
@@ -272,12 +273,15 @@ def format_command(argv):
 class CommandExecutor (object):
 
     def __init__(self):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.commands.CommandExecutor.__init__()")
         self._execfunc = None
         self._app = None
         self._port = None
 
     def set_app(self, app):
         """Set the app for the CommandExecutor"""
+        self.logger.debug("keepnote.commands.CommandExecutor.set_app() %s" % str(app))
         self._app = app
 
     def set_port(self, port):

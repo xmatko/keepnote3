@@ -82,7 +82,7 @@ class KeepNoteWindow (Gtk.Window):
         self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.__init__()")
 
         self._app = app  # application object
-        self._winid = winid if winid else unicode(uuid.uuid4())
+        self._winid = winid if winid else str(uuid.uuid4())
         self._viewers = []
 
         # window state

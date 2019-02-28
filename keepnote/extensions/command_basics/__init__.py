@@ -259,7 +259,7 @@ class Extension (keepnote.gui.extension.Extension):
         text = args[1]
         nodes = list(notebook.search_node_titles(text))
         for nodeid, title in nodes:
-            print "%s\t%s" % (title, keepnote.notebook.get_node_url(nodeid))
+            print("%s\t%s" % (title, keepnote.notebook.get_node_url(nodeid)))
 
 
     def view_nodeid(self, app, nodeid):

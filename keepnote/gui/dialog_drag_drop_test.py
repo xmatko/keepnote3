@@ -38,7 +38,7 @@ def parse_utf(text):
             (len(text) > 3 and text[3] == '\x00')):
         return text.decode("utf16")
     else:
-        return unicode(text, "utf8")
+        return str(text, "utf8")
 
 
 class DragDropTestDialog (object):
@@ -117,5 +117,5 @@ class DragDropTestDialog (object):
         buf.insert_at_cursor("sel.targets = " +
                              repr(selection_data.get_targets()) + "\n")
         buf.insert_at_cursor("type(sel.data) = " + str(type(data))+"\n")
-        print "sel.data = " + repr(data)[:1000]+"\n"
+        print("sel.data = " + repr(data)[:1000]+"\n")
         buf.insert_at_cursor("sel.data = " + repr(data)[:5000] + "\n")

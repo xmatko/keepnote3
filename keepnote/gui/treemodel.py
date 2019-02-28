@@ -237,7 +237,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def clear(self):
         """Clear all rows from model"""
-        for i in xrange(len(self._roots)-1, -1, -1):
+        for i in range(len(self._roots)-1, -1, -1):
             self.row_deleted((i,))
 
         self._roots = []
@@ -477,7 +477,7 @@ class BaseTreeModel (GenericTreeModel):
         else:
             children = parent.get_children()
             if n >= len(children):
-                print "out of bounds", parent.get_title(), n
+                print("out of bounds", parent.get_title(), n)
                 return None
             else:
                 return children[n]

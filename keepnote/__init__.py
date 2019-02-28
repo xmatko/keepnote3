@@ -759,6 +759,7 @@ class KeepNote (object):
 
         # listeners
         self._listeners = {}
+        self.logger.debug("keepnote.Keepnote.__init__()  DONE")
 
     def init(self):
         """Initialize from preferences saved on disk"""
@@ -1459,7 +1460,10 @@ class KeepNoteExtension (extension.Extension):
     visible = False
 
     def __init__(self, app):
+        self.logger = logging.getLogger('keepnote')
+        self.logger.debug("keepnote.__init__.KeepNoteExtension.__init__()")
         extension.Extension.__init__(self, app)
+        self.logger.debug("keepnote.__init__.KeepNoteExtension.__init__() DONE")
 
     def enable(self, enable):
         """This extension is always enabled"""
