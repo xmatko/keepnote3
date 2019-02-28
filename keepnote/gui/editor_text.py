@@ -172,7 +172,7 @@ class TextEditor (KeepNoteEditor):
                         page.get_attr("payload_filename"), "r", "utf-8")
                     text = infile.read()
                     infile.close()
-                    self._textview.get_buffer().set_text(text)
+                    self._textview.get_buffer().set_text(str(text))
                     self._load_cursor()
 
                 else:
@@ -231,7 +231,7 @@ class TextEditor (KeepNoteEditor):
                 # save text data
                 buf = self._textview.get_buffer()
                 text = buf.get_text(buf.get_start_iter(),
-                                                buf.get_end_iter())
+                                                buf.get_end_iter(), True)
                 out = self._page.open_file(
                     self._page.get_attr("payload_filename"), "w", "utf-8")
                 out.write(text)
