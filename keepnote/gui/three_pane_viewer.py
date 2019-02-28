@@ -497,7 +497,7 @@ class ThreePaneViewer (Viewer):
                       "Could not load page '%s'." % nodes[0].get_title(), e)
 
         self.emit("current-node", self._current_page)
-    '''
+
     def on_goto_node(self, widget, node):
         """Focus view on a node"""
         self.goto_node(node, direct=False)
