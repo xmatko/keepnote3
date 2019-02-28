@@ -87,12 +87,10 @@ class Extension (keepnote.gui.extension.Extension):
             AppCommand("search-titles", self.on_search_titles,
                        metavar="TEXT",
                        help="search notes by title"),
-            '''
             # Remove update / compat functionnality
             AppCommand("upgrade", self.on_upgrade_notebook,
                        metavar="[v VERSION] NOTEBOOK...",
                        help="upgrade a notebook"),
-            '''
 
             # misc
             AppCommand("screenshot", self.on_screenshot,
@@ -310,10 +308,10 @@ class Extension (keepnote.gui.extension.Extension):
         return window, notebook
 
 
-    '''
     # Remove update / compat functionnality
     def on_upgrade_notebook(self, app, args):
-
+        print("COMMAND: upgrade notebook not implemented")
+        '''
         version = keepnote.notebook.NOTEBOOK_FORMAT_VERSION
         i = 1
         while i < len(args):
@@ -333,4 +331,4 @@ class Extension (keepnote.gui.extension.Extension):
                                  (version, filename))
             keepnote.notebook.update.update_notebook(filename, version, 
                                                      verify=True)
-    '''
+        '''
