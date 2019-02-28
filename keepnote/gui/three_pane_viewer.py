@@ -90,7 +90,7 @@ class ThreePaneViewer (Viewer):
         # widgets
 
         # treeview
-        self.logger.debug("\n#\n# INSTANCIATE KeepNoteTreeView from ThreePaneViewer\n#")
+        self.logger.debug("### INSTANTIATE KeepNoteTreeView from ThreePaneViewer")
         self.treeview = KeepNoteTreeView()
         self.treeview.set_get_node(self._app.get_node)
         self.treeview.connect("select-nodes", self._on_tree_select)
@@ -101,9 +101,10 @@ class ThreePaneViewer (Viewer):
         self.treeview.connect("goto-node", self.on_goto_node)
         self.treeview.connect("activate-node", self.on_activate_node)
         self.treeview.connect("drop-file", self._on_attach_file)
-        self.logger.debug("\n#\n# KeepNoteTreeView INSTANCIATED from ThreePaneViewer\n#")
+        self.logger.debug("### DONE")
 
         # listview
+        self.logger.debug("### INSTANTIATE KeepNoteListView from ThreePaneViewer")
         self.listview = KeepNoteListView()
         self.listview.set_get_node(self._app.get_node)
         self.listview.connect("select-nodes", self._on_list_select)
@@ -117,30 +118,31 @@ class ThreePaneViewer (Viewer):
         self.listview.connect("edit-node", self._on_edit_node)
         self.listview.connect("drop-file", self._on_attach_file)
         self.listview.on_status = self.set_status  # TODO: clean up
+        self.logger.debug("### DONE")
 
         # editor
         #self.editor = KeepNoteEditor(self._app)
         #self.editor = RichTextEditor(self._app)
-        self.logger.debug("\n#\n# INSTANCIATE ContentEditor from ThreePaneViewer\n#")
+        self.logger.debug("### INSTANTIATE ContentEditor from ThreePaneViewer")
         self.editor = ContentEditor(self._app)
         self.logger.debug("### DONE")
-        self.logger.debug("\n#\n# INSTANCIATE RichTextEditor from ThreePaneViewer\n#")
+        self.logger.debug("### INSTANTIATE RichTextEditor from ThreePaneViewer")
         rich_editor = RichTextEditor(self._app)
         self.logger.debug("### DONE")
-        self.logger.debug("\n#\n# INSTANCIATE TextEditor from ThreePaneViewer\n#")
+        self.logger.debug("### INSTANTIATE TextEditor from ThreePaneViewer")
         text_editor = TextEditor(self._app)
         self.logger.debug("### DONE")
-        self.logger.debug("\n# add_editor: RichTextEditor")
+        self.logger.debug("### add_editor: RichTextEditor")
         self.editor.add_editor("text/xhtml+xml", rich_editor)
         self.logger.debug("### DONE")
-        self.logger.debug("\n# add_editor: TextEditor")
+        self.logger.debug("### add_editor: TextEditor")
         self.editor.add_editor("text", text_editor)
         self.logger.debug("### DONE")
-        self.logger.debug("\n# set_default_editor: RichTextEditor")
+        self.logger.debug("### set_default_editor: RichTextEditor")
         self.editor.set_default_editor(rich_editor)
         self.logger.debug("### DONE")
 
-        self.logger.debug("\n# connect signals")
+        self.logger.debug("### connect signals")
         self.editor.connect("view-node", self._on_editor_view_node)
         self.editor.connect("child-activated", self._on_child_activated)
         self.editor.connect("visit-node", lambda w, n:
@@ -149,7 +151,7 @@ class ThreePaneViewer (Viewer):
         self.editor.connect("window-request", lambda w, t:
                             self.emit("window-request", t))
         self.logger.debug("### DONE")
-        self.logger.debug("\n# view nodes")
+        self.logger.debug("### view nodes")
         self.editor.view_nodes([])
         self.logger.debug("### DONE")
 

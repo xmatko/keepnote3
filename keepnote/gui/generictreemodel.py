@@ -126,6 +126,7 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
 
         # Set initial stamp
         self.invalidate_iters()
+        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.__init__()   DONE")
 
     def iter_depth_first(self):
         """Depth-first iteration of the entire TreeModel yielding the python nodes."""

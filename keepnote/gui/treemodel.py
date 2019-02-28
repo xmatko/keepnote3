@@ -98,7 +98,7 @@ class TreeModelColumn (object):
         self.type = datatype
         self.attr = attr
         self.get_value = get
-        print(" => TreeModelColumn: pos =", self.pos, "name =", self.name, " type =", self.type, " attr =", self.attr, " get_value =", self.get_value)
+        print(" => TreeModelColumn: pos =", self.pos, ", name =", self.name, ", type =", self.type, ", attr =", self.attr, ", get_value =", self.get_value)
 
 def iter_children(model, it):
     """Iterate through the children of a row (it)"""
@@ -121,11 +121,10 @@ class BaseTreeModel (GenericTreeModel):
     """
 
     def __init__(self, roots=[]):
-
-        GenericTreeModel.__init__(self)
-
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__()")
+        GenericTreeModel.__init__(self)
+
         self.set_property("leak-references", False)
 
         self._notebook = None
@@ -137,12 +136,14 @@ class BaseTreeModel (GenericTreeModel):
         self._columns_lookup = {}
         self._node_column = None
 
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__() SET_ROOT_NODES")
         self.set_root_nodes(roots)
 
         # add default node column
         self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__() APPEND_COLUMN")
         self.append_column(TreeModelColumn("node", object,
                                            get=lambda node: node))
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__() SET_NODE_COLUMN")
         self.set_node_column(self.get_column_by_name("node"))
 
     def set_notebook(self, notebook):
@@ -207,6 +208,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def set_node_column(self, col):
         """Set the column that contains nodes"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_node_column")
         self._node_column = col
 
     '''
@@ -238,6 +240,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def clear(self):
         """Clear all rows from model"""
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.clear()")
         for i in range(len(self._roots)-1, -1, -1):
             self.row_deleted((i,))
 
@@ -246,7 +249,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def set_root_nodes(self, roots=[]):
         """Set the root nodes of the model"""
-        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_root_nodes()")
+        self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.set_root_nodes()  roots: %s" % str(roots))
         # clear the model
         self.clear()
 
@@ -510,12 +513,13 @@ class KeepNoteTreeModel (BaseTreeModel):
     The subset is defined by the self._roots list.
     """
     def __init__(self, roots=[]):
-        BaseTreeModel.__init__(self, roots)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treemodel.KeepNoteTreeModel.__init__()")
+        BaseTreeModel.__init__(self, roots)
 
         self.fades = set()
 
+        self.logger.debug("keepnote.gui.treemodel.KeepNoteTreeModel.__init__()  DONE")
         # add default node column
         #self.append_column(TreeModelColumn("node", object,
         #                                   get=lambda node: node))

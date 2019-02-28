@@ -41,33 +41,40 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
     """
 
     def __init__(self):
-        basetreeview.KeepNoteBaseTreeView.__init__(self)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treeview.KeepNoteTreeView.__init__()")
+        basetreeview.KeepNoteBaseTreeView.__init__(self)
 
         self._notebook = None
 
-        self.set_model(treemodel.KeepNoteTreeModel())
+        self.logger.debug("\n$$$\n$$$ INSTANTIATE MODEL from KeepNoteTreeView\n$$$")
+        model = treemodel.KeepNoteTreeModel()
+        self.logger.debug("\n$$$\n$$$ INSTANTIATE MODEL from KeepNoteTreeView  DONE\n$$$")
+        self.logger.debug("\n$$$\n$$$ set_model() from KeepNoteTreeView\n$$$")
+        self.set_model(model)
+        self.logger.debug("\n$$$\n$$$ set_model() DONE\n$$$")
 
         # treeview signals
+        self.logger.debug("$$$ connect signals()")
         self.connect("key-release-event", self.on_key_released)
         self.connect("button-press-event", self.on_button_press)
+        self.logger.debug("$$$ DONE")
 
         # selection config
+        self.logger.debug("$$$ set_mode()")
         self.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        self.logger.debug("$$$ DONE")
 
         self.set_headers_visible(False)
 
         # tree style
-        try:
-            # available only on gtk > 2.8
-            self.set_property("enable-tree-lines", True)
-        except TypeError:
-            pass
+        self.set_property("enable-tree-lines", True)
 
+        self.logger.debug("\n$$$\n$$$ _setup_columns()\n$$$")
         self._setup_columns()
+        self.logger.debug("\n$$$\n$$$ _setup_columns() DONE\n$$$")
         self.set_sensitive(False)
-        self.logger.debug("keepnote.gui.treeview.KeepNoteTreeView.__init__()  DONE")
+        self.logger.debug("\n$$$ keepnote.gui.treeview.KeepNoteTreeView.__init__()  DONE\n\n")
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
