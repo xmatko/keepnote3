@@ -149,7 +149,7 @@ class Extension (extension.Extension):
             filename = etree.SubElement(elm, "filename")
             filename.text = file_type.filename
 
-        tree.write(open(config, "w"), "UTF-8")
+        tree.write(open(config, "w"), "unicode")
 
 
     def set_default_file_types(self):
