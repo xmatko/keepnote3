@@ -308,7 +308,7 @@ def guess_file_mimetype(filename, default="application/octet-stream"):
 def write_empty_page(node, page_file=PAGE_DATA_FILE):
     """Initializes an empty page file for a node"""
     out = node.open_file(page_file, "w", "utf-8")
-    out.write(BLANK_NOTE)
+    out.write(bytes(BLANK_NOTE, "utf-8"))
     out.close()
 
 
@@ -696,7 +696,7 @@ class NoteBookNode (object):
                     data = infile.read(1024*4)
                     if data == "":
                         break
-                    out.write(data)
+                    out.write(bytes(data, "utf-8"))
                 infile.close()
                 out.close()
         except Exception as e:
@@ -1693,13 +1693,13 @@ class NoteBook (NoteBookNode):
             data = self.pref.get_data()
 
             out = self.open_file(PREF_FILE, "w", codec="utf-8")
-            out.write(u'<?xml version="1.0" encoding="UTF-8"?>\n'
-                      u'<notebook>\n'
-                      u'<version>%d</version>\n'
-                      u'<pref>\n' % data["version"])
+            out.write(bytes('<?xml version="1.0" encoding="UTF-8"?>\n'
+                      '<notebook>\n'
+                      '<version>%d</version>\n'
+                      '<pref>\n' % data["version"], "utf-8"))
             plist.dump(data, out, indent=4, depth=4)
-            out.write(u'</pref>\n'
-                      u'</notebook>\n')
+            out.write(bytes('</pref>\n'
+                      '</notebook>\n', "utf-8"))
             out.close()
 
         except (IOError, OSError) as e:
@@ -1754,7 +1754,7 @@ class NoteBook (NoteBookNode):
 
     def _recover_preferences(self):
         out = self.open_file(PREF_FILE, "w", "utf-8")
-        out.write(u"<notebook></notebook>")
+        out.write(bytes("<notebook></notebook>", "utf-8"))
         out.close()
 
 

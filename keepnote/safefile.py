@@ -99,6 +99,13 @@ class SafeFile (file):
             os.rename(self._tmp, self._filename)
             self._tmp = None
 
+    def write(self, msg):
+        if isinstance(msg, str):
+            super(SafeFile, self).write(bytes(msg, "utf-8"))
+        else:
+            super(SafeFile, self).write(msg)
+
+
     def discard(self):
         """
         Close and discard written data.

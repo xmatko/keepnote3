@@ -234,7 +234,7 @@ class TextEditor (KeepNoteEditor):
                                                 buf.get_end_iter(), True)
                 out = self._page.open_file(
                     self._page.get_attr("payload_filename"), "w", "utf-8")
-                out.write(text)
+                out.write(bytes(text, "utf-8"))
                 out.close()
 
                 # save meta data

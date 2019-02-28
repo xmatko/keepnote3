@@ -376,12 +376,12 @@ def write_attr(filename, nodeid, attr):
 
     version = attr.get('version',
                        keepnote.notebook.NOTEBOOK_FORMAT_VERSION)
-    out.write(u'<?xml version="1.0" encoding="UTF-8"?>\n'
-              u'<node>\n'
-              u'<version>%d</version>\n'
-              u'<id>%s</id>\n' % (version, nodeid))
+    out.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+              '<node>\n'
+              '<version>%d</version>\n'
+              '<id>%s</id>\n' % (version, nodeid))
     plist.dump(attr, out, indent=2, depth=0)
-    out.write(u'</node>\n')
+    out.write('</node>\n')
 
     if isinstance(filename, str):
         out.close()
