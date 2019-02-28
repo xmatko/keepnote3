@@ -1039,8 +1039,6 @@ class KeepNote (object):
                 if cmd[i] == "%f":
                     cmd[i] = filename
 
-        # create proper encoding
-        cmd = map(lambda x: unicode(x), cmd)
         if get_platform() == "windows":
             cmd = [x.encode('mbcs') for x in cmd]
         else:
