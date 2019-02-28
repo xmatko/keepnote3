@@ -358,7 +358,7 @@ class EditorMenus (GObject.GObject):
         def BothAction(name1, *args):
             return [Action(name1, *args), ToggleAction(name1 + " Tool", *args)]
 
-        return (map(lambda x: Action(*x), [
+        return (list(map(lambda x: Action(*x), [
             # finding
             ("Find In Page", Gtk.STOCK_FIND, _("_Find In Page..."),
              "<control>F", None,
@@ -378,7 +378,7 @@ class EditorMenus (GObject.GObject):
              "<control>R", None,
              lambda w: self._editor.find_dialog.on_find(True)),
 
-            ]) +
+            ])) +
 
             [ToggleAction("Spell Check", None, _("_Spell Check"),
                           "", None,
