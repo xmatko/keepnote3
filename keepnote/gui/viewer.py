@@ -58,7 +58,7 @@ class Viewer (Gtk.Box):
         self.logger.debug("keepnote.gui.viewer.Viewer.__init__()")
         self._app = app
         self._main_window = parent
-        self._viewerid = viewerid if viewerid else unicode(uuid.uuid4())
+        self._viewerid = viewerid if viewerid else str(uuid.uuid4())
         self.logger.debug("viewer_name=%s" % (viewer_name))
         self._viewer_name = viewer_name
 
@@ -72,7 +72,7 @@ class Viewer (Gtk.Box):
         return self._viewerid
 
     def set_id(self, viewerid):
-        self._viewerid = viewerid if viewerid else unicode(uuid.uuid4())
+        self._viewerid = viewerid if viewerid else str(uuid.uuid4())
 
     def get_name(self):
         return self._viewer_name
