@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-
+import sys
 import logging
 
 # GObject introspection imports
@@ -88,6 +88,7 @@ class ThreePaneViewer (Viewer):
         # widgets
 
         # treeview
+        self.logger.debug("\n#\n# INSTANCIATE KeepNoteTreeView from ThreePaneViewer\n#")
         self.treeview = KeepNoteTreeView()
         self.treeview.set_get_node(self._app.get_node)
         self.treeview.connect("select-nodes", self._on_tree_select)
@@ -98,6 +99,7 @@ class ThreePaneViewer (Viewer):
         self.treeview.connect("goto-node", self.on_goto_node)
         self.treeview.connect("activate-node", self.on_activate_node)
         self.treeview.connect("drop-file", self._on_attach_file)
+        self.logger.debug("\n#\n# KeepNoteTreeView INSTANCIATED from ThreePaneViewer\n#")
 
         # listview
         self.listview = KeepNoteListView()
@@ -117,12 +119,26 @@ class ThreePaneViewer (Viewer):
         # editor
         #self.editor = KeepNoteEditor(self._app)
         #self.editor = RichTextEditor(self._app)
+        self.logger.debug("\n#\n# INSTANCIATE ContentEditor from ThreePaneViewer\n#")
         self.editor = ContentEditor(self._app)
+        self.logger.debug("### DONE")
+        self.logger.debug("\n#\n# INSTANCIATE RichTextEditor from ThreePaneViewer\n#")
         rich_editor = RichTextEditor(self._app)
+        self.logger.debug("### DONE")
+        self.logger.debug("\n#\n# INSTANCIATE TextEditor from ThreePaneViewer\n#")
+        text_editor = TextEditor(self._app)
+        self.logger.debug("### DONE")
+        self.logger.debug("\n# add_editor: RichTextEditor")
         self.editor.add_editor("text/xhtml+xml", rich_editor)
-        self.editor.add_editor("text", TextEditor(self._app))
+        self.logger.debug("### DONE")
+        self.logger.debug("\n# add_editor: TextEditor")
+        self.editor.add_editor("text", text_editor)
+        self.logger.debug("### DONE")
+        self.logger.debug("\n# set_default_editor: RichTextEditor")
         self.editor.set_default_editor(rich_editor)
+        self.logger.debug("### DONE")
 
+        self.logger.debug("\n# connect signals")
         self.editor.connect("view-node", self._on_editor_view_node)
         self.editor.connect("child-activated", self._on_child_activated)
         self.editor.connect("visit-node", lambda w, n:
@@ -130,7 +146,10 @@ class ThreePaneViewer (Viewer):
         self.editor.connect("error", lambda w, t, e: self.emit("error", t, e))
         self.editor.connect("window-request", lambda w, t:
                             self.emit("window-request", t))
+        self.logger.debug("### DONE")
+        self.logger.debug("\n# view nodes")
         self.editor.view_nodes([])
+        self.logger.debug("### DONE")
 
         self.editor_pane = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         self.editor_pane.pack_start(self.editor, True, True, 0)
@@ -170,9 +189,11 @@ class ThreePaneViewer (Viewer):
 
         self.treeview.grab_focus()
 
+        self.logger.debug("\n***\n*** Ending instanciation of a ThreePaneViewer class\n***")
+
     def set_notebook(self, notebook):
         """Set the notebook for the viewer"""
-        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.set_notebook()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         # add/remove reference to notebook
         self._app.ref_notebook(notebook)
         if self._notebook is not None:
@@ -221,7 +242,7 @@ class ThreePaneViewer (Viewer):
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
-        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.load_prefrences()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         p = app_pref.get("viewers", "three_pane_viewer", define=True)
         self.set_view_mode(p.get("view_mode", DEFAULT_VIEW_MODE))
         self.paned2.set_property("position-set", True)
@@ -249,6 +270,7 @@ class ThreePaneViewer (Viewer):
 
     def save_preferences(self, app_pref):
         """Save application preferences"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         p = app_pref.get("viewers", "three_pane_viewer")
         p["view_mode"] = self._view_mode
         p["vsash_pos"] = self.paned2.get_position()
@@ -265,6 +287,7 @@ class ThreePaneViewer (Viewer):
 
     def on_notebook_node_changed(self, nodes):
         """Callback for when notebook node is changed"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self.emit("modified", True)
 
     def undo(self):
@@ -291,6 +314,7 @@ class ThreePaneViewer (Viewer):
             "vertical"
             "horizontal"
         """
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         vsash = self.paned2.get_position()
 
         # detach widgets
@@ -320,6 +344,7 @@ class ThreePaneViewer (Viewer):
 
     def _load_selections(self):
         """Load previous node selections from notebook preferences"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         if self._notebook:
             info = self._notebook.pref.get("viewers", "ids",
                                            self._viewerid, define=True)
@@ -357,12 +382,14 @@ class ThreePaneViewer (Viewer):
 
     def get_current_node(self):
         """Returns the currently focused page"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         return self._current_page
 
     def get_selected_nodes(self):
         """
         Returns  a list of selected nodes.
         """
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         if self.treeview.is_focus():
             return self.treeview.get_selected_nodes()
         else:
@@ -468,13 +495,14 @@ class ThreePaneViewer (Viewer):
                       "Could not load page '%s'." % nodes[0].get_title(), e)
 
         self.emit("current-node", self._current_page)
-
+    '''
     def on_goto_node(self, widget, node):
         """Focus view on a node"""
         self.goto_node(node, direct=False)
 
     def on_activate_node(self, widget, node):
         """Focus view on a node"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         if self.viewing_search():
             # if we are in a search, goto node, but not directly
             self.goto_node(node, direct=False)
@@ -490,6 +518,7 @@ class ThreePaneViewer (Viewer):
 
     def on_goto_parent_node(self, node=None):
         """Focus view on a node's parent"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         if node is None:
             nodes = self.get_selected_nodes()
             if len(nodes) == 0:
@@ -524,6 +553,7 @@ class ThreePaneViewer (Viewer):
 
     def new_node(self, kind, pos, parent=None):
         """Add a new node to the notebook"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         # TODO: think about where this goes
 
@@ -721,8 +751,7 @@ class ThreePaneViewer (Viewer):
 
     def add_ui(self, window):
         """Add the view's UI to a window"""
-
-        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer.add_ui()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         assert window == self._main_window
 
         self._ui_ready = True
@@ -820,7 +849,7 @@ class ThreePaneViewer (Viewer):
 
     def _setup_icon_menu(self):
         """Setup the icon menu"""
-        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._setup_icon_menu()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         iconmenu = IconMenu()
         iconmenu.connect(
             "set-icon",
@@ -837,7 +866,7 @@ class ThreePaneViewer (Viewer):
 
     def _setup_color_menu(self, kind):
         """Setup the icon menu"""
-        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._setup_color_menu()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         def on_set_color(w, color):
             for node in self.get_selected_nodes():
@@ -891,6 +920,7 @@ class ThreePaneViewer (Viewer):
 
     def _get_ui(self):
         """Returns the UI XML"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         # NOTE: I use a dummy menubar popup_menus so that I can have
         # accelerators on the menus.  It is a hack.

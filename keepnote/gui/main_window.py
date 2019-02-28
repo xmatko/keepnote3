@@ -103,6 +103,8 @@ class KeepNoteWindow (Gtk.Window):
         # load preferences for the first time
         self.load_preferences(True)
 
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.__init__()   DONE")
+
     def get_id(self):
         return self._winid
 
@@ -125,7 +127,9 @@ class KeepNoteWindow (Gtk.Window):
         #====================================
         # Dialogs
 
+        self.logger.debug("KeepNoteWindow.init_layout() DragDropTestDialog()")
         self.drag_test = dialog_drag_drop_test.DragDropTestDialog(self)
+        self.logger.debug("KeepNoteWindow.init_layout() TabbedViewer()")
         self.viewer = self.new_viewer()
 
         #====================================
@@ -826,7 +830,10 @@ class KeepNoteWindow (Gtk.Window):
 
     def set_notebook(self, notebook):
         """Set the NoteBook for the window"""
+        self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.set_notebook()")
+        print("\n\nSET NOTEBOOK FOR THE WINDOW\n\n")
         self.viewer.set_notebook(notebook)
+        print("\nNOTEBOOK FOR THE WINDOW SET\n")
 
     def update_index(self, notebook=None, clear=False):
         """Update notebook index"""

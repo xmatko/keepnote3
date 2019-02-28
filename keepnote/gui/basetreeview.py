@@ -198,6 +198,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             Gdk.DragAction.ASK)
         '''
 
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.__init__()   DONE")
+
     def set_master_node(self, node):
         self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_master_node()")
         print("node", node)

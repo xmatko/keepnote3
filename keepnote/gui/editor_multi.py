@@ -49,9 +49,9 @@ class MultiEditor (KeepNoteEditor):
     """
 
     def __init__(self, app):
-        KeepNoteEditor.__init__(self, app)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.editor_multi.MultiEditor.__init__()")
+        KeepNoteEditor.__init__(self, app)
         self.show_all()
 
         self._notebook = None
@@ -218,6 +218,7 @@ class ContentEditor (MultiEditor):
 
     def add_editor(self, content_type, editor):
         """Add an editor for a content-type"""
+        self.logger.debug("keepnote.gui.editor_multi.ContentEditor.add_editor() editor:%s" % editor)
         self._editors[content_type] = editor
 
     def removed_editor(self, content_type):
@@ -230,13 +231,13 @@ class ContentEditor (MultiEditor):
 
     def set_default_editor(self, editor):
         """Set the default editor"""
+        self.logger.debug("keepnote.gui.editor_multi.ContentEditor.set_default_editor() editor:%s" % editor)
         self._default_editor = editor
 
     #=============================
     # Editor Interface
 
     def view_nodes(self, nodes):
-
         self.logger.debug("keepnote.gui.editor_multi.ContentEditor.view_nodes()")
         if len(nodes) != 1:
             MultiEditor.view_nodes(self, [])

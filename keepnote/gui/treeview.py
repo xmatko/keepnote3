@@ -67,6 +67,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
 
         self._setup_columns()
         self.set_sensitive(False)
+        self.logger.debug("keepnote.gui.treeview.KeepNoteTreeView.__init__()  DONE")
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
@@ -95,6 +96,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         # make treeview searchable
         self.set_search_column(self.model.get_column_by_name("title").pos)
         #self.set_fixed_height_mode(True)
+        self.logger.debug("keepnote.gui.treeview.TreeView._setup_columns()  DONE")
 
     #=============================================
     # gui callbacks
@@ -125,8 +127,8 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
     # actions
 
     def set_notebook(self, notebook):
-        self.logger.debug("keepnote.gui.treeview.TreeView.set_notebook() notebook: %s" % str(notebook))
         basetreeview.KeepNoteBaseTreeView.set_notebook(self, notebook)
+        self.logger.debug("keepnote.gui.treeview.TreeView.set_notebook() notebook: %s" % str(notebook))
         self.logger.debug("keepnote.gui.treeview.TreeView.set_notebook() self._notebook: %s" % str(self._notebook))
 
         if self._notebook is None:
@@ -148,6 +150,8 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             if root.get_attr("expanded", True):
                 #self.expand_to_path((0,))
                 self.expand_to_path(Gtk.TreePath.new_from_indices((0,)))
+
+        self.logger.debug("keepnote.gui.treeview.TreeView.set_notebook()  DONE\n")
 
     def save(self):
         """Fake function"""

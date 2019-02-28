@@ -98,6 +98,7 @@ class TreeModelColumn (object):
         self.type = datatype
         self.attr = attr
         self.get_value = get
+        print(" => TreeModelColumn: pos =", self.pos, "name =", self.name, " type =", self.type, " attr =", self.attr, " get_value =", self.get_value)
 
 def iter_children(model, it):
     """Iterate through the children of a row (it)"""

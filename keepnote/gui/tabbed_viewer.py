@@ -24,6 +24,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+import sys
 import logging
 
 # GObject introspection imports
@@ -48,13 +49,12 @@ class TwoWayDict (object):
     def __init__(self):
 
         self.logger = logging.getLogger('keepnote')
-        self.logger.debug("keepnote.gui.tabbed_viewer.TwoWayDict.__init__()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self._lookup1 = {}
         self._lookup2 = {}
 
     def add(self, item1, item2):
-        self.logger.debug("TwoWayDict.add item 1: %s" % str(item1))
-        self.logger.debug("TwoWayDict.add item 2: %s" % str(item2))
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self._lookup1[item1] = item2
         self._lookup2[item2] = item1
 
@@ -71,13 +71,14 @@ class TabbedViewer (Viewer):
     def __init__(self, app, main_window, viewerid=None,
                  default_viewer=ThreePaneViewer):
         self.logger = logging.getLogger('keepnote')
-        self.logger.debug("keepnote.gui.tabbed_viewer.TabbedViewer.__init__()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         Viewer.__init__(self, app, main_window, viewerid,
                         viewer_name="tabbed_viewer")
         self._default_viewer = default_viewer
         self._current_viewer = None
         self._callbacks = {}
         self._ui_ready = False
+        self.logger.info("Add null_viewer") 
         self._null_viewer = Viewer(app, main_window, viewer_name="null_viewer")
         self._tab_names = {}
 
@@ -88,6 +89,7 @@ class TabbedViewer (Viewer):
                                 ThreePaneViewer)
 
         # layout
+        self.logger.info("Add Gtk.Notebook") 
         self._tabs = Gtk.Notebook()
         self._tabs.show()
         self._tabs.set_property("show-border", False)
@@ -100,6 +102,7 @@ class TabbedViewer (Viewer):
         self.pack_start(self._tabs, True, True, 0)
 
         # initialize with a single tab
+        self.logger.info("Initialize with a single tab") 
         self.new_tab()
 
         # TODO: maybe add close_viewer() function
@@ -114,17 +117,18 @@ class TabbedViewer (Viewer):
 
     def iter_viewers(self):
         """Iterate through all viewers"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         for i in xrange(self._tabs.get_n_pages()):
             yield self._tabs.get_nth_page(i)
 
     def new_tab(self, viewer=None, init="current_node"):
         """Open a new tab with a viewer"""
-
-        self.logger.debug("keepnote.gui.tabbed_viewer.TabbedViewer.new_tab()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         # TODO: make new tab appear next to existing tab
 
         # create viewer and add to notebook
         if viewer is None:
+            self.logger.info("Adding default_viewer (three_pane_viewer)") 
             viewer = self._default_viewer(self._app, self._main_window)
         label = TabLabel(self, viewer, None, _("(Untitled)"))
         label.connect("new-name", lambda w, text:
@@ -230,6 +234,7 @@ class TabbedViewer (Viewer):
 
     def on_tab_current_node(self, viewer, node):
         """Callback for when a viewer wants to set its title"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         # get node title
         if node is None:
@@ -290,6 +295,7 @@ class TabbedViewer (Viewer):
 
     def set_notebook(self, notebook):
         """Set the notebook for the viewer"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         if notebook is None:
             # clear the notebook in the viewer
             return self._current_viewer.set_notebook(notebook)
@@ -360,6 +366,7 @@ class TabbedViewer (Viewer):
 
     def load_preferences(self, app_pref, first_open=False):
         """Load application preferences"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         for viewer in self.iter_viewers():
             viewer.load_preferences(app_pref, first_open)
 
@@ -421,10 +428,12 @@ class TabbedViewer (Viewer):
     # node operations
 
     def new_node(self, kind, pos, parent=None):
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         return self._current_viewer.new_node(kind, pos, parent)
 
     def get_current_node(self):
         """Returns the currently focused page"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         return self._current_viewer.get_current_node()
 
     def get_selected_nodes(self):
@@ -432,6 +441,7 @@ class TabbedViewer (Viewer):
         Returns (nodes, widget) where 'nodes' are a list of selected nodes
         in widget 'widget'
         """
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         return self._current_viewer.get_selected_nodes()
 
     def goto_node(self, node, direct=False):
@@ -462,6 +472,7 @@ class TabbedViewer (Viewer):
 
     def add_ui(self, window):
         """Add the view's UI to a window"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         assert window == self._main_window
         self._ui_ready = True
         self._action_group = Gtk.ActionGroup("Tabbed Viewer")
@@ -541,7 +552,7 @@ class TabLabel (Gtk.Box):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
 
         self.logger = logging.getLogger('keepnote')
-        self.logger.debug("keepnote.gui.tabbed_viewer.TabLabel.__init__()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         #self.name = None
 
         self.tabs = tabs

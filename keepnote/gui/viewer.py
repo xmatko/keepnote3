@@ -25,8 +25,9 @@
 #
 
 # python imports
-import uuid
+import sys
 import logging
+import uuid
 
 # GObject introspection imports
 import gi
@@ -55,7 +56,7 @@ class Viewer (Gtk.Box):
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.logger = logging.getLogger('keepnote')
-        self.logger.debug("keepnote.gui.viewer.Viewer.__init__()")
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self._app = app
         self._main_window = parent
         self._viewerid = viewerid if viewerid else str(uuid.uuid4())
@@ -79,6 +80,7 @@ class Viewer (Gtk.Box):
 
     def set_notebook(self, notebook):
         """Sets the current notebook for the viewer"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self._notebook = notebook
 
     def get_notebook(self):
@@ -90,6 +92,7 @@ class Viewer (Gtk.Box):
             self.set_notebook(None)
 
     def load_preferences(self, app_pref, first_open):
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         pass
 
     def save_preferences(self, app_pref):
@@ -117,6 +120,7 @@ class Viewer (Gtk.Box):
         return []
 
     def new_node(self, kind, pos, parent=None):
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         if parent is None:
             parent = self._notebook
