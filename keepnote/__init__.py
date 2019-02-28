@@ -210,22 +210,6 @@ def ensure_unicode(text, encoding="utf8"):
     return text
 
 
-def unicode_gtk(text):
-    """
-    Converts a string from gtk (utf8) to unicode
-
-    All strings from the pygtk API are returned as byte strings (str)
-    encoded as utf8.  KeepNote has the convention to keep all strings as
-    unicode internally.  So strings from pygtk must be converted to unicode
-    immediately.
-
-    Note: pygtk can accept either unicode or utf8 encoded byte strings.
-    """
-    if text is None:
-        return None
-    return str(text, "utf8")
-
-
 def print_error_log_header(out=None):
     """Display error log header"""
     if out is None:

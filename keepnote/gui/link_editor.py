@@ -31,7 +31,6 @@ from gi.repository import GObject, Gtk
 
 
 # keepnote imports
-from keepnote import unicode_gtk
 from keepnote.notebook import get_node_url
 
 
@@ -114,7 +113,7 @@ class LinkEditor (Gtk.Frame):
             self.update_completion()
 
     def update_completion(self):
-        text = unicode_gtk(self.url_text.get_text())
+        text = self.url_text.get_text()
 
         self._liststore.clear()
         if self.search_nodes and len(text) > 0:
@@ -156,7 +155,7 @@ class LinkEditor (Gtk.Frame):
         if self.textview is None:
             return
 
-        url = unicode_gtk(self.url_text.get_text())
+        url = self.url_text.get_text()
         tag, start, end = self.textview.get_link()
 
         if start is not None:

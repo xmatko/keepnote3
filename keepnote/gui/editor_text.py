@@ -32,7 +32,7 @@ from gi.repository import GObject, Gtk
 # keepnote imports
 import keepnote
 from keepnote import \
-    KeepNoteError, unicode_gtk
+    KeepNoteError
 from keepnote.notebook import \
     NoteBookError, \
     parse_node_url, \
@@ -172,7 +172,7 @@ class TextEditor (KeepNoteEditor):
                         page.get_attr("payload_filename"), "r", "utf-8")
                     text = infile.read()
                     infile.close()
-                    self._textview.get_buffer().set_text(text)
+                    self._textview.get_buffer().set_text(str(text))
                     self._load_cursor()
 
                 else:
@@ -230,11 +230,11 @@ class TextEditor (KeepNoteEditor):
             try:
                 # save text data
                 buf = self._textview.get_buffer()
-                text = unicode_gtk(buf.get_text(buf.get_start_iter(),
-                                                buf.get_end_iter()))
+                text = buf.get_text(buf.get_start_iter(),
+                                                buf.get_end_iter(), True)
                 out = self._page.open_file(
                     self._page.get_attr("payload_filename"), "w", "utf-8")
-                out.write(text)
+                out.write(bytes(text, "utf-8"))
                 out.close()
 
                 # save meta data
@@ -358,7 +358,7 @@ class EditorMenus (GObject.GObject):
         def BothAction(name1, *args):
             return [Action(name1, *args), ToggleAction(name1 + " Tool", *args)]
 
-        return (map(lambda x: Action(*x), [
+        return (list(map(lambda x: Action(*x), [
             # finding
             ("Find In Page", Gtk.STOCK_FIND, _("_Find In Page..."),
              "<control>F", None,
@@ -378,7 +378,7 @@ class EditorMenus (GObject.GObject):
              "<control>R", None,
              lambda w: self._editor.find_dialog.on_find(True)),
 
-            ]) +
+            ])) +
 
             [ToggleAction("Spell Check", None, _("_Spell Check"),
                           "", None,

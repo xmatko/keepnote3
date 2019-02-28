@@ -99,10 +99,9 @@ class WaitDialog (object):
                 self.progressbar.set_fraction(percent)
 
             # filter for messages we process
-            messages = filter(lambda x: isinstance(x, tuple) and len(x) == 2,
-                              self._task.get_messages())
-            texts = filter(lambda a, b: a == "text", messages)
-            details = filter(lambda a, b: a == "detail", messages)
+            messages = [x for x in self._task.get_messages() if isinstance(x, tuple) and len(x) == 2]
+            texts = list(filter(lambda a, b: a == "text", messages))
+            details = list(filter(lambda a, b: a == "detail", messages))
 
             # update text
             if len(texts) > 0:

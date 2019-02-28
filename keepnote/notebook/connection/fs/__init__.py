@@ -110,13 +110,13 @@ from keepnote.notebook.connection.index import AttrIndex
 _ = trans.translate
 
 # constants
-XML_HEADER = u"""\
+XML_HEADER = """\
 <?xml version="1.0" encoding="UTF-8"?>
 """
 
-NOTEBOOK_META_DIR = u"__NOTEBOOK__"
-LOSTDIR = u"lost_found"
-ORPHANDIR = u"orphans"
+NOTEBOOK_META_DIR = "__NOTEBOOK__"
+LOSTDIR = "lost_found"
+ORPHANDIR = "orphans"
 MAX_LEN_NODE_FILENAME = 40
 
 
@@ -155,7 +155,7 @@ REGEX_BAD_CHARS = re.compile(r'[\*\?\'&<>|`:;]')
 REGEX_LEADING_UNDERSCORE = re.compile(r'^__+')
 
 
-def get_valid_filename(filename, default=u"folder",
+def get_valid_filename(filename, default="folder",
                        maxlen=MAX_LEN_NODE_FILENAME):
     """
     Converts a filename into a valid one
@@ -163,16 +163,16 @@ def get_valid_filename(filename, default=u"folder",
     Strips bad characters from filename
     """
     filename = filename[:maxlen]
-    filename = re.sub(REGEX_SLASHES, u"-", filename)
-    filename = re.sub(REGEX_BAD_CHARS, u"", filename)
-    filename = filename.replace(u"\t", " ")
-    filename = filename.strip(u" \t.")
+    filename = re.sub(REGEX_SLASHES, "-", filename)
+    filename = re.sub(REGEX_BAD_CHARS, "", filename)
+    filename = filename.replace("\t", " ")
+    filename = filename.strip(" \t.")
 
     # don't allow files to start with two underscores
-    filename = re.sub(REGEX_LEADING_UNDERSCORE, u"", filename)
+    filename = re.sub(REGEX_LEADING_UNDERSCORE, "", filename)
 
     # don't allow pure whitespace filenames
-    if filename == u"":
+    if filename == "":
         filename = default
 
     # use only lower case, some filesystems have trouble with mixed case
@@ -181,7 +181,7 @@ def get_valid_filename(filename, default=u"folder",
     return filename
 
 
-def get_valid_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
+def get_valid_unique_filename(path, filename, ext="", sep=" ", number=2,
                               return_number=False, use_number=False):
     """Returns a valid and unique version of a filename for a given path"""
     return keepnote.notebook.get_unique_filename(
@@ -190,7 +190,7 @@ def get_valid_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
 
 
 def get_valid_unique_filename_list(filenames, filename,
-                                   ext=u"", sep=u" ", number=2,
+                                   ext="", sep=" ", number=2,
                                    return_number=False, use_number=False):
     """Returns a valid and unique version of a filename for a given path"""
     return keepnote.notebook.get_unique_filename_list(
@@ -198,7 +198,7 @@ def get_valid_unique_filename_list(filenames, filename,
         return_number=return_number, use_number=use_number)
 
 
-def new_filename(conn, nodeid, new_filename, ext=u"", sep=u" ", number=2,
+def new_filename(conn, nodeid, new_filename, ext="", sep=" ", number=2,
                  return_number=False, use_number=False, ensure_valid=True,
                  _path=None):
 
@@ -210,7 +210,7 @@ def new_filename(conn, nodeid, new_filename, ext=u"", sep=u" ", number=2,
                              _path=_path)
 
 
-def new_filename_list(filenames, new_filename, ext=u"", sep=u" ", number=2,
+def new_filename_list(filenames, new_filename, ext="", sep=" ", number=2,
                       return_number=False, use_number=False, ensure_valid=True,
                       _path=None):
 
@@ -247,7 +247,7 @@ def iter_child_node_paths(path):
 
     for child in children:
         child_path = os.path.join(path, child)
-        if os.path.isfile(os.path.join(child_path, u"node.xml")):
+        if os.path.isfile(os.path.join(child_path, "node.xml")):
             yield child_path
 
 
@@ -275,8 +275,8 @@ def last_node_change(path):
 
     for dirpath, dirnames, filenames in os.walk(path):
         mtime = max(mtime, stat(dirpath).st_mtime)
-        if u"node.xml" in filenames:
-            mtime = max(mtime, stat(join(dirpath, u"node.xml")).st_mtime)
+        if "node.xml" in filenames:
+            mtime = max(mtime, stat(join(dirpath, "node.xml")).st_mtime)
 
     return mtime
 
@@ -330,7 +330,7 @@ def read_attr(filename, set_extra=True):
         tree = ET.ElementTree(file=filename)
     except Exception as e:
         raise ConnectionError(
-            _(u"Error reading meta data file '%s'" % filename), e)
+            _("Error reading meta data file '%s'" % filename), e)
 
     # check root
     root = tree.getroot()
@@ -353,7 +353,7 @@ def read_attr(filename, set_extra=True):
         extra['nodeid'] = attr['nodeid']
 
     if set_extra:
-        for key, value in extra.items():
+        for key, value in list(extra.items()):
             attr[key] = value
 
     return attr, extra
@@ -366,7 +366,7 @@ def write_attr(filename, nodeid, attr):
     filename -- a filename or stream
     attr     -- attribute dict
     """
-    if isinstance(filename, basestring):
+    if isinstance(filename, str):
         out = safefile.open(filename, "w", codec="utf-8")
 
     # Ensure nodeid is consistent if given.
@@ -376,14 +376,14 @@ def write_attr(filename, nodeid, attr):
 
     version = attr.get('version',
                        keepnote.notebook.NOTEBOOK_FORMAT_VERSION)
-    out.write(u'<?xml version="1.0" encoding="UTF-8"?>\n'
-              u'<node>\n'
-              u'<version>%d</version>\n'
-              u'<id>%s</id>\n' % (version, nodeid))
+    out.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+              '<node>\n'
+              '<version>%d</version>\n'
+              '<id>%s</id>\n' % (version, nodeid))
     plist.dump(attr, out, indent=2, depth=0)
-    out.write(u'</node>\n')
+    out.write('</node>\n')
 
-    if isinstance(filename, basestring):
+    if isinstance(filename, str):
         out.close()
 
 
@@ -405,7 +405,7 @@ class PathCache (object):
     """
     An in-memory cache of filesystem paths for nodeids
     """
-    def __init__(self, rootid=None, rootpath=u""):
+    def __init__(self, rootid=None, rootpath=""):
         self._root_parent = object()
         self._nodes = {None: self._root_parent}
 
@@ -637,14 +637,14 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             os.makedirs(lostdir)
 
         new_filename = keepnote.notebook.get_unique_filename(
-            lostdir, os.path.basename(filename),  sep=u"-")
+            lostdir, os.path.basename(filename),  sep="-")
 
-        keepnote.log_message(u"moving data to lostdir '%s' => '%s'\n" %
+        keepnote.log_message("moving data to lostdir '%s' => '%s'\n" %
                              (filename, new_filename))
         try:
             os.rename(filename, new_filename)
         except OSError as e:
-            raise ConnectionError(u"unable to store lost file '%s'"
+            raise ConnectionError("unable to store lost file '%s'"
                                   % filename, e)
 
     #======================
@@ -814,7 +814,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             # Move to a new parent.
             self._rename_node_dir(nodeid, attr, parentid, parentid2, path)
         elif (parentid and title_index and
-              title_index != attr.get("title", u"")):
+              title_index != attr.get("title", "")):
             # Rename node directory, but
             # do not rename root node dir (parentid is None).
             self._rename_node_dir(nodeid, attr, parentid, parentid2, path)
@@ -842,7 +842,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             os.rename(path, new_path)
         except Exception as e:
             raise ConnectionError(
-                _(u"Cannot rename '%s' to '%s'" % (path, new_path)), e)
+                _("Cannot rename '%s' to '%s'" % (path, new_path)), e)
 
         # update index
         self._path_cache.move(nodeid, basename, new_parentid)
@@ -869,7 +869,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             shutil.rmtree(path)
         except Exception as e:
             raise ConnectionError(
-                _(u"Do not have permission to delete"), e)
+                _("Do not have permission to delete"), e)
 
         # TODO: remove from index entire subtree
 
@@ -901,7 +901,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
             files = os.listdir(path)
         except Exception as e:
             raise ConnectionError(
-                _(u"Do not have permission to read folder contents: %s")
+                _("Do not have permission to read folder contents: %s")
                 % path, e)
 
         for filename in files:
@@ -910,7 +910,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
                 try:
                     yield self._read_node(nodeid, path2, _full=_full)
                 except ConnectionError as e:
-                    keepnote.log_error(u"error reading %s" % path2)
+                    keepnote.log_error("error reading %s" % path2)
                     continue
                     # TODO: raise warning, not all children read
 
@@ -999,7 +999,7 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
         """Reindex a node that has been tampered"""
         if warn:
             keepnote.log_message(
-                u"Unmanaged change detected. Reindexing '%s'\n" % path)
+                "Unmanaged change detected. Reindexing '%s'\n" % path)
 
         # TODO: to prevent a full recurse I could index children but
         # use 0 for mtime, so that they will still trigger an index for them
@@ -1145,9 +1145,9 @@ class BaseNoteBookConnectionFS (NoteBookConnection):
 
     def index_attr(self, key, datatype, index_value=False):
 
-        if isinstance(datatype, basestring):
+        if isinstance(datatype, str):
             index_type = datatype
-        elif issubclass(datatype, basestring):
+        elif issubclass(datatype, str):
             index_type = "TEXT"
         elif issubclass(datatype, int):
             index_type = "INTEGER"
@@ -1209,7 +1209,7 @@ class NoteBookConnectionFS (BaseNoteBookConnectionFS):
             'parentids': [],
             'childrenids': [],
         }
-        for key, value in defaults.items():
+        for key, value in list(defaults.items()):
             if key not in attr:
                 attr[key] = value
                 if key not in masked:

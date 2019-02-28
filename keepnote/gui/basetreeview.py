@@ -25,7 +25,8 @@
 #
 
 # python imports
-import urllib, logging
+import urllib
+import logging
 
 # GObject introspection imports
 import gi
@@ -34,7 +35,6 @@ from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 
 # keepnote imports
 import keepnote
-from keepnote import unicode_gtk
 from keepnote.notebook import NoteBookError
 from keepnote.gui.icons import get_node_icon
 from keepnote.gui.treemodel import \
@@ -239,8 +239,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def set_model(self, model):
         """Set the model for the view"""
-        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_model()")
-        print("model", model)
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_model()  model: %s" % str(model))
         # TODO: could group signal IDs into lists, for each detach
         # if model already attached, disconnect all of its signals
         if self.model is not None:
@@ -256,19 +255,24 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         # set new model
         self.model = model
         self.rich_model = None
+        
+        self.logger.debug("\n\nkeepnote.gui.basetreeview.KeepNoteBaseTreeView.set_model()  calling Gtk.TreeView.set_model()\n------------------------------>")
         Gtk.TreeView.set_model(self, self.model)
+        self.logger.debug("\n\nkeepnote.gui.basetreeview.KeepNoteBaseTreeView.set_model()  calling Gtk.TreeView.set_model()   DONE !!!\n<-----------------------")
 
         # set new model
         if self.model is not None:
             # look to see if model has an inner model (happens when we have
             # sorting models)
             if hasattr(self.model, "get_model"):
+                print("has_attr  get_model")
                 self.rich_model = self.model.get_model()
             else:
+                print("NOT has_attr get_model")
                 self.rich_model = model
-            print("self.model", self.model)
-            print("self.rich_model", self.rich_model)
-            print("self._notebook", self._notebook)
+            print("self.model :", self.model)
+            print("self.rich_model :", self.rich_model)
+            print("self._notebook :", self._notebook)
             # init signals for model
             self.rich_model.set_notebook(self._notebook)
             self.changed_start_id = self.rich_model.connect(
@@ -286,6 +290,8 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                                                 self.on_row_deleted)
             self.has_child_id = self.model.connect(
                 "row-has-child-toggled", self.on_row_has_child_toggled)
+
+        self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_model()  DONE")
 
     def set_popup_menu(self, menu):
         self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.set_popup_menu()")
@@ -740,8 +746,6 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
         # remember editing state
         self.editing_path = None
-
-        new_text = unicode_gtk(new_text)
 
         # get node being edited
         node = self.model.get_value(self.model.get_iter(path), self._node_col)

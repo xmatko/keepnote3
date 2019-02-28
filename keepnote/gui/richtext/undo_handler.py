@@ -216,8 +216,6 @@ class UndoHandler (object):
     def on_insert_text(self, textbuffer, it, text, length):
         """Callback for text insert"""
 
-        # NOTE: GTK does not give us a proper UTF string, so fix it
-        text = unicode(text, "utf_8")
         length = len(text)
 
         # setup next action

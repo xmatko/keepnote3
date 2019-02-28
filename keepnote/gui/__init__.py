@@ -40,7 +40,7 @@ from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 import keepnote
 from keepnote import log_error
 import keepnote.gui.richtext.richtext_tags
-from keepnote import get_resource, unicode_gtk
+from keepnote import get_resource
 from keepnote import tasklib
 from keepnote.notebook import NoteBookError
 import keepnote.notebook as notebooklib
@@ -275,7 +275,7 @@ class FileChooserDialog (Gtk.FileChooserDialog):
         if (response == Gtk.ResponseType.OK and
                 self._app and self._persistent_path):
             self._app.set_default_path(
-                self._persistent_path, unicode_gtk(self.get_current_folder()))
+                self._persistent_path, self.get_current_folder())
 
         return response
 
@@ -830,7 +830,7 @@ class KeepNote (keepnote.KeepNote):
 
         if response == Gtk.ResponseType.OK:
             if len(dialog.get_filenames()) > 0:
-                filenames = list(map(unicode_gtk, dialog.get_filenames()))
+                filenames = dialog.get_filenames()
                 self.attach_files(filenames, node,
                                   parent_window=parent_window)
 

@@ -43,7 +43,6 @@ _ = gettext.gettext
 
 # keepnote imports
 import keepnote
-from keepnote import unicode_gtk
 from keepnote.notebook import NoteBookError
 from keepnote import notebook as notebooklib
 from keepnote import tasklib
@@ -125,7 +124,7 @@ class Extension (extension.Extension):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK and dialog.get_filename():
-            filename = unicode_gtk(dialog.get_filename())
+            filename = dialog.get_filename()
             dialog.destroy()
             self.export_notebook(notebook, filename, window=window)
         else:

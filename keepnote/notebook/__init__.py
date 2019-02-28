@@ -63,46 +63,46 @@ _ = trans.translate
 # NOTE: the <?xml ?> header is left off to keep it compatiable with IE,
 # for the time being.
 # constants
-NOTE_HEADER = u"""\
+NOTE_HEADER = """\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" """ + """\
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><body>"""
-NOTE_FOOTER = u"</body></html>"
+NOTE_FOOTER = "</body></html>"
 BLANK_NOTE = NOTE_HEADER + NOTE_FOOTER
 
 
 NOTEBOOK_FORMAT_VERSION = 6
 ELEMENT_NODE = 1
-PAGE_DATA_FILE = u"page.html"
-PREF_FILE = u"notebook.nbk"
-NOTEBOOK_META_DIR = u"__NOTEBOOK__"
-NOTEBOOK_ICON_DIR = u"icons"
-TRASH_DIR = u"__TRASH__"
-TRASH_NAME = u"Trash"
-DEFAULT_PAGE_NAME = u"New Page"
-DEFAULT_DIR_NAME = u"New Folder"
+PAGE_DATA_FILE = "page.html"
+PREF_FILE = "notebook.nbk"
+NOTEBOOK_META_DIR = "__NOTEBOOK__"
+NOTEBOOK_ICON_DIR = "icons"
+TRASH_DIR = "__TRASH__"
+TRASH_NAME = "Trash"
+DEFAULT_PAGE_NAME = "New Page"
+DEFAULT_DIR_NAME = "New Folder"
 
 # content types
-CONTENT_TYPE_PAGE = u"text/xhtml+xml"
+CONTENT_TYPE_PAGE = "text/xhtml+xml"
 #CONTENT_TYPE_PLAIN_TEXT = "text/plain"
-CONTENT_TYPE_TRASH = u"application/x-notebook-trash"
-CONTENT_TYPE_DIR = u"application/x-notebook-dir"
-CONTENT_TYPE_UNKNOWN = u"application/x-notebook-unknown"
+CONTENT_TYPE_TRASH = "application/x-notebook-trash"
+CONTENT_TYPE_DIR = "application/x-notebook-dir"
+CONTENT_TYPE_UNKNOWN = "application/x-notebook-unknown"
 
 NULL = object()
 
 # the node id of the implied root of all nodes everywhere
-UNIVERSAL_ROOT = u"b810760f-f246-4e42-aebb-50ce51c3d1ed"
+UNIVERSAL_ROOT = "b810760f-f246-4e42-aebb-50ce51c3d1ed"
 
 
 #=============================================================================
 # common filesystem functions
 
-def get_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
+def get_unique_filename(path, filename, ext="", sep=" ", number=2,
                         return_number=False, use_number=False):
     """Returns a unique version of a filename for a given directory"""
 
-    if path != u"":
+    if path != "":
         assert os.path.exists(path), path
 
     # try the given filename
@@ -114,13 +114,13 @@ def get_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
     # try numbered suffixes
     i = number
     while True:
-        newname = os.path.join(path, filename + sep + unicode(i) + ext)
+        newname = os.path.join(path, filename + sep + str(i) + ext)
         if not os.path.exists(newname):
             return (newname, i) if return_number else newname
         i += 1
 
 
-def get_unique_filename_list(filenames, filename, ext=u"", sep=u" ", number=2,
+def get_unique_filename_list(filenames, filename, ext="", sep=" ", number=2,
                              return_number=False, use_number=False):
     """Returns a unique filename for a given list of existing files"""
     filenames = set(filenames)
@@ -134,7 +134,7 @@ def get_unique_filename_list(filenames, filename, ext=u"", sep=u" ", number=2,
     # try numbered suffixes
     i = number
     while True:
-        newname = filename + sep + unicode(i) + ext
+        newname = filename + sep + str(i) + ext
         if newname not in filenames:
             return (newname, i) if return_number else newname
         i += 1
@@ -197,11 +197,11 @@ def normalize_notebook_dirname(filename, longpath=None):
 #=============================================================================
 # HTML functions
 
-TAG_PATTERN = re.compile(u"<[^>]*>")
+TAG_PATTERN = re.compile("<[^>]*>")
 
 
 def strip_tags(line):
-    return re.sub(TAG_PATTERN, u"", line)
+    return re.sub(TAG_PATTERN, "", line)
 
 
 def read_data_as_plain_text(infile):
@@ -269,17 +269,17 @@ def get_notebook_version_etree(tree):
 
 def new_nodeid():
     """Generate a new node id"""
-    return unicode(uuid.uuid4())
+    return str(uuid.uuid4())
 
 
-def get_node_url(nodeid, host=u""):
+def get_node_url(nodeid, host=""):
     """Get URL for a nodeid"""
-    return u"nbk://%s/%s" % (host, nodeid)
+    return "nbk://%s/%s" % (host, nodeid)
 
 
 def is_node_url(url):
     """Returns True if URL is a node"""
-    return re.match(u"nbk://[^/]*/.*", url) is not None
+    return re.match("nbk://[^/]*/.*", url) is not None
 
 
 def parse_node_url(url):
@@ -289,7 +289,7 @@ def parse_node_url(url):
     nbk:///abcd              => ("", "abcd")
     nbk://example.com/abcd   => ("example.com", "abcd")
     """
-    match = re.match(u"nbk://([^/]*)/(.*)", url)
+    match = re.match("nbk://([^/]*)/(.*)", url)
     if match:
         return match.groups()
     else:
@@ -308,7 +308,7 @@ def guess_file_mimetype(filename, default="application/octet-stream"):
 def write_empty_page(node, page_file=PAGE_DATA_FILE):
     """Initializes an empty page file for a node"""
     out = node.open_file(page_file, "w", "utf-8")
-    out.write(BLANK_NOTE)
+    out.write(bytes(BLANK_NOTE, "utf-8"))
     out.close()
 
 
@@ -448,7 +448,7 @@ class AttrDefs (object):
 
     def format(self):
         return [attr_def.format()
-                for attr_def in self._attr_defs.itervalues()]
+                for attr_def in self._attr_defs.values()]
 
 
 def format_attr_def(attr_def):
@@ -528,7 +528,7 @@ class AttrTables (object):
 
     def format(self):
         return [attr_table.format()
-                for attr_table in self._attr_tables.itervalues()]
+                for attr_table in self._attr_tables.values()]
 
 
 g_default_attr_tables = [
@@ -560,7 +560,7 @@ class NoteBookNode (object):
     """A general base class for all nodes in a NoteBook"""
 
 
-    def __init__(self, title=u"", parent=None, notebook=None,
+    def __init__(self, title="", parent=None, notebook=None,
                  content_type=CONTENT_TYPE_DIR, conn=None,
                  attr=None):
         self.logger = logging.getLogger('keepnote')
@@ -609,7 +609,7 @@ class NoteBookNode (object):
 
     def clear_attr(self, title="", content_type=CONTENT_TYPE_DIR):
         """Clear attributes (set them to defaults)"""
-        for key in self._attr.keys():
+        for key in list(self._attr.keys()):
             if key not in BUILTIN_ATTR:
                 del self._attr[key]
 
@@ -643,7 +643,7 @@ class NoteBookNode (object):
 
     def iter_attr(self):
         """Iterate through attributes of the node"""
-        return self._attr.iteritems()
+        return iter(self._attr.items())
 
     def _init_attr(self):
         """Initialize attributes from a dict"""
@@ -696,7 +696,7 @@ class NoteBookNode (object):
                     data = infile.read(1024*4)
                     if data == "":
                         break
-                    out.write(data)
+                    out.write(bytes(data, "utf-8"))
                 infile.close()
                 out.close()
         except Exception as e:
@@ -1075,7 +1075,7 @@ class NoteBookNode (object):
     def delete_file(self, filename):
         return self._conn.delete_file(self._attr["nodeid"], filename)
 
-    def new_filename(self, new_filename, ext=u"", sep=u" ", number=2,
+    def new_filename(self, new_filename, ext="", sep=" ", number=2,
                      return_number=False, use_number=False, ensure_valid=True):
         return connection_fs.new_filename(
             self._conn,
@@ -1315,7 +1315,7 @@ class NoteBook (NoteBookNode):
                         safefile.open(pref_file, codec="utf-8"))
 
                     # TODO: temp solution. remove soon.
-                    index_dir = self.pref.get("index_dir", default=u"")
+                    index_dir = self.pref.get("index_dir", default="")
                     if index_dir and os.path.exists(index_dir):
                         self._conn._set_index_file(
                             os.path.join(index_dir, notebook_index.INDEX_FILE))
@@ -1530,7 +1530,7 @@ class NoteBook (NoteBookNode):
             NOTEBOOK_META_DIR, NOTEBOOK_ICON_DIR, basename)
 
         newfilename = connection_fs.new_filename(
-            self._conn, self._attr["nodeid"], newfilename, ext, u"-",
+            self._conn, self._attr["nodeid"], newfilename, ext, "-",
             ensure_valid=False)
 
         self._conn.copy_file(None, filename,
@@ -1551,17 +1551,17 @@ class NoteBook (NoteBookNode):
         use_number = False
         while True:
             newfilename, number = connection_fs.new_filename(
-                self._conn, self._attr["nodeid"], startname, ext, u"-",
+                self._conn, self._attr["nodeid"], startname, ext, "-",
                 number=number, return_number=True, use_number=use_number,
                 ensure_valid=False)
 
             # determine open icon filename
             newfilename_open = startname
             if number:
-                newfilename_open += u"-" + unicode(number)
+                newfilename_open += "-" + str(number)
             else:
                 number = 2
-            newfilename_open += u"-open" + ext
+            newfilename_open += "-open" + ext
 
             # see if it already exists
             if self._conn.has_file(self._attr["nodeid"], newfilename_open):
@@ -1693,13 +1693,13 @@ class NoteBook (NoteBookNode):
             data = self.pref.get_data()
 
             out = self.open_file(PREF_FILE, "w", codec="utf-8")
-            out.write(u'<?xml version="1.0" encoding="UTF-8"?>\n'
-                      u'<notebook>\n'
-                      u'<version>%d</version>\n'
-                      u'<pref>\n' % data["version"])
+            out.write(bytes('<?xml version="1.0" encoding="UTF-8"?>\n'
+                      '<notebook>\n'
+                      '<version>%d</version>\n'
+                      '<pref>\n' % data["version"], "utf-8"))
             plist.dump(data, out, indent=4, depth=4)
-            out.write(u'</pref>\n'
-                      u'</notebook>\n')
+            out.write(bytes('</pref>\n'
+                      '</notebook>\n', "utf-8"))
             out.close()
 
         except (IOError, OSError) as e:
@@ -1754,7 +1754,7 @@ class NoteBook (NoteBookNode):
 
     def _recover_preferences(self):
         out = self.open_file(PREF_FILE, "w", "utf-8")
-        out.write(u"<notebook></notebook>")
+        out.write(bytes("<notebook></notebook>", "utf-8"))
         out.close()
 
 
