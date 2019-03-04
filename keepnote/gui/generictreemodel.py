@@ -39,10 +39,6 @@ class _CTreeIter(ctypes.Structure):
 
     @classmethod
     def from_iter(cls, iter):
-        logger = logging.getLogger('keepnote')
-        logger.debug("keepnote.gui.generictreemodel._CTreeIter.from_iter()")
-        print("cls", cls)
-        print("iter", iter)
         offset = sys.getsizeof(object())  # size of PyObject_HEAD
         return ctypes.POINTER(cls).from_address(id(iter) + offset)
 
@@ -53,10 +49,14 @@ if platform.python_implementation() == "PyPy":
 else:
     def _get_user_data_as_pyobject(iter):
         logger = logging.getLogger('keepnote')
-        logger.debug("keepnote.gui.generictreemodel._get_user_data_as_pyobject()")
-        print("iter", iter)
 
         citer = _CTreeIter.from_iter(iter)
+        #print("type(CTreeIter) :", type(citer))
+        #print("CTreeIter.user_data :", citer.contents.user_data)
+        #print("CTreeIter.py_object:", ctypes.py_object)
+        #print("ctypes.cast(citer.contents.user_data, ctypes.py_object).value = ", ctypes.cast(citer.contents.user_data, ctypes.py_object).value)
+
+        # This return a pyobject (in our case, a NoteBook or a NoteBookNode object)
         return ctypes.cast(citer.contents.user_data, ctypes.py_object).value
 
 
@@ -168,12 +168,12 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
         GenericTreeModel stores arbitrary Python objects mapped to instances of Gtk.TreeIter.
         This method allows to retrieve the Python object held by the given iterator.
         """
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.get_user_data()")
-        print("iter", iter)
         if self.leak_references:
             return self._held_refs[iter.user_data]
         else:
-            return _get_user_data_as_pyobject(iter)
+            res = _get_user_data_as_pyobject(iter)
+            #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.get_user_data() return: %s" % str(res))
+            return res
 
     def set_user_data(self, iter, user_data):
         """Applies user_data and stamp to the given iter.
@@ -182,9 +182,7 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
         user_data is stored with the model to ensure we don't run into bad
         memory problems with the TreeIter.
         """
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.set_user_data()")
-        print("iter", iter)
-        print("user_data", user_data)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.set_user_data()")
         iter.user_data = id(user_data)
 
         if user_data is None:
@@ -200,8 +198,7 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
         Use this method to create Gtk.TreeIter instance instead of directly calling
         Gtk.Treeiter(), this will ensure proper reference managment of wrapped used_data.
         """
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.create_tree_iter() user_data: %s" % str(user_data))
-        print("user_data", user_data)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.create_tree_iter() user_data: %s" % str(user_data))
         iter = Gtk.TreeIter()
         self.set_user_data(iter, user_data)
         return iter
@@ -209,8 +206,7 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
     def _create_tree_iter(self, data):
         """Internal creation of a (bool, TreeIter) pair for returning directly
         back to the view interfacing with this model."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel._create_tree_iter() data: %s" % str(data))
-        print("data", data)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel._create_tree_iter() data: %s" % str(data))
         if data is None:
             return (False, None)
         else:
@@ -241,34 +237,31 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
     @handle_exception(0)
     def do_get_flags(self):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_flags()")
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_flags()")
         return self.on_get_flags()
 
     @handle_exception(0)
     def do_get_n_columns(self):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_n_columns()")
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_n_columns()")
         return self.on_get_n_columns()
 
     @handle_exception(GObject.TYPE_INVALID)
     def do_get_column_type(self, index):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_column_type()")
-        print("index", index)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_column_type() column_index: %d" % index)
         return self.on_get_column_type(index)
 
     @handle_exception((False, None))
     def do_get_iter(self, path):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_iter()")
-        print("path", path)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_iter()  path=%s (type: %s)" % (str(path), str(type(path))))
         return self._create_tree_iter(self.on_get_iter(path))
 
     @handle_exception(False)
     def do_iter_next(self, iter):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_next()")
-        print("iter", iter)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_next()")
         if iter is None:
             next_data = self.on_iter_next(None)
         else:
@@ -279,11 +272,9 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
 
     @handle_exception(None)
     def do_get_path(self, iter):
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_path()")
-        print("iter", iter)
         """Internal method."""
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_path()")
         path = self.on_get_path(self.get_user_data(iter))
-        print("path", path)
         if path is None:
             return None
         else:
@@ -292,41 +283,34 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
     @handle_exception(None)
     def do_get_value(self, iter, column):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_value()")
-        print("iter", iter)
-        print("column", column)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_get_value()  column=%d" % column)
         return self.on_get_value(self.get_user_data(iter), column)
 
     @handle_exception((False, None))
     def do_iter_children(self, parent):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_children()")
-        print("parent", parent)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_children()")
         data = self.get_user_data(parent) if parent else None
         return self._create_tree_iter(self.on_iter_children(data))
 
     @handle_exception(False)
     def do_iter_has_child(self, parent):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_has_child()")
-        print("parent", parent)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_has_child()")
         return self.on_iter_has_child(self.get_user_data(parent))
 
     @handle_exception(0)
     def do_iter_n_children(self, iter):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_n_children()")
-        print("iter", iter)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_n_children()")
         if iter is None:
             return self.on_iter_n_children(None)
         return self.on_iter_n_children(self.get_user_data(iter))
 
     @handle_exception((False, None))
     def do_iter_nth_child(self, parent, n):
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_nth_children()")
-        print("parent", parent)
-        print("n", n)
         """Internal method."""
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_nth_children()")
         if parent is None:
             data = self.on_iter_nth_child(None, n)
         else:
@@ -336,20 +320,17 @@ class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
     @handle_exception((False, None))
     def do_iter_parent(self, child):
         """Internal method."""
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_parent()")
-        print("child", child)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_iter_parent()")
         return self._create_tree_iter(self.on_iter_parent(self.get_user_data(child)))
 
     @handle_exception(None)
     def do_ref_node(self, iter):
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_ref_node()")
-        print("iter", iter)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_ref_node()")
         self.on_ref_node(self.get_user_data(iter))
 
     @handle_exception(None)
     def do_unref_node(self, iter):
-        self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_unref_node()")
-        print("iter", iter)
+        #self.logger.debug("keepnote.gui.generictreemodel.GenericTreeModel.do_unref_node()")
         self.on_unref_node(self.get_user_data(iter))
 
     #

@@ -471,6 +471,7 @@ class ThreePaneViewer (Viewer):
 
     def _on_tree_select(self, treeview, nodes):
         """Callback for treeview selection change"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._on_tree_select() nodes: %s" % str(nodes))
         # do nothing if selection is unchanged
         if self._treeview_sel_nodes == nodes:
             return
@@ -510,6 +511,7 @@ class ThreePaneViewer (Viewer):
 
     def on_goto_node(self, widget, node):
         """Focus view on a node"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self.goto_node(node, direct=False)
 
     def on_activate_node(self, widget, node):
@@ -544,6 +546,7 @@ class ThreePaneViewer (Viewer):
 
     def _on_edit_node(self, widget, node, attr, value):
         """Callback for title edit finishing"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         # move cursor to editor after new page has been created
         if self._new_page_occurred:
             self._new_page_occurred = False
@@ -600,6 +603,7 @@ class ThreePaneViewer (Viewer):
 
     def _view_new_node(self, node):
         """View a node particular widget"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         self._new_page_occurred = True
 
@@ -622,6 +626,7 @@ class ThreePaneViewer (Viewer):
 
     def goto_node(self, node, direct=False):
         """Move view focus to a particular node"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
 
         if node is None:
             # default node is the one selected in the listview

@@ -273,8 +273,9 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             print("self.model :", self.model)
             print("self.rich_model :", self.rich_model)
             print("self._notebook :", self._notebook)
-            # init signals for model
+
             self.rich_model.set_notebook(self._notebook)
+            # init signals for model
             self.changed_start_id = self.rich_model.connect(
                 "node-changed-start", self._on_node_changed_start)
             self.changed_end_id = self.rich_model.connect(
@@ -694,7 +695,6 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         """Returns a list of currently selected nodes"""
         self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.get_selected_nodes()")
         iters = self.get_selected_iters()
-        print("iters", iters)
         if len(iters) == 0:
             if self.editing_path:
                 node = self._get_node_from_path(self.editing_path)
