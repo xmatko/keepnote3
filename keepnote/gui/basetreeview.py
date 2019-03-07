@@ -665,8 +665,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def select_nodes(self, nodes):
         """Select nodes in treeview"""
-        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.select_nodes()")
-        print("nodes", nodes)
+        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.select_nodes()  nodes: %s" % str(nodes))
         # NOTE: for now only select one node
         if len(nodes) > 0:
             node = nodes[0]
@@ -684,10 +683,9 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
     def on_select_changed(self, treeselect):
         """Callback for when selection changes"""
-        self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.on_select_changed()")
-        print("treeselect", treeselect)
+        #self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.on_select_changed()  treeselect: %s" % str(treeselect))
         nodes = self.get_selected_nodes()
-        print("nodes", nodes)
+        #self.logger.debug("keepnote.gui.basetreeview.BaseTreeView.on_select_changed()  get_selected_nodes returned node: %s" % str(nodes))
         self.emit("select-nodes", nodes)
         return True
 

@@ -368,7 +368,7 @@ class BaseTreeModel (GenericTreeModel):
     def on_get_iter(self, path):
         """Returns the node of a path"""
         # path: Gtk.TreePath
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_iter()  path: %s (type %s)" % (str(path), type(path)))
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_iter()  path: %s (type %s)" % (str(path), type(path)))
         if path[0] >= len(self._roots):
             return None
 
@@ -379,7 +379,7 @@ class BaseTreeModel (GenericTreeModel):
                 raise ValueError()
             node = node.get_children()[i]
 
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_iter()  return node %s" % str(node))
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_iter()  return node %s" % str(node))
         return node
 
     def on_get_path(self, rowref):
@@ -403,19 +403,19 @@ class BaseTreeModel (GenericTreeModel):
         #print reversed(path)
 
         res = list(reversed(path))
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_path() returned: %s" % str(res))
+#        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_path() returned: %s" % str(res))
         return res
 
     def on_get_value(self, rowref, column):
         """Returns a value from a row in the treemodel"""
         #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_value(): rowref: %s, column %d" % (str(type(rowref)), column))
         res = self.get_column(column).get_value(rowref)
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_value(): returned value for column %d: %s" % (column, str(res)))
+#        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_get_value(): returned value for column %d: %s" % (column, str(res)))
         return res
 
     def on_iter_next(self, rowref):
         """Returns the next sibling of a rowref"""
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_next()")
+#        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_next()")
         parent = rowref.get_parent()
 
         if parent is None or rowref in self._root_set:
@@ -436,7 +436,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_children(self, parent):
         """Returns the first child of a treeiter"""
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_children()")
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_children()")
         if parent is None:
             if len(self._roots) > 0:
                 return self._roots[0]
@@ -449,12 +449,12 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_has_child(self, rowref):
         """Returns True of treeiter has children"""
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_has_child()")
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_has_child()")
         return self._nested and rowref.has_children()
 
     def on_iter_n_children(self, rowref):
         """Returns the number of children of a treeiter"""
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_n_children()")
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_n_children()")
         if rowref is None:
             return len(self._roots)
         if not self._nested:
@@ -464,7 +464,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_nth_child(self, parent, n):
         """Returns the n'th child of a treeiter"""
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_nth_child()")
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_nth_child()")
         if parent is None:
             if n >= len(self._roots):
                 return None
@@ -482,7 +482,7 @@ class BaseTreeModel (GenericTreeModel):
 
     def on_iter_parent(self, child):
         """Returns the parent of a treeiter"""
-        self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_parent()")
+        #self.logger.debug("BaseTreeModel (GenericTreeModel implementation)  on_iter_parent()")
         if child in self._root_set:
             return None
         else:

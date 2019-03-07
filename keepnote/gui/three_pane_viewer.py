@@ -465,6 +465,10 @@ class ThreePaneViewer (Viewer):
 
     def _on_child_activated(self, editor, textview, child):
         """Callback for when child widget in editor is activated"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._on_child_activated()")
+        print("editor:", editor)
+        print("textview:", textview)
+        print("child:", child)
         if self._current_page and isinstance(child, richtext.RichTextImage):
             filename = self._current_page.get_file(child.get_filename())
             self._app.run_external_app("image_viewer", filename)
@@ -472,6 +476,7 @@ class ThreePaneViewer (Viewer):
     def _on_tree_select(self, treeview, nodes):
         """Callback for treeview selection change"""
         self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._on_tree_select() nodes: %s" % str(nodes))
+        print("node title: ", nodes[0].get_attr("title"))
         # do nothing if selection is unchanged
         if self._treeview_sel_nodes == nodes:
             return
@@ -516,7 +521,7 @@ class ThreePaneViewer (Viewer):
 
     def on_activate_node(self, widget, node):
         """Focus view on a node"""
-        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
+        self.logger.debug("%s : %s()   node: %s" % (self.__class__, sys._getframe().f_code.co_name, str(node)))
         if self.viewing_search():
             # if we are in a search, goto node, but not directly
             self.goto_node(node, direct=False)
@@ -747,6 +752,7 @@ class ThreePaneViewer (Viewer):
 
     def viewing_search(self):
         """Returns True if we are currently viewing a search result"""
+        self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         return (len(self.treeview.get_selected_nodes()) == 0)
         ###return (len(self.treeview.get_selected_nodes()) == 0 and
                 ###len(self.listview.get_selected_nodes()) > 0)
