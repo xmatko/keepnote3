@@ -925,7 +925,7 @@ class HtmlBuffer (HTMLParser):
             self.reset()
             #for line in infile:
             #    self.feed(line)
-            self.feed(infile.read())
+            self.feed(infile.read().decode('utf-8'))
             self.close()
 
         except Exception as e:

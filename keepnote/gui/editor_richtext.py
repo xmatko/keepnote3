@@ -523,8 +523,8 @@ class RichTextEditor (KeepNoteEditor):
             # offer url match
             if is_url(text):
                 results = [(text, text,
-                            get_resource_pixbuf(u"node_icons",
-                                                u"web.png"))] + results
+                            get_resource_pixbuf("node_icons",
+                                                "web.png"))] + results
 
             # ensure link picker is initialized
             if self._link_picker is None:
@@ -667,10 +667,10 @@ class RichTextEditor (KeepNoteEditor):
 
             # TODO: do I need this?
             imgname, ext = os.path.splitext(os.path.basename(filename))
-            if ext.lower() in (u".jpg", u".jpeg"):
-                ext = u".jpg"
+            if ext.lower() in (".jpg", ".jpeg"):
+                ext = ".jpg"
             else:
-                ext = u".png"
+                ext = ".png"
 
             imgname2 = self._page.new_filename(imgname, ext=ext)
 
@@ -683,7 +683,7 @@ class RichTextEditor (KeepNoteEditor):
         else:
             dialog.destroy()
 
-    def insert_image(self, filename, savename=u"image.png"):
+    def insert_image(self, filename, savename="image.png"):
         """Inserts an image into the text editor"""
         if self._page is None:
             return
@@ -1025,7 +1025,7 @@ class EditorMenus (GObject.GObject):
         def BothAction(name1, *args):
             return [Action(name1, *args), ToggleAction(name1 + " Tool", *args)]
 
-        return (map(lambda x: Action(*x), [
+        return ([Action(*x) for x in [
             ("Insert Horizontal Rule", None, _("Insert _Horizontal Rule"),
              "<control>H", None,
              lambda w: self._editor.on_insert_hr()),
@@ -1061,7 +1061,7 @@ class EditorMenus (GObject.GObject):
              "<control>R", None,
              lambda w: self._editor.find_dialog.on_find(True)),
 
-            ("Format", None, _("Fo_rmat"))]) +
+            ("Format", None, _("Fo_rmat"))]] +
 
             BothAction("Bold", Gtk.STOCK_BOLD, _("_Bold"),
                        "<control>B", _("Bold"),
@@ -1123,7 +1123,7 @@ class EditorMenus (GObject.GObject):
                        lambda w: self._on_bullet_list(),
                        "bullet.png") +
 
-            map(lambda x: Action(*x), [
+            [Action(*x) for x in [
 
                 ("Font Selector Tool", None, "", "", _("Set Font Face")),
                 ("Font Size Tool", None, "", "", _("Set Font Size")),
@@ -1168,7 +1168,7 @@ class EditorMenus (GObject.GObject):
                  "<control>space", None,
                  lambda w: self._editor.get_textview().click_iter()),
 
-                ]) +
+                ]] +
 
             [ToggleAction("Spell Check", None, _("_Spell Check"),
                           "", None,

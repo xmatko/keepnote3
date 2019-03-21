@@ -105,7 +105,7 @@ class RichTextBaseTagTable (Gtk.TextTagTable):
             return tag
 
         # make tag from scratch
-        for tag_class in self._tag_classes.itervalues():
+        for tag_class in self._tag_classes.values():
             if tag_class.class_type.is_name(name):
                 tag = tag_class.class_type.make_from_name(name)
                 self.tag_class_add(tag_class.name, tag)
@@ -188,7 +188,7 @@ class RichTextTag (Gtk.TextTag):
         Gtk.TextTag.__init__(self, name=name)
         self._count = 0
 
-        for key, val in iter(kargs.items()):
+        for key, val in iter(list(kargs.items())):
             self.set_property(key.replace("_", "-"), val)
 
     def expires(self):
