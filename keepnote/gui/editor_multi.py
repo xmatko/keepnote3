@@ -75,10 +75,12 @@ class MultiEditor (KeepNoteEditor):
 
         # do nothing if editor is already set
         if editor == self._editor:
+            print("  DO NOTHING. EDITOR ALREADY SET")
             return
 
         # tear down old editor, if it exists
         if self._editor:
+            print("  TEAR DOWN OLD EDITOR: ", self._editor)
             self._editor.view_nodes([])
             self._editor.save_preferences(self._app.pref)
             self._disconnect_signals(self._editor)
@@ -91,6 +93,7 @@ class MultiEditor (KeepNoteEditor):
 
         # start up new editor, if it exists
         if self._editor:
+            print("  START UP NEW EDITOR: ", self._editor)
             self.pack_start(self._editor, True, True, 0)
             self._editor.show()
             self._connect_signals(self._editor)
@@ -98,6 +101,7 @@ class MultiEditor (KeepNoteEditor):
             if self._window:
                 self._editor.add_ui(self._window)
             self._editor.load_preferences(self._app.pref)
+            print("      SELF._NODES to view: ", self._nodes)
             self._editor.view_nodes(self._nodes)
 
     def get_editor(self):
@@ -243,13 +247,17 @@ class ContentEditor (MultiEditor):
             MultiEditor.view_nodes(self, [])
         else:
             content_type = nodes[0].get_attr("content_type").split("/")
+            print("content_type", content_type)
 
             for i in range(len(content_type), 0, -1):
                 editor = self._editors.get("/".join(content_type[:i]), None)
+                print("editor ", i, editor)
                 if editor:
                     self.set_editor(editor)
                     break
             else:
+                print("No editor found. Setting the default editor")
                 self.set_editor(self._default_editor)
 
             MultiEditor.view_nodes(self, nodes)
+            print("TRACKING THE SEGFAULT... 33")

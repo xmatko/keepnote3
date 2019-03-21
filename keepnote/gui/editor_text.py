@@ -168,6 +168,7 @@ class TextEditor (KeepNoteEditor):
 
             try:
                 if page.has_attr("payload_filename"):
+                    print("     ==> OPEN PAYLOAD FILENAME", page.get_attr("payload_filename"))
                     infile = page.open_file(
                         page.get_attr("payload_filename"), "r", "utf-8")
                     text = infile.read()
