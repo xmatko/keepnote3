@@ -507,7 +507,7 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
         vbox.pack_start(label, expand=False, fill=True, padding=0)
 
         # pallete
-        self.pallete = ColorPallete(DEFAULT_COLORS)
+        self.pallete = ColorPalette(DEFAULT_COLORS)
         self.pallete.connect("pick-color", self.on_pick_pallete_color)
         self.pallete.show()
         vbox.pack_start(self.pallete, expand=False, fill=True, padding=0)
@@ -570,7 +570,7 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
         self.pallete.set_colors(DEFAULT_COLORS)
 
 
-class ColorPallete (Gtk.IconView):
+class ColorPalette (Gtk.IconView):
     def __init__(self, colors=DEFAULT_COLORS, nrows=1, ncols=7):
         Gtk.IconView.__init__(self)
         self._model = Gtk.ListStore(GdkPixbuf.Pixbuf, object)
@@ -676,7 +676,8 @@ class ColorPallete (Gtk.IconView):
         pixbuf.get_from_drawable(pixmap, cmap, 0, 0, 0, 0, width, height)
 
 
-GObject.type_register(ColorPallete)
-GObject.signal_new("pick-color", ColorPallete, GObject.SignalFlags.RUN_LAST,
+GObject.type_register(ColorPalette)
+GObject.signal_new("pick-color", ColorPalette, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
+
 # vim: ft=python: set et ts=4 sw=4 sts=4:
