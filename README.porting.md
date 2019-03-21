@@ -37,6 +37,25 @@ Next, we will port to Python 3
 * **Gtk.Builder connect signals to callback**: [Connect signal callback to each object individually](https://stackoverflow.com/questions/51953389/gtk-glade-and-python-connecting-handlers-from-multiple-classes-with-the-connect)
 * **VBox/HBox**: Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
+#### Signals
+ * [Create/Define signals](https://python-gtk-3-tutorial.readthedocs.io/en/latest/objects.html#signals)
+ * [Receive (connect) signals](https://python-gtk-3-tutorial.readthedocs.io/en/latest/basics.html#signals)
+
+
+Replace:
+```
+GObject.signal_new("error", Viewer, GObject.SignalFlags.RUN_LAST, None, (str, object))
+GObject.signal_new("status", Viewer, GObject.SignalFlags.RUN_LAST, None, (str, str))
+```
+
+With:
+```
+    __gsignals__ = {
+            'error': (GObject.SIGNAL_RUN_LAST, None, (str, object)),
+            'status': (GObject.SIGNAL_RUN_LAST, None, (str, str))
+            }
+```
+
 ### Major issues
 #### Gtk.GenericTreeView
 
