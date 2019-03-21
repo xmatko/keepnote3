@@ -45,7 +45,7 @@ from keepnote import notebook as notebooklib
 from keepnote.gui import richtext
 from keepnote.gui.richtext import RichTextError
 from keepnote.gui.treeview import KeepNoteTreeView
-#from keepnote.gui.listview import KeepNoteListView
+from keepnote.gui.listview import KeepNoteListView
 from keepnote.gui.editor_richtext import RichTextEditor
 from keepnote.gui.editor_text import TextEditor
 from keepnote.gui.editor_multi import ContentEditor
@@ -105,7 +105,7 @@ class ThreePaneViewer (Viewer):
         self.logger.debug("### DONE")
 
         # listview
-        ''' Disable listview for debug
+        #''' Disable listview for debug
         self.logger.debug("### INSTANTIATE KeepNoteListView from ThreePaneViewer")
         self.listview = KeepNoteListView()
         self.listview.set_get_node(self._app.get_node)
@@ -122,7 +122,8 @@ class ThreePaneViewer (Viewer):
         self.listview.on_status = self.set_status  # TODO: clean up
         self.logger.debug("### DONE")
         '''
-        self.listview = Gtk.Label()
+        self.listview = Gtk.Label(label='FAKE LISTVIEW FOR DEBUG')
+        '''
 
         # editor
         #self.editor = KeepNoteEditor(self._app)
@@ -221,15 +222,16 @@ class ThreePaneViewer (Viewer):
         # set notebook
         self._notebook = notebook
         self.editor.set_notebook(notebook)
-        ###self.listview.set_notebook(notebook)
+        self.listview.set_notebook(notebook)
         self.treeview.set_notebook(notebook)
 
         self.logger.debug("  Get popup menu")
         if self.treeview.get_popup_menu():
             self.logger.debug("  Get popup menu treeview iconmenu.set_notebook")
             self.treeview.get_popup_menu().iconmenu.set_notebook(notebook)
-            ###self.logger.debug("  Get popup menu listview iconmenu.set_notebook")
-            ###self.listview.get_popup_menu().iconmenu.set_notebook(notebook)
+            self.logger.debug("  Get popup menu listview iconmenu.set_notebook")
+            print("§§§ LISTVIEW !!!", self.listview.get_popup_menu())
+            self.listview.get_popup_menu().iconmenu.set_notebook(notebook)
 
             colors = (self._notebook.pref.get("colors", default=DEFAULT_COLORS)
                       if self._notebook else DEFAULT_COLORS)
@@ -237,10 +239,10 @@ class ThreePaneViewer (Viewer):
             self.treeview.get_popup_menu().fgcolor_menu.set_colors(colors)
             self.logger.debug("  Get popup menu treeview bgcolor_menu.set_colors")
             self.treeview.get_popup_menu().bgcolor_menu.set_colors(colors)
-            ###self.logger.debug("  Get popup menu listview fgcolor_menu.set_colors")
-            ###self.listview.get_popup_menu().fgcolor_menu.set_colors(colors)
-            ###self.logger.debug("  Get popup menu listview bgcolor_menu.set_colors")
-            ###self.listview.get_popup_menu().bgcolor_menu.set_colors(colors)
+            self.logger.debug("  Get popup menu listview fgcolor_menu.set_colors")
+            self.listview.get_popup_menu().fgcolor_menu.set_colors(colors)
+            self.logger.debug("  Get popup menu listview bgcolor_menu.set_colors")
+            self.listview.get_popup_menu().bgcolor_menu.set_colors(colors)
 
         # restore selections
         self._load_selections()
@@ -258,7 +260,7 @@ class ThreePaneViewer (Viewer):
         self.paned2.set_position(p.get("vsash_pos", DEFAULT_VSASH_POS))
         self.hpaned.set_position(p.get("hsash_pos", DEFAULT_HSASH_POS))
 
-        ###self.listview.load_preferences(app_pref, first_open)
+        self.listview.load_preferences(app_pref, first_open)
 
         try:
             # if this version of GTK doesn't have tree-lines, ignore it
@@ -284,12 +286,12 @@ class ThreePaneViewer (Viewer):
         p["vsash_pos"] = self.paned2.get_position()
         p["hsash_pos"] = self.hpaned.get_position()
 
-        ###self.listview.save_preferences(app_pref)
+        self.listview.save_preferences(app_pref)
         self.editor.save_preferences(app_pref)
 
     def save(self):
         """Save the current notebook"""
-        ###self.listview.save()
+        self.listview.save()
         self.editor.save()
         self._save_selections()
 
@@ -368,7 +370,7 @@ class ThreePaneViewer (Viewer):
                 for i in info.get("selected_listview_nodes", []))
                 if node is not None]
 
-            ###self.listview.select_nodes(nodes)
+            self.listview.select_nodes(nodes)
 
     def _save_selections(self):
         """Save node selections into notebook preferences"""
@@ -380,9 +382,9 @@ class ThreePaneViewer (Viewer):
             info["selected_treeview_nodes"] = [
                 node.get_attr("nodeid")
                 for node in self.treeview.get_selected_nodes()]
-            ###info["selected_listview_nodes"] = [
-                ###node.get_attr("nodeid")
-                ###for node in self.listview.get_selected_nodes()]
+            info["selected_listview_nodes"] = [
+                node.get_attr("nodeid")
+                for node in self.listview.get_selected_nodes()]
             self._notebook.set_preferences_dirty()
 
     #===============================================
@@ -401,13 +403,11 @@ class ThreePaneViewer (Viewer):
         if self.treeview.is_focus():
             return self.treeview.get_selected_nodes()
         else:
-            ###nodes = self.listview.get_selected_nodes()
-            ###if len(nodes) == 0:
-                ###return self.treeview.get_selected_nodes()
-            ###else:
-                ###return nodes
-            ### Replace with the following
-            return self.treeview.get_selected_nodes()
+            nodes = self.listview.get_selected_nodes()
+            if len(nodes) == 0:
+                return self.treeview.get_selected_nodes()
+            else:
+                return nodes
 
     def _on_history_changed(self, viewer, history):
         """Callback for when node browse history changes"""
@@ -419,8 +419,8 @@ class ThreePaneViewer (Viewer):
         """Returns the currently focused widget"""
         if self.treeview.is_focus():
             return self.treeview
-        ###if self.listview.is_focus():
-            ###return self.listview
+        if self.listview.is_focus():
+            return self.listview
         else:
             return default
 
@@ -485,20 +485,20 @@ class ThreePaneViewer (Viewer):
         self._treeview_sel_nodes = nodes
 
         # view the children of these nodes in the listview
-        ###self.listview.view_nodes(nodes)
+        self.listview.view_nodes(nodes)
 
         # if nodes are queued for selection in listview (via goto parent)
         # then select them here
-        ###if len(self._queue_list_select) > 0:
-            ###self.listview.select_nodes(self._queue_list_select)
-            ###self._queue_list_select = []
+        if len(self._queue_list_select) > 0:
+            self.listview.select_nodes(self._queue_list_select)
+            self._queue_list_select = []
 
         # make sure nodes are also selected in listview
-        ###self.listview.select_nodes(nodes)
+        self.listview.select_nodes(nodes)
 
-    '''
     def _on_list_select(self, listview, nodes):
         """Callback for listview selection change"""
+        self.logger.debug("keepnote.gui.three_pane_viewer.ThreePaneViewer._on_list_select() nodes: %s" % str(nodes))
         # remember the selected node
         if len(nodes) == 1:
             self._current_page = nodes[0]
@@ -581,7 +581,7 @@ class ThreePaneViewer (Viewer):
             return
 
         self.treeview.cancel_editing()
-        ###self.listview.cancel_editing()
+        self.listview.cancel_editing()
 
         if parent is None:
             nodes = self.get_selected_nodes()
@@ -616,8 +616,8 @@ class ThreePaneViewer (Viewer):
 
         if node in self.treeview.get_selected_nodes():
             self.treeview.edit_node(node)
-        ###else:
-            ###self.listview.edit_node(node)
+        else:
+            self.listview.edit_node(node)
 
     def _on_rename_node(self):
         """Callback for renaming a node"""
@@ -626,8 +626,8 @@ class ThreePaneViewer (Viewer):
         if len(nodes) == 0:
             return
 
-        ###widget = self.get_focused_widget(self.listview)
-        ###widget.edit_node(nodes[0])
+        widget = self.get_focused_widget(self.listview)
+        widget.edit_node(nodes[0])
 
     def goto_node(self, node, direct=False):
         """Move view focus to a particular node"""
@@ -635,7 +635,7 @@ class ThreePaneViewer (Viewer):
 
         if node is None:
             # default node is the one selected in the listview
-            ###nodes = self.listview.get_selected_nodes()
+            nodes = self.listview.get_selected_nodes()
             if len(nodes) == 0:
                 return
             node = nodes[0]
@@ -670,8 +670,8 @@ class ThreePaneViewer (Viewer):
                 self.treeview.select_nodes([node2])
 
             # This test might be needed for windows crash
-            ###if node2 != node:
-                ###self.listview.select_nodes([node])
+            if node2 != node:
+                self.listview.select_nodes([node])
 
     def goto_next_node(self):
         """Move focus to the 'next' node"""
@@ -732,11 +732,11 @@ class ThreePaneViewer (Viewer):
     def start_search_result(self):
         """Start a new search result"""
         self.treeview.select_nodes([])
-        ###self.listview.view_nodes([], nested=False)
+        self.listview.view_nodes([], nested=False)
 
     def add_search_result(self, node):
         """Add a search result"""
-        ###self.listview.append_node(node)
+        self.listview.append_node(node)
         pass
 
     def end_search_result(self):
@@ -744,7 +744,7 @@ class ThreePaneViewer (Viewer):
 
         # select top result
         try:
-            ###self.listview.get_selection().select_path((0,))
+            self.listview.get_selection().select_path((0,))
             pass
         except:
             # don't worry if there isn't anything to select
@@ -754,8 +754,8 @@ class ThreePaneViewer (Viewer):
         """Returns True if we are currently viewing a search result"""
         self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         return (len(self.treeview.get_selected_nodes()) == 0)
-        ###return (len(self.treeview.get_selected_nodes()) == 0 and
-                ###len(self.listview.get_selected_nodes()) > 0)
+        return (len(self.treeview.get_selected_nodes()) == 0 and
+                len(self.listview.get_selected_nodes()) > 0)
 
     #=============================================
     # Goto functions
@@ -843,7 +843,6 @@ class ThreePaneViewer (Viewer):
         item.set_submenu(menu1.bgcolor_menu)
         item.show()
 
-        '''
         # listview context menu
         self.logger.debug("  listview context menu")
         menu2 = uimanager.get_widget(
@@ -875,7 +874,6 @@ class ThreePaneViewer (Viewer):
             "/popup_menus/listview_popup/Change Bg Color")
         item.set_submenu(menu2.bgcolor_menu)
         item.show()
-        '''
 
     def _setup_icon_menu(self):
         """Setup the icon menu"""
