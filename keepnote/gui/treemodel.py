@@ -119,10 +119,16 @@ class BaseTreeModel (GenericTreeModel):
     The subset is defined by the self._roots list.
     """
 
+    __gsignals__ = {
+        'node-changed-start': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'node-changed-end':   (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
+
     def __init__(self, roots=[]):
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.treemodel.BaseTreeModel.__init__()")
         GenericTreeModel.__init__(self)
+        GObject.type_register(BaseTreeModel)
 
         self.set_property("leak-references", False)
 
@@ -488,15 +494,6 @@ class BaseTreeModel (GenericTreeModel):
         else:
             parent = child.get_parent()
             return parent
-
-
-GObject.type_register(BaseTreeModel)
-GObject.signal_new("node-changed-start", BaseTreeModel,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("node-changed-end", BaseTreeModel,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
 
 
 class KeepNoteTreeModel (BaseTreeModel):

@@ -75,8 +75,13 @@ DEFAULT_WINDOW_POS = (-1, -1)
 class KeepNoteWindow (Gtk.Window):
     """Main windows for KeepNote"""
 
+    __gsignals__ = {
+        'error': (GObject.SignalFlags.RUN_LAST, None, (str, object, object))
+        }
+
     def __init__(self, app, winid=None):
         Gtk.Window.__init__(self, type=Gtk.WindowType.TOPLEVEL)
+        GObject.type_register(KeepNoteWindow)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.main_windows.KeepNoteWindow.__init__()")
 
@@ -1483,10 +1488,6 @@ class KeepNoteWindow (Gtk.Window):
 
         return statusicon_menu
 
-
-GObject.type_register(KeepNoteWindow)
-GObject.signal_new("error", KeepNoteWindow, GObject.SignalFlags.RUN_LAST,
-                   None, (str, object, object))
 
 
 class SearchBox (Gtk.Entry):

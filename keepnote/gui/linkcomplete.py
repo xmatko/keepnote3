@@ -53,8 +53,13 @@ class LinkPicker (Gtk.TreeView):
 
 class LinkPickerPopup (PopupWindow):
 
+    __gsignals__ = {
+        'pick-link': (GObject.SignalFlags.RUN_LAST, None, (str, object))
+        }
+
     def __init__(self, parent, maxwidth=100):
         PopupWindow.__init__(self, parent)
+        GObject.type_register(LinkPickerPopup)
         self._maxwidth = maxwidth
 
         self._link_picker = LinkPicker()
@@ -148,8 +153,5 @@ class LinkPickerPopup (PopupWindow):
         #                    for path in paths]
 
 
-GObject.type_register(LinkPickerPopup)
-GObject.signal_new("pick-link", LinkPickerPopup, GObject.SignalFlags.RUN_LAST,
-                   None, (str, object))
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

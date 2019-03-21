@@ -413,8 +413,16 @@ class RichTextDragDrop (object):
 class RichTextView (Gtk.TextView):
     """A RichText editor widget"""
 
+    __gsignals__ = {
+        'modified':        (GObject.SignalFlags.RUN_LAST, None, (bool,)),
+        'font-change':     (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'child-activated': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'visit-url':       (GObject.SignalFlags.RUN_LAST, None, (str,))
+        }
+
     def __init__(self, textbuffer=None):
         Gtk.TextView.__init__(self)
+        GObject.type_register(RichTextView)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.richtext.__init__.RichTextView.__init__()")
 
@@ -1501,6 +1509,7 @@ class RichTextView (Gtk.TextView):
 
     def set_default_font(self, font):
         """Sets the default font of the textview"""
+        self.logger.debug("keepnote.gui.richtext.__init__.RichTextView.set_default_font(): %s" % font)
         try:
 
             # HACK: fix small font sizes on Mac
@@ -1509,9 +1518,11 @@ class RichTextView (Gtk.TextView):
             # // PIXELS_PER_PANGO_UNIT)
             #set_text_scale(native_size / 10.0)
 
-            f = Pango.FontDescription(font)
+            f = Pango.FontDescription.from_string(font)
+            print(f)
             f.set_size(int(f.get_size() * get_text_scale()))
             self.modify_font(f)
+            # TODO: do we need to free the Pango.FontDescription() ?
         except:
             # TODO: think about how to handle this error
             pass
@@ -1532,16 +1543,6 @@ class RichTextView (Gtk.TextView):
             self.scroll_mark_onscreen(self._textbuffer.get_insert())
 
 
-# register new signals
-GObject.type_register(RichTextView)
-GObject.signal_new("modified", RichTextView, GObject.SignalFlags.RUN_LAST,
-                   None, (bool,))
-GObject.signal_new("font-change", RichTextView, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("child-activated", RichTextView, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("visit-url", RichTextView, GObject.SignalFlags.RUN_LAST,
-                   None, (str,))
 
 
 '''

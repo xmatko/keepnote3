@@ -106,9 +106,25 @@ class TextRendererValidator (object):
 
 class KeepNoteBaseTreeView (Gtk.TreeView):
     """Base class for treeviews of a NoteBook notes"""
+    __gsignals__ = {
+        'goto-node':           (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'activate-node':       (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'delete-node':         (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'goto-parent-node':    (GObject.SignalFlags.RUN_LAST, None, ()),
+        'copy-clipboard':      (GObject.SignalFlags.RUN_LAST, None, ()),
+        'copy-tree-clipboard': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'cut-clipboard':       (GObject.SignalFlags.RUN_LAST, None, ()),
+        'paste-clipboard':     (GObject.SignalFlags.RUN_LAST, None, ()),
+        'select-nodes':        (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'edit-node':           (GObject.SignalFlags.RUN_LAST, None, (object, str, str)),
+        'drop-file':           (GObject.SignalFlags.RUN_LAST, None, (object, int, str)),
+        'error':               (GObject.SignalFlags.RUN_LAST, None, (str, object,))
+        }
 
     def __init__(self):
         Gtk.TreeView.__init__(self)
+        GObject.type_register(KeepNoteBaseTreeView)
+
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.basetreeview.KeepNoteBaseTreeView.__init__()")
 
@@ -1276,38 +1292,4 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                  target_node.get_parent() == source_node.get_parent()))
 
 
-GObject.type_register(KeepNoteBaseTreeView)
-GObject.signal_new("goto-node", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new(
-    "activate-node", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
-    None, (object,))
-GObject.signal_new(
-    "delete-node", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
-    None, (object,))
-GObject.signal_new("goto-parent-node", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST, None, ())
-GObject.signal_new("copy-clipboard", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, ())
-GObject.signal_new("copy-tree-clipboard", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, ())
-GObject.signal_new("cut-clipboard", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, ())
-GObject.signal_new("paste-clipboard", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, ())
-GObject.signal_new("select-nodes", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("edit-node", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, (object, str, str))
-GObject.signal_new("drop-file", KeepNoteBaseTreeView,
-                   GObject.SignalFlags.RUN_LAST,
-                   None, (object, int, str))
-GObject.signal_new("error", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
-                   None, (str, object,))
 # vim: ft=python: set et ts=4 sw=4 sts=4:

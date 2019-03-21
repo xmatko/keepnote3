@@ -42,9 +42,20 @@ class KeepNoteEditor (Gtk.Box):
     """
     Base class for all KeepNoteEditors
     """
+    __gsignals__ = {
+        'view-node':       (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'visit-node':      (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'modified':        (GObject.SignalFlags.RUN_LAST, None, (object, bool)),
+        'font-change':     (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'error':           (GObject.SignalFlags.RUN_LAST, None, (str, object)),
+        'child-activated': (GObject.SignalFlags.RUN_LAST, None, (object, object)),
+        'window-request':  (GObject.SignalFlags.RUN_LAST, None, (str,)),
+        'make-link':       (GObject.SignalFlags.RUN_LAST, None, ())
+        }
 
     def __init__(self, app):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        GObject.type_register(KeepNoteEditor)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.editor.KeepNoteEditor.__init__()")
         self._app = app
@@ -97,23 +108,5 @@ class KeepNoteEditor (Gtk.Box):
         pass
 
 
-# add new signals to KeepNoteEditor
-GObject.type_register(KeepNoteEditor)
-GObject.signal_new("view-node", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("visit-node", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("modified", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (object, bool))
-GObject.signal_new("font-change", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("error", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (str, object))
-GObject.signal_new("child-activated", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (object, object))
-GObject.signal_new("window-request", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, (str,))
-GObject.signal_new("make-link", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
-                   None, ())
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

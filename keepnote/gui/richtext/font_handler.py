@@ -52,11 +52,16 @@ class RichTextBaseFont (object):
 
 class FontHandler (GObject.GObject):
     """Basic RichTextBuffer with the following features
-
         - manages "current font" behavior
     """
+
+    __gsignals__ = {
+        'font-change': (GObject.SignalFlags.RUN_LAST, GObject.TYPE_NONE, (object,))
+        }
+
     def __init__(self, textbuffer):
         GObject.GObject.__init__(self)
+        GObject.type_register(FontHandler)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.richtext.font_handler.FontHandler.__init__()  textbuffer: %s" % str(textbuffer))
 
@@ -282,8 +287,5 @@ class FontHandler (GObject.GObject):
         return font
 
 
-GObject.type_register(FontHandler)
-GObject.signal_new("font-change", FontHandler, GObject.SIGNAL_RUN_LAST,
-                   GObject.TYPE_NONE, (object,))
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

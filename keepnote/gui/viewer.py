@@ -45,16 +45,17 @@ _ = keepnote.translate
 class Viewer (Gtk.Box):
 
     __gsignals__ = {
-            'error': (GObject.SIGNAL_RUN_FIRST, None, (str, object)),
-            'status': (GObject.SIGNAL_RUN_LAST, None, (str, str)),
-            'history-changed': (GObject.SignalFlags.RUN_LAST, None, (object,)),
-            'window-request': (GObject.SignalFlags.RUN_LAST, None, (str,)),
-            'modified': (GObject.SignalFlags.RUN_LAST, None, (bool,)),
-            'current-node': (GObject.SignalFlags.RUN_LAST, None, (object,))
-              }
+        'error':           (GObject.SignalFlags.RUN_LAST, None, (str, object)),
+        'status':          (GObject.SignalFlags.RUN_LAST, None, (str, str)),
+        'history-changed': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'window-request':  (GObject.SignalFlags.RUN_LAST, None, (str,)),
+        'modified':        (GObject.SignalFlags.RUN_LAST, None, (bool,)),
+        'current-node':    (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
 
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        GObject.type_register(Viewer)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
         self._app = app
@@ -181,21 +182,6 @@ class Viewer (Gtk.Box):
         """ Overidable """
         pass
 
-GObject.type_register(Viewer)
-'''
-GObject.signal_new("error", Viewer, GObject.SignalFlags.RUN_LAST,
-                   None, (str, object))
-GObject.signal_new("status", Viewer, GObject.SignalFlags.RUN_LAST,
-                   None, (str, str))
-GObject.signal_new("history-changed", Viewer, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("window-request", Viewer, GObject.SignalFlags.RUN_LAST,
-                   None, (str,))
-GObject.signal_new("modified", Viewer, GObject.SignalFlags.RUN_LAST,
-                   None, (bool,))
-GObject.signal_new("current-node", Viewer, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-'''
 
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

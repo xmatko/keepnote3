@@ -547,8 +547,13 @@ class TabbedViewer (Viewer):
 
 class TabLabel (Gtk.Box):
 
+    __gsignals__ = {
+        'new-name': (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
+
     def __init__(self, tabs, viewer, icon, text):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        GObject.type_register(TabLabel)
 
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("%s : %s()" % (self.__class__, sys._getframe().f_code.co_name))
@@ -642,8 +647,5 @@ class TabLabel (Gtk.Box):
         self.icon.set_from_pixbuf(pixbuf)
 
 
-GObject.type_register(TabLabel)
-GObject.signal_new("new-name", TabLabel, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

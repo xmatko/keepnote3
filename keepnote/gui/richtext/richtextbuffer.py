@@ -123,8 +123,15 @@ def download_file(url, filename):
 class BaseWidget (Gtk.EventBox):
     """Widgets in RichTextBuffer must support this interface"""
 
+    '''
+    __gsignals__ = {
+        "init": (GObject.SignalFlags.RUN_LAST, None, ())
+        }
+    '''
+
     def __init__(self):
         Gtk.EventBox.__init__(self)
+        #GObject.type_register(BaseWidget)
 
         # TODO: will this be configurable?
         # set to white background
@@ -145,9 +152,6 @@ class BaseWidget (Gtk.EventBox):
         Gtk.EventBox.show_all(self)
 
 
-#GObject.type_register(BaseWidget)
-#GObject.signal_new("init", BaseWidget, GObject.SignalFlags.RUN_LAST,
-#                   None, ())
 
 
 class RichTextSep (BaseWidget):
@@ -645,11 +649,18 @@ class RichTextBuffer (RichTextBaseBuffer):
     - manages "current font" behavior
 
     """
+    __gsignals__ = {
+        'child-added':     (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'child-activated': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'child-menu':      (GObject.SignalFlags.RUN_LAST, None, (object, object, object)),
+        'font-change':     (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
 
     def __init__(self, table=RichTextTagTable()):
+        RichTextBaseBuffer.__init__(self, table)
+        GObject.type_register(RichTextBuffer)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.richtext.richtextbuffer.RichTextBuffer.__init__() table:%s" % str(table))
-        RichTextBaseBuffer.__init__(self, table)
 
         # indentation handler
         self._indent = IndentHandler(self)
@@ -1025,14 +1036,5 @@ class RichTextBuffer (RichTextBaseBuffer):
             self._anchors_highlighted.clear()
 
 
-GObject.type_register(RichTextBuffer)
-GObject.signal_new("child-added", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("child-activated", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("child-menu", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
-                   None, (object, object, object))
-GObject.signal_new("font-change", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

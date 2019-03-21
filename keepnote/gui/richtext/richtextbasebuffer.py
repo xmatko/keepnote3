@@ -56,8 +56,16 @@ def add_child_to_buffer(textbuffer, it, anchor):
 class RichTextAnchor (Gtk.TextChildAnchor):
     """Base class of all anchor objects in a RichTextView"""
 
+    __gsignals__ = {
+        'selected':   (GObject.SignalFlags.RUN_LAST, GObject.TYPE_NONE, ()),
+        'activated':  (GObject.SignalFlags.RUN_LAST, GObject.TYPE_NONE, ()),
+        'popup-menu': (GObject.SignalFlags.RUN_LAST, GObject.TYPE_NONE, (int, object)),
+        'init':       (GObject.SignalFlags.RUN_LAST, GObject.TYPE_NONE, ())
+        }
+
     def __init__(self):
         Gtk.TextChildAnchor.__init__(self)
+        GObject.type_register(RichTextAnchor)
         self._widgets = {}
         self._buffer = None
 
@@ -97,15 +105,6 @@ class RichTextAnchor (Gtk.TextChildAnchor):
                 widget.unhighlight()
 
 
-GObject.type_register(RichTextAnchor)
-GObject.signal_new("selected", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
-                   GObject.TYPE_NONE, ())
-GObject.signal_new("activated", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
-                   GObject.TYPE_NONE, ())
-GObject.signal_new("popup-menu", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
-                   GObject.TYPE_NONE, (int, object))
-GObject.signal_new("init", RichTextAnchor, GObject.SIGNAL_RUN_LAST,
-                   GObject.TYPE_NONE, ())
 
 
 class RichTextBaseBuffer (Gtk.TextBuffer):
@@ -113,9 +112,13 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
 
         - maintains undo/redo stacks
     """
+    __gsignals__ = {
+        'ending-user-action': (GObject.SignalFlags.RUN_LAST, GObject.TYPE_NONE, ())
+        }
 
     def __init__(self, tag_table=RichTextBaseTagTable()):
         Gtk.TextBuffer.__init__(self)
+        GObject.type_register(RichTextBaseBuffer)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.richtext.richtextbasebuffer.RichTextBaseBuffer.__init__()  tag_table:%s" % str(tag_table))
         self.tag_table = tag_table
@@ -393,9 +396,6 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
         self.undo_stack.end_action()
 
 
-GObject.type_register(RichTextBaseBuffer)
-GObject.signal_new("ending-user-action", RichTextBaseBuffer,
-                   GObject.SIGNAL_RUN_LAST,
-                   GObject.TYPE_NONE, ())
+
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

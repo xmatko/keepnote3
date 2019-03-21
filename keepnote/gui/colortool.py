@@ -233,8 +233,15 @@ class ColorTextImage (Gtk.Image):
 class ColorMenu (Gtk.Menu):
     """Color picker menu"""
 
+    __gsignals__ = {
+        'set-color':  (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'set-colors': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'get-colors': (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
+
     def __init__(self, colors=DEFAULT_COLORS):
         Gtk.Menu.__init__(self)
+        GObject.type_register(ColorMenu)
         self.logger = logging.getLogger('keepnote')
         self.logger.debug("keepnote.gui.colortool.ColorMenu.__init__()")
         self.width = 7
@@ -358,13 +365,6 @@ class ColorMenu (Gtk.Menu):
             self.realize()
 
 
-GObject.type_register(ColorMenu)
-GObject.signal_new("set-color", ColorMenu, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("set-colors", ColorMenu, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("get-colors", ColorMenu, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
 
 
 #=============================================================================
@@ -374,8 +374,15 @@ GObject.signal_new("get-colors", ColorMenu, GObject.SignalFlags.RUN_LAST,
 class ColorTool (Gtk.MenuToolButton):
     """Abstract base class for a ColorTool"""
 
+    __gsignals__ = {
+        'set-color':  (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'set-colors': (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        'get-colors': (GObject.SignalFlags.RUN_LAST, None, ())
+        }
+
     def __init__(self, icon, default):
         Gtk.MenuToolButton.__init__(self, icon_widget=self.icon, label="")
+        GObject.type_register(ColorTool)
         self.icon = icon
         self.color = None
         self.colors = DEFAULT_COLORS
@@ -424,13 +431,6 @@ class ColorTool (Gtk.MenuToolButton):
         self.menu.set_colors(self.colors)
 
 
-GObject.type_register(ColorTool)
-GObject.signal_new("set-color", ColorTool, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("set-colors", ColorTool, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
-GObject.signal_new("get-colors", ColorTool, GObject.SignalFlags.RUN_LAST,
-                   None, ())
 
 
 class FgColorTool (ColorTool):
@@ -571,8 +571,15 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
 
 
 class ColorPalette (Gtk.IconView):
+
+    __gsignals__ = {
+        'pick-color': (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
+
     def __init__(self, colors=DEFAULT_COLORS, nrows=1, ncols=7):
         Gtk.IconView.__init__(self)
+        GObject.type_register(ColorPalette)
+
         self._model = Gtk.ListStore(GdkPixbuf.Pixbuf, object)
         self._cell_size = [30, 20]
 
@@ -676,8 +683,5 @@ class ColorPalette (Gtk.IconView):
         pixbuf.get_from_drawable(pixmap, cmap, 0, 0, 0, 0, width, height)
 
 
-GObject.type_register(ColorPalette)
-GObject.signal_new("pick-color", ColorPalette, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:

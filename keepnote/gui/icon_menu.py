@@ -41,8 +41,13 @@ default_menu_icons = [x for x in keepnote.gui.icons.builtin_icons
 class IconMenu (Gtk.Menu):
     """Icon picker menu"""
 
+    __gsignals__ = {
+        'set-icon': (GObject.SignalFlags.RUN_LAST, None, (object,))
+        }
+
     def __init__(self):
         Gtk.Menu.__init__(self)
+        GObject.type_register(IconMenu)
 
         self._notebook = None
 
@@ -140,8 +145,5 @@ class IconMenu (Gtk.Menu):
         self.append_grid(child)
 
 
-GObject.type_register(IconMenu)
-GObject.signal_new("set-icon", IconMenu, GObject.SignalFlags.RUN_LAST,
-                   None, (object,))
 
 # vim: ft=python: set et ts=4 sw=4 sts=4:
