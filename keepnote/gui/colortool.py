@@ -281,7 +281,7 @@ class ColorMenu (Gtk.Menu):
             color = color_int16_to_str((color.red, color.green, color.blue))
             self.set_colors(dialog.get_colors())
 
-            # add new color to pallete
+            # add new color to palette
             if color not in self.colors:
                 self.colors.append(color)
                 self.append_color(color)
@@ -300,7 +300,7 @@ class ColorMenu (Gtk.Menu):
         # TODO: complete
 
     def clear_colors(self):
-        """Clears color pallete"""
+        """Clears color palette"""
         children = set(self.get_children())
         for item in reversed(self.color_items):
             if item in children:
@@ -311,7 +311,7 @@ class ColorMenu (Gtk.Menu):
         self.colors = []
 
     def set_colors(self, colors):
-        """Sets color pallete"""
+        """Sets color palette"""
         self.logger.debug("keepnote.gui.colortool.ColorMenu.set_colors(): %s" % str(colors))
         self.clear_colors()
 
@@ -325,7 +325,7 @@ class ColorMenu (Gtk.Menu):
         self.realize()
 
     def get_colors(self):
-        """Returns color pallete"""
+        """Returns color palette"""
         return self.colors
 
     def append_color(self, color, refresh=True):
@@ -396,12 +396,12 @@ class ColorTool (Gtk.MenuToolButton):
         raise Exception("unimplemented")
 
     def on_set_colors(self, menu, color):
-        """Callback from menu when pallete is set"""
+        """Callback from menu when palette is set"""
         self.colors = list(self.menu.get_colors())
         self.emit("set-colors", self.colors)
 
     def set_colors(self, colors):
-        """Sets pallete"""
+        """Sets palette"""
         self.colors = list(colors)
         self.menu.set_colors(colors)
 
@@ -477,7 +477,7 @@ class BgColorTool (ColorTool):
 
 
 #=============================================================================
-# color selection dialog and pallete
+# color selection dialog and palette
 
 
 class ColorSelectionDialog (Gtk.ColorSelectionDialog):
@@ -486,17 +486,17 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
         Gtk.ColorSelectionDialog.__init__(self, title)
         self.colorsel.set_has_opacity_control(False)
 
-        # hide default gtk pallete
+        # hide default gtk palette
         self.colorsel.set_has_palette(False)
 
         # structure of ColorSelection widget
-        # colorsel = VBox(HBox(selector, VBox(Table, VBox(Label, pallete),
-        #                                     my_pallete)))
-        # pallete = Table(Frame(DrawingArea), ...)
+        # colorsel = VBox(HBox(selector, VBox(Table, VBox(Label, palette),
+        #                                     my_palette)))
+        # palette = Table(Frame(DrawingArea), ...)
         #
         #vbox = (self.colorsel.get_children()[0]
         #        .get_children()[1].get_children()[1])
-        #pallete = vbox.get_children()[1]
+        #palette = vbox.get_children()[1]
 
         vbox = self.colorsel.get_children()[0].get_children()[1]
 
@@ -506,13 +506,13 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
         label.show()
         vbox.pack_start(label, expand=False, fill=True, padding=0)
 
-        # pallete
-        self.pallete = ColorPalette(DEFAULT_COLORS)
-        self.pallete.connect("pick-color", self.on_pick_pallete_color)
-        self.pallete.show()
-        vbox.pack_start(self.pallete, expand=False, fill=True, padding=0)
+        # palette
+        self.palette = ColorPalette(DEFAULT_COLORS)
+        self.palette.connect("pick-color", self.on_pick_palette_color)
+        self.palette.show()
+        vbox.pack_start(self.palette, expand=False, fill=True, padding=0)
 
-        # pallete buttons
+        # palette buttons
         hbox = Gtk.HButtonBox()
         hbox.show()
         vbox.pack_start(hbox, expand=False, fill=True, padding=0)
@@ -543,31 +543,31 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
         # colorsel signals
         def func(w):
             color = self.colorsel.get_current_color()
-            self.pallete.set_color(
+            self.palette.set_color(
                 color_int16_to_str((color.red, color.green, color.blue)))
         self.colorsel.connect("color-changed", func)
 
     def set_colors(self, colors):
-        """Set pallete colors"""
-        self.pallete.set_colors(colors)
+        """Set palette colors"""
+        self.palette.set_colors(colors)
 
     def get_colors(self):
-        """Get pallete colors"""
-        return self.pallete.get_colors()
+        """Get palette colors"""
+        return self.palette.get_colors()
 
-    def on_pick_pallete_color(self, widget, color):
+    def on_pick_palette_color(self, widget, color):
         self.colorsel.set_current_color(Gdk.Color(color))
 
     def on_new_color(self, widget):
         color = self.colorsel.get_current_color()
-        self.pallete.new_color(
+        self.palette.new_color(
             color_int16_to_str((color.red, color.green, color.blue)))
 
     def on_delete_color(self, widget):
-        self.pallete.remove_selected()
+        self.palette.remove_selected()
 
     def on_reset_colors(self, widget):
-        self.pallete.set_colors(DEFAULT_COLORS)
+        self.palette.set_colors(DEFAULT_COLORS)
 
 
 class ColorPalette (Gtk.IconView):
@@ -593,24 +593,24 @@ class ColorPalette (Gtk.IconView):
         # TODO: could ImageColorText become a DrawingArea widget?
 
     def clear_colors(self):
-        """Clears all colors from pallete"""
+        """Clears all colors from palette"""
         self._model.clear()
 
     def set_colors(self, colors):
-        """Sets colors in pallete"""
+        """Sets colors in palette"""
         self.clear_colors()
         for color in colors:
             self.append_color(color)
 
     def get_colors(self):
-        """Returns colors in pallete"""
+        """Returns colors in palette"""
         colors = []
         self._model.foreach(
             lambda m, p, i: colors.append(m.get_value(i, 1)))
         return colors
 
     def append_color(self, color):
-        """Append color to pallete"""
+        """Append color to palette"""
         width, height = self._cell_size
 
         # make pixbuf

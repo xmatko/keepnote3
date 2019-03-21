@@ -941,7 +941,7 @@ class EditorMenus (GObject.GObject):
             raise Exception("unknown color type '%s'" % str(kind))
 
     def _on_colors_set(self, colors):
-        """Set color pallete"""
+        """Set color palette"""
         # save colors
         notebook = self._editor._notebook
         if notebook:
