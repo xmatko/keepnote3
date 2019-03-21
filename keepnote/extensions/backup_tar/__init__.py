@@ -533,3 +533,5 @@ def archive_notebook_zip(notebook, filename, task=None):
         
     except Exception as e:
         raise NoteBookError("Error while archiving notebook", e)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

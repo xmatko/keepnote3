@@ -631,3 +631,5 @@ class TextBufferDom (Dom):
         self.display_indent(indent, "TextBufferDom")
         for child in self:
             child.display(indent+1)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

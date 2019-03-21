@@ -101,3 +101,5 @@ class MaskDict (dict):
 
     def __str__(self):
         return str(dict(self.iteritems()))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

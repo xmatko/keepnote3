@@ -73,3 +73,5 @@ def get_my_documents():
 
 #def set_env(key, val):
 #    ctypes.windll.kernel32.SetEnvironmentVariableW(key, val)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

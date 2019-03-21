@@ -213,3 +213,5 @@ def make_data_dir(dirname, data_dirs=None,
 
     if not os.path.exists(data_dir):
         os.makedirs(data_dir, mode=0o700)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

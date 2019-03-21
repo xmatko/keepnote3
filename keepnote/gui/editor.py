@@ -115,3 +115,5 @@ GObject.signal_new("window-request", KeepNoteEditor, GObject.SignalFlags.RUN_LAS
                    None, (str,))
 GObject.signal_new("make-link", KeepNoteEditor, GObject.SignalFlags.RUN_LAST,
                    None, ())
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

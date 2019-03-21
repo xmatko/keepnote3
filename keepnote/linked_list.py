@@ -175,3 +175,5 @@ class LinkedList (object):
         self._head = None
         self._tail = None
         self._size = 0
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

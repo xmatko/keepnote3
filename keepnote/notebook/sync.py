@@ -124,3 +124,5 @@ def copy_file(conn1, nodeid1, file1, conn2, nodeid2, file2):
 
     stream1.close()
     stream2.close()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

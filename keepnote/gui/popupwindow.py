@@ -64,3 +64,5 @@ class PopupWindow (Gtk.Window):
         else:
             # drop up
             self.move(x + x3, y2 + y3 - h)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

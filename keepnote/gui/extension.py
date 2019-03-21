@@ -177,3 +177,5 @@ class Extension (extension.Extension):
             for uid in uids:
                 window.get_uimanager().remove_ui(uid)
             del self.__ui_ids[window]
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

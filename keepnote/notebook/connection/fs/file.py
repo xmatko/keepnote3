@@ -181,3 +181,6 @@ class FileFS(object):
         except Exception as e:
             raise FileError(
                 "unable to copy file '%s' '%s'" % (nodeid1, filename1), e)
+
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

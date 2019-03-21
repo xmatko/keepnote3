@@ -224,3 +224,5 @@ def dump_etree(elm):
                         (str(type(elm)), str(elm)))
 
     return elm2
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

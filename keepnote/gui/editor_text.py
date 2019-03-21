@@ -458,3 +458,5 @@ class EditorMenus (GObject.GObject):
             self._editor.get_textview().can_spell_check())
         self.spell_check_toggle.set_active(window.get_app().pref.get(
             "editors", "general", "spell_check", default=True))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

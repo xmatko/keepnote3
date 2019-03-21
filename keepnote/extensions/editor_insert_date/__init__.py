@@ -218,3 +218,5 @@ class EditorInsertDateSection (dialog_app_options.Section):
         
         self.ext.format = self.format.get_text()
         self.ext.save_config()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

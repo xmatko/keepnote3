@@ -1180,3 +1180,5 @@ class ThreePaneViewer (Viewer):
 
             ("Change Bg Color", None, _("Change _Bg Color")),
         ])
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

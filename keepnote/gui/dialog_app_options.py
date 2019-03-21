@@ -1070,3 +1070,5 @@ class ApplicationOptionsDialog (object):
         self.finish()
         self.dialog.stop_emission("delete-event")
         return True
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

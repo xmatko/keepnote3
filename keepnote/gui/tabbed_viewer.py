@@ -645,3 +645,5 @@ class TabLabel (Gtk.Box):
 GObject.type_register(TabLabel)
 GObject.signal_new("new-name", TabLabel, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

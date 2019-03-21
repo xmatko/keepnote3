@@ -397,3 +397,5 @@ GObject.type_register(RichTextBaseBuffer)
 GObject.signal_new("ending-user-action", RichTextBaseBuffer,
                    GObject.SIGNAL_RUN_LAST,
                    GObject.TYPE_NONE, ())
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

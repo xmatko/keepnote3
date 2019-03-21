@@ -464,3 +464,5 @@ class NodeTitleCache (object):
         self._titles.clear()
         self._nodeids.clear()
         self._complete = False
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

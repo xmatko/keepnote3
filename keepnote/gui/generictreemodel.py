@@ -453,3 +453,5 @@ class GenericTreeModel (GObject.GObject, Gtk.TreeModel):
 
     def on_unref_node(self, node):
         pass
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -289,3 +289,5 @@ class UndoHandler (object):
             self.after_changed.notify(action)
 
         textbuffer.end_user_action()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

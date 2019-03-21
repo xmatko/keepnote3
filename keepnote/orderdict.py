@@ -87,3 +87,5 @@ class OrderDict (dict):
 
     def __iter__(self):
         return iter(self._order)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

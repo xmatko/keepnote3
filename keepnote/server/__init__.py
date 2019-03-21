@@ -430,3 +430,5 @@ class NoteBookHttpServer(BaseNoteBookHttpServer):
             abort(FORBIDDEN, 'node already exists.' + str(e))
 
         return self.json_response(attr)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

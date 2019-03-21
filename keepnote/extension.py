@@ -305,3 +305,5 @@ class Extension (object):
         If 'exists' is True, create directory if it does not exists.
         """
         return os.path.join(self.get_data_dir(exist), filename)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

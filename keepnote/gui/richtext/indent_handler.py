@@ -393,3 +393,5 @@ class IndentHandler (object):
 
     def _get_cursor(self):
         return self._buf.get_iter_at_mark(self._buf.get_insert())
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

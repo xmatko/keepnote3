@@ -232,3 +232,5 @@ class ImageResizeDialog (object):
             self.snap_size = int(self.snap_entry.get_text())
         except ValueError:
             pass
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

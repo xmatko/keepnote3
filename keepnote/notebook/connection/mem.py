@@ -257,3 +257,5 @@ class NoteBookConnectionMem (NoteBookConnection):
 
         elif query[0] == "index_all":
             return
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

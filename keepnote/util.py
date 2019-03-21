@@ -68,3 +68,5 @@ def compose(*funcs):
     for g in funcs:
         f = compose2(g, f)
     return f
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

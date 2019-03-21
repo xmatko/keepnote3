@@ -151,3 +151,5 @@ class LinkPickerPopup (PopupWindow):
 GObject.type_register(LinkPickerPopup)
 GObject.signal_new("pick-link", LinkPickerPopup, GObject.SignalFlags.RUN_LAST,
                    None, (str, object))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

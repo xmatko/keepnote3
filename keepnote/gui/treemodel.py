@@ -562,3 +562,5 @@ class KeepNoteTreeModel (BaseTreeModel):
         #    TreeModelColumn("order", int,
         #                    attr="order",
         #                    get=lambda node: node.get_attr("order")))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

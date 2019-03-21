@@ -359,3 +359,5 @@ def get_node_icon(node, expand=False, fade=False):
 
 def uncache_node_icon(node):
     notebook_icon_manager.uncache_node_icon(node)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

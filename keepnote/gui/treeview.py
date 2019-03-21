@@ -171,3 +171,5 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         GObject.idle_add(lambda: self.set_cursor_on_cell(
             Gtk.TreePath.new_from_indices(path), self.column, self.title_text, True))
         #GObject.idle_add(lambda: self.scroll_to_cell(path))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

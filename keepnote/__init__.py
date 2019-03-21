@@ -1455,3 +1455,5 @@ class KeepNoteExtension (extension.Extension):
     def get_depends(self):
         """Application has no dependencies, returns []"""
         return []
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

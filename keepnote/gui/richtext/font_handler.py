@@ -285,3 +285,5 @@ class FontHandler (GObject.GObject):
 GObject.type_register(FontHandler)
 GObject.signal_new("font-change", FontHandler, GObject.SIGNAL_RUN_LAST,
                    GObject.TYPE_NONE, (object,))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

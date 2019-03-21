@@ -679,3 +679,4 @@ class ColorPallete (Gtk.IconView):
 GObject.type_register(ColorPallete)
 GObject.signal_new("pick-color", ColorPallete, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -220,3 +220,5 @@ class RichTextTag (Gtk.TextTag):
     @classmethod
     def make_from_name(cls, tag_name):
         return cls(cls.get_value(tag_name))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

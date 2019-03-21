@@ -573,3 +573,5 @@ class NewFileSection (dialog_app_options.Section):
             self.set_filetypes()
             
     
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

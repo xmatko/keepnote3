@@ -124,3 +124,5 @@ class WaitDialog (object):
         """Attempt to stop the task"""
         self.text.set_text("Canceling...")
         self._task.stop()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

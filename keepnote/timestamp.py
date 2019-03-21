@@ -165,3 +165,5 @@ def parse_timestamp(timestamp_str, format):
     tstruct = time.strptime(timestamp_str, format)
     local = time.mktime(tstruct)
     return int(local - EPOC)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -44,3 +44,5 @@ def path_node2local(filename):
     if os.path.sep == u"/":
         return filename
     return filename.replace(u"/", os.path.sep)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

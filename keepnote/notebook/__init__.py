@@ -1758,3 +1758,5 @@ class NoteBook (NoteBookNode):
         out.close()
 
 
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

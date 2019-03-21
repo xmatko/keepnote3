@@ -1643,3 +1643,5 @@ class SearchBox (Gtk.Entry):
         node = self._window.get_notebook().get_node_by_id(nodeid)
         if node:
             self._window.get_viewer().goto_node(node, False)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

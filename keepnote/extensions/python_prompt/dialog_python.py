@@ -244,3 +244,5 @@ def execute(code, vars, stdout, stderr):
     sys.stdout = __stdout
     sys.stderr = __stderr
 
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

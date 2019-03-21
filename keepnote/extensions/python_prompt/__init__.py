@@ -99,3 +99,5 @@ class Extension (extension.Extension):
 
         dialog = dialog_python.PythonDialog(window)
         dialog.show()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

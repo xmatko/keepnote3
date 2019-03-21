@@ -184,3 +184,5 @@ class LinkedTreeNode (object):
         self._parent = None
         self._next = None
         self._prev = None
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

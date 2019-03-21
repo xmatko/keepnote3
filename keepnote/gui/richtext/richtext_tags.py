@@ -432,3 +432,5 @@ class RichTextLinkTag (RichTextTag):
 
     #def on_event(self, texttag, widget, event, it):
     #    print event, it
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

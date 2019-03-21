@@ -182,3 +182,5 @@ class UndoStack (object):
     def is_in_progress(self):
         """Returns True if undo or redo is in progress"""
         return self._in_progress
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

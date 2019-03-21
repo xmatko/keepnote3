@@ -126,3 +126,5 @@ class Pref (object):
         """Clear the config value"""
         kargs = {"define": True}
         get_pref(self._data, *args, **kargs).clear()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -63,3 +63,5 @@ class FontSelector (Gtk.ComboBox):
 
     def get_family(self):
         return self._families[self.get_active()]
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

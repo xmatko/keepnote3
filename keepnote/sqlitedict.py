@@ -368,3 +368,5 @@ if __name__ in '__main___':
         assert not d
         d.close()
     print 'all tests passed :-)'
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

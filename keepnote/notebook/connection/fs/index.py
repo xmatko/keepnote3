@@ -510,3 +510,5 @@ class NoteBookIndex (NodeIndex):
             keepnote.log_error("SQLITE error while performing search")
         finally:
             cur.close()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -1221,3 +1221,5 @@ class NoteBookConnectionFS (BaseNoteBookConnectionFS):
             was_clean = False
 
         return was_clean
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

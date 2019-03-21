@@ -143,3 +143,5 @@ class IconMenu (Gtk.Menu):
 GObject.type_register(IconMenu)
 GObject.signal_new("set-icon", IconMenu, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

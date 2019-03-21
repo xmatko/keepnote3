@@ -142,3 +142,5 @@ def get_langs(localedir=None):
         localedir = _locale_dir
 
     return os.listdir(localedir)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

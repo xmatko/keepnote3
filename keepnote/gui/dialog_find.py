@@ -168,3 +168,5 @@ class KeepNoteFindDialog (object):
             self.find_xml.get_widget("replace_entry").set_sensitive(False)
             self.find_xml.get_widget("replace_button").set_sensitive(False)
             self.find_xml.get_widget("replace_all_button").set_sensitive(False)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

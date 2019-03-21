@@ -1531,3 +1531,5 @@ class ComboToolAction (Gtk.Action):
 # FIXME: How to port this ?
 # See: https://github.com/jdahlin/pygobject/blob/master/gi/pygtkcompat.py
 #ComboToolAction.set_tool_item_type(ComboToolItem)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

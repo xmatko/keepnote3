@@ -220,3 +220,5 @@ class LinkEditor (Gtk.Frame):
             pass
 
         self.textview.grab_focus()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

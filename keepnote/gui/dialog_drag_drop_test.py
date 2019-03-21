@@ -119,3 +119,5 @@ class DragDropTestDialog (object):
         buf.insert_at_cursor("type(sel.data) = " + str(type(data))+"\n")
         print("sel.data = " + repr(data)[:1000]+"\n")
         buf.insert_at_cursor("sel.data = " + repr(data)[:5000] + "\n")
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -541,3 +541,5 @@ class KeepNoteListView (basetreeview.KeepNoteBaseTreeView):
 
     def _on_listview_row_collapsed(self, treeview, it, path):
         self.display_page_count()
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

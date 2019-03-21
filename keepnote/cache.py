@@ -84,3 +84,5 @@ class LRUCache (DictCache):
 
     def __init__(self, func, limit=1000):
         DictCache.__init__(self, func, LRUDict(limit))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -1587,3 +1587,5 @@ GObject.signal_new("visit-url", RichTextView, GObject.SignalFlags.RUN_LAST,
 
         self._textbuffer.end_user_action()
     '''
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

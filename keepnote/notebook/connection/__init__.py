@@ -387,3 +387,5 @@ class NoteBookConnections (object):
 
     def lookup(self, proto):
         return self._protos.get(proto, None)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

@@ -1034,3 +1034,5 @@ GObject.signal_new("child-menu", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
                    None, (object, object, object))
 GObject.signal_new("font-change", RichTextBuffer, GObject.SignalFlags.RUN_LAST,
                    None, (object,))
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

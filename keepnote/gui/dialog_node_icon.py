@@ -312,3 +312,5 @@ class NodeIconDialog (object):
         iconview, icon, iconfile = self.get_iconview_selection()
         if iconfile:
             self.set_icon("icon_open", iconfile)
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

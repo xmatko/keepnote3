@@ -122,3 +122,5 @@ class SafeFile (file):
     def get_tempfile(self):
         """Returns tempfile filename"""
         return self._tmp
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

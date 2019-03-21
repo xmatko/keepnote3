@@ -74,3 +74,5 @@ class NodeHistory (object):
 
     def has_forward(self):
         return self._pos < len(self._list) - 1
+
+# vim: ft=python: set et ts=4 sw=4 sts=4:

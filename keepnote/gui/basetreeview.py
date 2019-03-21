@@ -1310,3 +1310,4 @@ GObject.signal_new("drop-file", KeepNoteBaseTreeView,
                    None, (object, int, str))
 GObject.signal_new("error", KeepNoteBaseTreeView, GObject.SignalFlags.RUN_LAST,
                    None, (str, object,))
+# vim: ft=python: set et ts=4 sw=4 sts=4:
