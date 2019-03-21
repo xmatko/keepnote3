@@ -31,7 +31,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 
-class _CTreeIter(ctypes.Structure):
+class _CTreeIter (ctypes.Structure):
     _fields_ = [('stamp', ctypes.c_int),
                 ('user_data', ctypes.c_void_p),
                 ('user_data2', ctypes.c_void_p),
@@ -81,7 +81,7 @@ def handle_exception(default_return):
     return decorator
 
 
-class GenericTreeModel(GObject.GObject, Gtk.TreeModel):
+class GenericTreeModel (GObject.GObject, Gtk.TreeModel):
     """A base implementation of a Gtk.TreeModel for python.
 
     The GenericTreeModel eases implementing the Gtk.TreeModel interface in Python.

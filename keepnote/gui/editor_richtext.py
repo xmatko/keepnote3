@@ -1493,7 +1493,7 @@ class EditorMenus (GObject.GObject):
         self.logger.debug("keepnote.gui.editor_richtext.EditorMenus.setup_menu()  FIN")
 
 
-class ComboToolItem(Gtk.ToolItem):
+class ComboToolItem (Gtk.ToolItem):
 
     __gtype_name__ = "ComboToolItem"
 
@@ -1516,7 +1516,7 @@ class ComboToolItem(Gtk.ToolItem):
         tooltips.set_tip(self.combobox, tip_text, tip_private)
 
 
-class ComboToolAction(Gtk.Action):
+class ComboToolAction (Gtk.Action):
 
     __gtype_name__ = "ComboToolAction"
 
