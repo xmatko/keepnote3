@@ -1518,6 +1518,7 @@ class RichTextView (Gtk.TextView):
             # // PIXELS_PER_PANGO_UNIT)
             #set_text_scale(native_size / 10.0)
 
+            # FIXME: Really ? To check...
             f = Pango.FontDescription.from_string(font)
             print(f)
             f.set_size(int(f.get_size() * get_text_scale()))
