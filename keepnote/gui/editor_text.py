@@ -173,7 +173,14 @@ class TextEditor (KeepNoteEditor):
                         page.get_attr("payload_filename"), "r", "utf-8")
                     text = infile.read()
                     infile.close()
-                    self._textview.get_buffer().set_text(str(text))
+                    print("TEXT ==>")
+                    print(text)
+                    ### THIS CAUSE A SEGFAULT
+                    ###self._textview.get_buffer().set_text(text.decode("utf-8"))
+                    ### BEGIN DEBUG
+                    #tvbuf = self._textview.get_buffer()
+                    #print("   tvbuf", tvbuf)
+                    ### END DEBUG
                     self._load_cursor()
 
                 else:

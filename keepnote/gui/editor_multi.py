@@ -157,9 +157,13 @@ class MultiEditor (KeepNoteEditor):
 
     def view_nodes(self, nodes):
         """View a page in the editor"""
+        self.logger.debug("keepnote.gui.editor_multi.MultiEditor.view_nodes()  %s" % str(nodes))
+        print("self._nodes", self._nodes)
         self._nodes = nodes[:]
         if self._editor:
-            return self._editor.view_nodes(nodes)
+            print("VIEW NODE ", nodes, " FOR EDITOR ", self._editor)
+            ### THIS CAUSE A SEGFAULT !!!
+            self._editor.view_nodes(nodes)
 
     def save(self):
         """Save the loaded node"""

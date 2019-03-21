@@ -506,13 +506,18 @@ class ThreePaneViewer (Viewer):
             self._current_page = None
 
         try:
-            self.editor.view_nodes(nodes)
+            if self._current_page:
+                self.logger.warning("WE SHOULD HERE VIEW NODE(S): %s in %s" % (str(nodes[0].get_attr('title')), str(type(self.editor))))
+                ### THE FOLLOWING CALL MAKES A SEGFAULT !!!
+                self.editor.view_nodes(nodes)
+            else:
+                self.logger.warning("TRY TO VIEW A NODE OUT OF RANGE: len(nodes)=%d" % len(nodes))
         except RichTextError as e:
+            self.logger.error("RichTextError: %s" % str(e))
             self.emit("error",
                       "Could not load page '%s'." % nodes[0].get_title(), e)
 
         self.emit("current-node", self._current_page)
-    '''
 
     def on_goto_node(self, widget, node):
         """Focus view on a node"""
